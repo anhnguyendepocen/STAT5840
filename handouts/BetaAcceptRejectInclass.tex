@@ -1,0 +1,80 @@
+% Created 2011-05-18 Wed 12:10
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Accept-Reject Algorithm}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\section*{Simulating Beta(2.5, 4.5) Random Variables: Which method is better?}
+\label{sec-1}
+
+\noindent
+We wish to simulate Beta(2.5,4.5) random variables with target density
+\[
+f(x) \propto x^{1.5}(1-x)^{3.5}.
+\]
+To do this we will use the Accept/Reject Algorithm with two different instrumental densities.
+
+
+\begin{description}
+\item[Method I:] Use uniform RV’s with instrumental density
+   \[
+   g_{1}(x) = 1,\quad 0 < x < 1.
+   \]
+   \textbf{Notes:}
+\begin{itemize}
+\item you may use \(M \approx 0.0472\).
+\item to simulate from \(g_{1}\) use the command \texttt{x <- runif(1)}.
+\end{itemize}
+\item[Method II:] Use the average of two uniform RV’s with instrumental density
+   \[
+   g_{2}(x) = 2 - |4x - 2|,\quad 0 < x <1.
+   \]
+   \textbf{Notes:}
+\begin{itemize}
+\item you may use \(M \approx 0.0554\).
+\item the \texttt{R} function for absolute value is \texttt{abs}.
+\item to simulate from \(g_{2}\) use the command \texttt{x <- mean(runif(2))}.
+\end{itemize}
+\end{description}
+\section*{Question: Which method is better?}
+\label{sec-2}
+
+
+\begin{enumerate}
+\item Write a program that simulates 10,000 Beta(2.5,4.5) random variables using both methods.
+\item Compare the acceptance rates and decide which one is the better algorithm.
+\item Graph histograms of your results.
+\item Write a report that includes your program, your histograms, and a paragraph that summarizes your findings.
+\end{enumerate}
+
+\textbf{Hints:}
+
+\begin{itemize}
+\item Download \texttt{rand\_norm.R} and modify it to suit your needs by changing the target and instrumental densities.  You could call the new one \texttt{rand\_beta.R}.
+\item It may help to write two separate programs, \texttt{rand\_beta1.R} and \texttt{rand\_beta2.R}.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,81 @@
+% Created 2011-05-19 Thu 14:12
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Investigating Robustness of the Two Sample t-Test}
+%\author{G. Jay Kerns}
+\date{STAT 5840: Summer 2011}
+
+\begin{document}
+
+\maketitle
+
+
+In this example we investigate the robustness of the 2 sample \emph{t} statistic.  The setting is $X_{1}$, \ldots{}, $X_{n}$ IID from $f$ and $Y_{1}$, \ldots{}, $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample \emph{t}-test changes as we fiddle with the population assumptions.  Copy-paste the \texttt{robust} function at the command prompt in \texttt{R}.
+\begin{verbatim}
+# robustt.R
+
+robustt <- function(sigma1, sigma2, Iter = 10000){
+  n <- 10; m <- 10         # sample sizes
+
+  frepeated <- function(){
+    x <- rnorm(m, sd = sigma1)             # generate data
+    y <- rnorm(n, sd = sigma2)  
+    tmp <- t.test(x, y, var.equal = TRUE)  # do the test
+    tmp$p.value < 0.05                     # did it reject? 
+  }
+
+  ptmp <- replicate(Iter, frepeated())     # do it over and over
+  p <- mean(ptmp)                          # prop of rejections
+  se <- round(sqrt(p*(1-p)/Iter), 4)       # standard error
+  
+  # report results
+  print(paste('sigma1 = ', sigma1, ', sigma2 = ', sigma2, sep = ""))
+  print(paste('observed level of test = ', p, ' (', se, ')', sep = ""))
+}
+\end{verbatim}
+
+
+\bigskip
+\noindent
+
+\textbf{At the command prompt:} we run the simulation to see what happens.  First we try it for the case the variances are identically 1, then we run it again for $\sigma_{1} = 1$, $\sigma_{2} = 10$.
+
+\begin{verbatim}
+robustt(1,1)
+\end{verbatim}
+
+\begin{verbatim}
+ [1] "sigma1 = 1, sigma2 = 1"
+ [1] "observed level of test = 0.0524 (0.0022)"
+\end{verbatim}
+
+
+\begin{verbatim}
+robustt(1,10)
+\end{verbatim}
+
+\begin{verbatim}
+ [1] "sigma1 = 1, sigma2 = 10"
+ [1] "observed level of test = 0.0671 (0.0025)"
+\end{verbatim}
+
+
+
+\end{document}

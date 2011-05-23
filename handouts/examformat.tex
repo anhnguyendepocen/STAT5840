@@ -1,0 +1,24 @@
+% examformat.tex
+% set up page formatting for exams/quizzes
+
+% page margins
+\usepackage[letterpaper]{geometry}
+\geometry{verbose, tmargin = 1in, bmargin = 1in, lmargin = 1in, rmargin = 1in}
+
+% format headings for questions/answers
+\usepackage{titlesec}
+\titleformat{\section}[runin]{\normalfont}{\bfseries\arabic{section}.}{.5em}{}[\quad]
+\titleformat{\subsection}[block]{\normalfont}{\bfseries\alph{subsection})}{.5em}{}[\quad]
+\titleformat{\subsubsection}[block]{\normalfont}{}{}{}[\quad]
+
+% typeset student entered R code
+\newenvironment{studinpt}
+  {\begin{minipage}{\textwidth}\ttfamily}
+  {\end{minipage}}
+
+% extra math commands
+\newcommand{\E}{\mathrm{I\! E}}
+\renewcommand{\P}{\mathrm{I\! P}}
+
+% extra space between last line of text and footnote rule
+\skip\footins 20pt plus4pt minus4pt

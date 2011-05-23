@@ -1,0 +1,66 @@
+% Created 2011-05-18 Wed 20:49
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Evaluating Tests via Monte Carlo Methods}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\section*{Setup}
+\label{sec-1}
+
+
+Suppose $X_{1}$, $X_{2}$, \ldots{}, $X_{n}$ are a random sample from a distribution $f$ with mean $\mu$.  The standard test of the null hypothesis $H_{0}: \mu = 0$ is based on the statistic
+\[
+T = \frac{\Xbar}{S/\sqrt{n}}.
+\]
+At level $\alpha = 0.05$, one rejects $H_{0}$ if $|T| > t_{\alpha/2}$, where $t_{\alpha/2}$ is the percentile of a \texttt{t(df = n-1)} distribution with upper tail probability 0.025.  For this exercise, assume $n = 10$.
+
+
+\begin{description}
+\item[KNOW:] An implicit assumption for the above test is that the underlying population is Normal. What happens if that assumption is violated?
+\end{description}
+\section*{Questions.}
+\label{sec-2}
+
+
+\begin{itemize}
+\item Using Monte Carlo simulation, approximate the level of this test when $f$ is
+\begin{enumerate}
+\item N(0,1),
+\item Chi-square with 4 \texttt{df},
+\item Uniform(0,1), and
+\item Standard Logistic, Logis(0,1).
+\end{enumerate}
+\item For each population distribution, give a) the estimate of the level, b) a standard error for your estimate, and c) a paragraph stating what you have found.
+\item After the four parts are finished, write a report collecting and summarizing your findings, and PRINT it out to be submitted on Friday.
+\end{itemize}
+
+\textbf{Hints:}
+
+\begin{itemize}
+\item Download \texttt{robust.R} and modify it to suit your needs by changing the simulated data and the \texttt{t.test} command.
+\end{itemize}
+
+\end{document}

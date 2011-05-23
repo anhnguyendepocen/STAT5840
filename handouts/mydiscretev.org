@@ -1,0 +1,49 @@
+#+TITLE:   Illustration of the Accept/Reject Algorithm
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Discrete Accept/Reject
+This function generates a discrete distribution via the accept-reject algorithm.  Copy-paste the =mydiscretev= function at the command prompt in =R=.
+#+begin_src R :exports code
+# mydiscretev.R
+
+mydiscretev <- function(p,N){
+  # mydiscretev.R
+  # p is the desired target density on 1,...,k.
+  # N is the number of observations desired
+  x <- rep(0, times = N)                # initialize
+  k <- length(p)                        # the support of p
+  M <- k*max(p)                         # the bound size
+  for(i in seq.int(N)){
+    accept <- FALSE                     # initialize
+    while (!accept){                    # continue until we accept
+      y <- sample(k, size = 1)          # y is disc unif 1...k
+      u <- runif(1)                     # u is unif(0,1)
+      accept <- ( u < p[y]/(M*1/k) )    # is TRUE if A/R condition satisfied
+    }
+    x[i] <- y                           # this y is a good one
+  }
+  return(x)
+}
+#+end_src
+After copy-pasting we can run the function with the following.
+#+begin_src R :exports both
+p <- c(.11, .12, .09, .08, .12, .10, .09, .09, .10, .10)
+x <- mydiscretev(p, 10000)
+#+end_src
+
+#+CAPTION:    A relative frequency barplot of the simulated values
+#+LABEL:      fig:yplot
+#+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
+#+begin_src R :exports both :results output graphics :file img/DARalgo.pdf
+plot(prop.table(table(x)), ylab = "Relative frequency")
+#+end_src

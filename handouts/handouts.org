@@ -1,0 +1,52 @@
+#+TITLE:   Accept-Reject Algorithm
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+We cover the standard Normal density with a Cauchy proposal density and use the accept-reject algorithm.  We copy-paste the =rand_norm= function at the command prompt in =R=.
+
+#+begin_src R :exports code
+rand_norm <- function(n){
+  M <- 1.5203;           # bound used in A/R algorithm
+  i <- 0; N <- 0;        # initialization and storage
+  z <- rep(0, times = n);
+
+  while(i < n){                      # keep going until n accepts
+      x <- tan(pi*(runif(1) - 0.5))  # simulate a Cauchy
+      u <- runif(1)                  # simulate a Uniform
+      f <- 1/sqrt(2*pi)*exp(-x^2/2)  # compute f(x)
+      g <- 1/pi/(1+x^2)              # compute g(x)
+      if (u <= f/M/g){
+        i <- i + 1;            # got another accept
+        z[i] <- x;             # save this one
+      }
+    N <- N + 1                 # keep track of num trials
+  }
+list(z = z, accept = n/N)                     
+}
+#+end_src
+After the copy-paste we can run the function with the following.
+#+begin_src R :exports both
+tmp <- rand_norm(10000)
+tmp$accept
+#+end_src
+The acceptance rate is around 65%.  We see plots below.
+
+#+CAPTION:    Plot of the target/proposal densities, plus histogram
+#+LABEL:      fig:yplot
+#+ATTR_LaTeX: width=5in, height=2in, placement=[h!]
+#+begin_src R :exports results :results output graphics :file ARalgo.png
+par(mfrow = c(1,2))
+curve(dnorm, xlim = c(-3,3), ylim = c(0,0.5), lwd = 2)
+f <- function(x) 1.53*dcauchy(x)
+curve(f, add = TRUE, lwd = 2, lty = 2)
+hist(tmp$z, main = "")
+par(mfrow = c(1,1))
+#+end_src

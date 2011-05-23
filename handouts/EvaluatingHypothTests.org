@@ -1,0 +1,36 @@
+#+TITLE:   Evaluating Tests via Monte Carlo Methods
+#+AUTHOR:    
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil ^:nil date:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+
+* Setup
+
+Suppose $X_{1}$, $X_{2}$, ..., $X_{n}$ are a random sample from a distribution $f$ with mean $\mu$.  The standard test of the null hypothesis $H_{0}: \mu = 0$ is based on the statistic
+\[
+T = \frac{\Xbar}{S/\sqrt{n}}.
+\]
+At level $\alpha = 0.05$, one rejects $H_{0}$ if $|T| > t_{\alpha/2}$, where $t_{\alpha/2}$ is the percentile of a =t(df = n-1)= distribution with upper tail probability 0.025.  For this exercise, assume $n = 10$.
+
+- KNOW: :: An implicit assumption for the above test is that the underlying population is Normal. What happens if that assumption is violated?
+
+
+* Questions. 
+- Using Monte Carlo simulation, approximate the level of this test when $f$ is 
+   1. N(0,1),
+   2. Chi-square with 4 =df=,
+   3. Uniform(0,1), and
+   4. Standard Logistic, Logis(0,1).
+
+- For each population distribution, give a) the estimate of the level, b) a standard error for your estimate, and c) a paragraph stating what you have found.
+
+- After the four parts are finished, write a report collecting and summarizing your findings, and PRINT it out to be submitted on Friday.
+
+*Hints:*
+- Download =robust.R= and modify it to suit your needs by changing the simulated data and the =t.test= command.

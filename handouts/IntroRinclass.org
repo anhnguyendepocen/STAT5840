@@ -1,0 +1,67 @@
+#+TITLE:  STAT 5840 | Statistical Computing | Introduction to =R=
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 author:nil toc:nil date:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [10pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Illustration of the basic Monte Carlo method: *estimating areas*.  
+
+1. We will usually write programs (or "scripts") and save them on the Desktop (or some other folder of your choice).  For this lab it may make your life easier to download the =IntroRinclass.R= script and work from there. 
+
+2. We would like to estimate the area of a region $E$ inside the unit square.
+
+   #+latex: \begin{center}
+   #+ATTR_LaTeX: width=3in, height=1.5in, placement=[h!]
+   #+begin_src R :exports results :results graphics :file img/IntroR.pdf
+   par(mfrow = c(1,2))
+   require(diagram)
+   par(mex = 0.2, cex = 0.5)
+   openplotmat(frame.plot=TRUE)
+   print(textellipse(mid = c(0.54,0.5), box.col = grey(0.95), 
+     radx = 0.24, rady = 0.37, angle = 37,
+     lab = "E", cex = 10, asp = 1))
+   openplotmat(frame.plot=TRUE)
+   textellipse(mid = c(0.54,0.5), box.col = grey(0.95), 
+     radx = 0.24, rady = 0.37, angle = 37,
+     lab = "E", cex = 10, asp = 1)
+   print(points(runif(1000), runif(1000)))
+   par(mfrow = c(1,1))
+   #+end_src
+   #+latex: \end{center}
+
+   Suppose we can generate a pair \( (x,y) \) of random numbers, each chosen independently at random from [0,1].  Then \( (x,y) \) are the coordinates of a point chosen at random from the unit square.  If we would like to estimate the area of the region, we could choose a large number of random points and record the fraction that fall in the region.
+
+   *Example:* $E = \{ (x,y)\, : \, y \leq x^2  \}$.
+
+   #+begin_src R :exports both
+   # IntroRinclass.R
+
+   Iter <- 1000; count <- 0           # initialization and storage
+   for (i in 1:Iter){                 # start the simulation loop	
+     x <- runif(1); y <- runif(1)     # generates two rand coords
+     if (y <= x^2){ 
+       count <- count + 1             # accept the point
+     }
+   }
+   accept <- count/Iter               # store prop of accepts
+   accept                             # print prop of accepts
+   sqrt(accept*(1-accept)/Iter)       # print std error of estimate
+   #+end_src
+
+3. For each of the following, find 1) an estimate of the area, 2) an error of estimate, and 3) the exact value.
+   1. \( E = \{ (x,y) : y > |\sin(5 \pi x)| \} \).
+   2. \( E = \{ (x,y) : y < 1024 x^5 (1-x)^5 \} \).
+   3. \( E = \{ \mbox{inside circle with center (0.5,0.5) and radius 0.5}\} \).
+
+
+*Hints:*
+- the =R= functions for absolute value and sine are =abs= and =sin=, respectively (and $\pi$ is just =pi=). 
+- the equation of a circle with center \( (a,b) \) and radius $r$ is \( (x-a)^{2} + (y-b)^{2} = r^{2} \).
+- you can open a new =R= script with File, New, R Script, and you can open an existing script with File, Open File...

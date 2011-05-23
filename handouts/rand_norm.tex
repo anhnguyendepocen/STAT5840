@@ -1,0 +1,74 @@
+% Created 2011-05-23 Mon 11:40
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Accept-Reject Algorithm}
+%\author{}
+\date{STAT 5840: Summer 2011}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section*{Simulating Normal with a Cauchy}
+\label{sec-1}
+
+We cover the standard Normal density with a Cauchy proposal density and use the accept-reject algorithm.  We copy-paste the \texttt{rand\_norm} function at the command prompt in \texttt{R}.
+
+\begin{verbatim}
+# rand_norm.R
+rand_norm <- function(n){
+  M <- 1.5203;           # bound used in A/R algorithm
+  i <- 0; N <- 0;        # initialization and storage
+  z <- rep(0, times = n);
+  while(i < n){                      # keep going until n accepts
+      x <- tan(pi*(runif(1) - 0.5))  # simulate a Cauchy
+      u <- runif(1)                  # simulate a Uniform
+      f <- 1/sqrt(2*pi)*exp(-x^2/2)  # compute f(x)
+      g <- 1/pi/(1+x^2)              # compute g(x)
+      if (u <= f/M/g){
+        i <- i + 1;            # got another accept
+        z[i] <- x;             # save this one
+      }
+    N <- N + 1                 # keep track of num trials
+  }
+list(z = z, accept = n/N)                     
+}
+\end{verbatim}
+After the copy-paste we can run the function with the following.
+\begin{verbatim}
+tmp <- rand_norm(10000)
+tmp$accept
+\end{verbatim}
+
+\begin{verbatim}
+ [1] 0.6524008
+\end{verbatim}
+
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=7in, height=9in,]{img/ARalgo.pdf}
+\caption{\label{fig:yplot}Plot of the target/proposal densities, plus histogram}
+\end{figure}
+
+\end{document}

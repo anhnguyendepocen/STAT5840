@@ -1,0 +1,54 @@
+#+TITLE:   Comparing Exponential and Lognormal Risks
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil date:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+
+* Using Importance Sampling
+
+We would like to compare risks of $X$ under an exponential $\mathrm{Exp}(\lambda)$ population versus a lognormal $\mathrm{Lnorm}(0,\sqrt{2}\log\,\lambda)$ population under the loss function
+\[
+L(\lambda) = \E \left[\frac{(X - \lambda)^{2}}{\lambda^{2}}\right].
+\]
+The following is a script to accomplish that goal.
+#+begin_src R :exports code
+# exp_lognormal.R
+
+# compute for a range of lambdas
+lambda <- seq(from = 1.5, to = 10, by = 0.1)
+
+m <- 100000                       # number of iterations (need a lot)
+R1 <- rep(0, length(lambda))
+R2 <- rep(0, length(lambda))
+
+for (j in seq_along(lambda)){     # for each lambda, estimate risk
+  l <- lambda[j]                  # get jth lambda
+  sig <- sqrt(2*log(l))           # calc sigma
+  x <- rlnorm(m, sdlog = sig)     # simulate m lognormals
+  f1 <- l^(-1)*exp(-x/l);;        # f1 is the exponential density
+                                  # f2 is the lognormal density
+  f2 <- (1/x)*(exp(-(log(x))^2/(2*sig^2)))/sqrt(2*pi*sig^2) 
+  h <- (x - l)^2/l^2              # loss function
+  R2[j] <- mean(h)                # lognormal risk
+  R1[j] <- mean((h*f1)/f2)        # exponential risk
+}
+#+end_src
+
+* At the command prompt
+
+#+CAPTION:    Risks at different values of $\lambda$ for the two populations.  We see that the risk for the exponential population is essentially constant while the risk for the lognormal population is sharply increasing in $\lambda$.
+#+LABEL:      fig:yplot
+#+ATTR_LaTeX: width=7in, height=7in, placement=[h!]
+#+begin_src R :exports both :results output graphics :file img/ExpLognormal.pdf
+# now plot the results
+par(mfrow = c(2,1))
+plot(R1 ~ lambda, ylim = c(0,2), type = "l", main = "Exponential")
+plot(R2 ~ lambda, ylim = c(0,60), type = "l", main = "Lognormal")
+par(mfrow = c(1,1))
+#+end_src

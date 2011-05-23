@@ -1,0 +1,49 @@
+#+TITLE:   Investigating Robustness of the Two Sample t-Test
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+In this example we investigate the robustness of the 2 sample /t/ statistic.  The setting is $X_{1}$, ..., $X_{n}$ IID from $f$ and $Y_{1}$, ..., $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample /t/-test changes as we fiddle with the population assumptions.  Copy-paste the =robust= function at the command prompt in =R=.
+#+begin_src R :exports code
+# robustt.R
+
+robustt <- function(sigma1, sigma2, Iter = 10000){
+  n <- 10; m <- 10         # sample sizes
+
+  frepeated <- function(){
+    x <- rnorm(m, sd = sigma1)             # generate data
+    y <- rnorm(n, sd = sigma2)  
+    tmp <- t.test(x, y, var.equal = TRUE)  # do the test
+    tmp$p.value < 0.05                     # did it reject? 
+  }
+
+  ptmp <- replicate(Iter, frepeated())     # do it over and over
+  p <- mean(ptmp)                          # prop of rejections
+  se <- round(sqrt(p*(1-p)/Iter), 4)       # standard error
+  
+  # report results
+  print(paste('sigma1 = ', sigma1, ', sigma2 = ', sigma2, sep = ""))
+  print(paste('observed level of test = ', p, ' (', se, ')', sep = ""))
+}
+#+end_src
+
+
+\bigskip
+\noindent
+
+*At the command prompt:* we run the simulation to see what happens.  First we try it for the case the variances are identically 1, then we run it again for $\sigma_{1} = 1$, $\sigma_{2} = 10$.
+
+#+begin_src R :exports both
+robustt(1,1)
+#+end_src
+#+begin_src R :exports both
+robustt(1,10)
+#+end_src

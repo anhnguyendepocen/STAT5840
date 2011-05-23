@@ -1,0 +1,31 @@
+#+TITLE:   Suggested Exercises for STAT 5840
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [10pt,english]
+#+LATEX_HEADER: \input{handouts/handoutformat}
+#+latex: \thispagestyle{empty}
+
+All of the following exercises come from /Statistical Computing with R/ by Maria L. Rizzo (2008).
+
+* Chapter 3, page 94
+| 1 | 2 | 3 | 4 | 5 | 7 | 8 | 9 | 11 | 12 | 13 |
+
+* Chapter 5, page 149
+| 1 | 2 | 3 | 4 | 6 | 7 | 9 | 10 | 14 |
+
+* Chapter 6, page 180
+| 1 | 2 | 4 | 5 | 6 | 7 | 9 | 10 |
+
+* Chapter 7, page 212
+| 1 | 2 | 3 | 5 | 7 | 8 | 9 |
+
+* Chapter 8, page 242
+| 1 | 2 |
+
+* Chapter 9, page 277
+| 1 | 2 | 3 | 4 | 7 | 8 | 9 | 10 | 11 |

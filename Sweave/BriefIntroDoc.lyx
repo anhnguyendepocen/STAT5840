@@ -1,0 +1,1684 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass literate-article
+\begin_preamble
+
+% packages used
+\usepackage{amssymb,latexsym}
+\usepackage[mathscr]{eucal}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{layout}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage{hyperref}
+
+
+
+
+
+% get rid of extra Sweave space
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}  
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 0
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 0.9in
+\topmargin 0.5in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+A 
+\emph on
+Brief
+\emph default
+ Introduction to 
+\family sans
+R
+\end_layout
+
+\begin_layout Standard
+This is a document designed to help a person to begin to get to know the
+ 
+\family sans
+R
+\family default
+ statistical computing environment.
+ It paraphrases and summarizes information gleaned from materials listed
+ in the 
+\series bold
+References
+\series default
+.
+ Please refer to them for a more complete treatment.
+\end_layout
+
+\begin_layout Section
+Installing 
+\family sans
+R
+\family default
+ and the 
+\family typewriter
+IPSUR
+\family default
+ Package
+\end_layout
+
+\begin_layout Standard
+There are detailed instructions for installing 
+\family sans
+R
+\family default
+ on your personal computer at the following website:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://ipsur.r-forge.r-project.org/book/installation.php
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+For more complete and technical installation instructions see the 
+\emph on
+R Installation and Administration Manual
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://cran.r-project.org/doc/manuals/R-admin.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+You will also want to install RStudio, which you can find here:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.rstudio.org/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Communicating with 
+\family sans
+R
+\end_layout
+
+\begin_layout Standard
+There are three basic methods for communicating with the software.
+\end_layout
+
+\begin_layout Enumerate
+At the Command Prompt (
+\family typewriter
+>
+\family default
+).
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+This is the most basic way to complete simple, one-line commands.
+ 
+\family sans
+R
+\family default
+ will evaluate what is typed there and output the results in the Console
+ Window.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Copy & Paste from a text file.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+For longer programs (called 
+\emph on
+scripts
+\emph default
+) there is too much code to write all at once at the Command Prompt.
+ Further, for long scripts the user sometimes wishes to only modify a certain
+ piece of the script and run it again in 
+\family sans
+R
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+One way to do this is to open a text file with a text editor (say, NotePad
+ or MS-Word
+\begin_inset Formula $\circledR$
+\end_inset
+
+).
+ One writes the code in the text file, then when satisfied the user copy-and-pas
+tes it at the Command Prompt in 
+\family sans
+R
+\family default
+.
+ Then 
+\family sans
+R
+\family default
+ will compile all of the code at once and give output in the Console Window.
+ 
+\end_layout
+
+\begin_layout Standard
+Alternatively, 
+\family sans
+R
+\family default
+ provides its own built-in script editor, called 
+\family sans
+R
+\family default
+ Editor.
+ From the console window, select 
+\emph on
+File 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ New
+\emph default
+ 
+\emph on
+Script.
+
+\emph default
+\color none
+ A script window opens, and the lines of code can be written in the window.
+ When satisfied with the code, the user highlights all of the commands and
+ presses 
+\family typewriter
+Ctrl+R
+\family default
+.
+ The commands are automatically run at once in 
+\family sans
+R
+\family default
+ and the output is shown.
+ To save the script for later, click 
+\emph on
+File 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ Save as...
+
+\emph default
+ in 
+\family sans
+R
+\family default
+ Editor.
+ The script can be reopened later with 
+\emph on
+File 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ Open Script...
+
+\emph default
+ in the Console Window.
+\end_layout
+
+\begin_layout Standard
+A disadvantage to these methods is that all of the code is written in the
+ same way, with the same font.
+ It can become confusing with longer scripts, and there is no way to efficiently
+ identify mistakes in the code.
+ To address this problem, software developers have designed powerful IDE
+ / Script Editors.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+IDE / Script Editors.
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+There are free programs specially designed to aid the communication and
+ code writing process.
+ The advantage to using Script Editors is that they have additional functions
+ and options to help the user write code more efficiently, including 
+\family sans
+R
+\family default
+ syntax highlighting, automatic code completion, delimiter matching, and
+ dynamic help on the 
+\family sans
+R
+\family default
+ functions as they are written.
+ In addition, they typically have all of the text editing features of programs
+ like MS Word.
+ Lastly, most script editors are fully customizable in the sense that the
+ user can customize the appearance of the interface and can choose what
+ colors to display, when to display them, and how they are to be displayed.
+\end_layout
+
+\begin_layout Standard
+Some of the more popular script editors can be downloaded from the R-Project
+ website at 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.sciviews.org/_rgui/
+\end_layout
+
+\end_inset
+
+.
+
+\color none
+ On the left side of the screen (under 
+\series bold
+Projects
+\series default
+) there are several choices available.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+RStudio
+\series default
+: This open-source IDE works on all platforms and is the best one for beginners
+ that I have yet seen to date.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Tinn-
+\family sans
+R
+\family default
+\series default
+: This one is also free, but is really just used for editing scripts.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Emacs
+\series default
+ / 
+\series bold
+ESS
+\series default
+: Click Emacs (ESS) or Emacs (ESS/Windows).
+ This will take you to download sites with sophisticated programs for editing,
+ compiling, and coordinating software such as 
+\family typewriter
+S-Plus
+\family default
+, 
+\family sans
+R
+\family default
+, and 
+\family typewriter
+SAS
+\family default
+ simultaneously.
+ Emacs is short for 
+\emph on
+E
+\emph default
+diting 
+\emph on
+MAC
+\emph default
+ro
+\emph on
+S
+\emph default
+ and ESS means 
+\emph on
+E
+\emph default
+macs 
+\emph on
+S
+\emph default
+peaks 
+\emph on
+S
+\emph default
+tatistics.
+ An alternate branch of Emacs is called XEmacs.
+ This editor is -- 
+\emph on
+by far
+\emph default
+ -- the most powerful of the text editors, but all of the flexibility comes
+ at a price.
+ Emacs requires a level of computer-saavy that the others do not, and the
+ learning curve is more steep.
+ If you want to explore this option, then speak with me beforehand; I can
+ give you some advice about getting started.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+A First Session: Using 
+\family sans
+R
+\family default
+ as a calculator
+\end_layout
+
+\begin_layout Standard
+
+\family sans
+R
+\family default
+ is perfectly able to do standard calculations.
+ For example, type 
+\begin_inset Formula $2+3$
+\end_inset
+
+ and observe
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+2 + 3
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+[1]
+\family default
+ means that the 5 is the first entry in the list, and the 
+\family typewriter
+>
+\family default
+ means that 
+\family sans
+R
+\family default
+ is waiting on your next command.
+ Entry numbers will be generated for each row, such as
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+3:50
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+Here, the 
+\begin_inset Formula $26^{\mathrm{th}}$
+\end_inset
+
+ entry in the list is 28.
+ Notice also the 
+\family typewriter
+3:50
+\family default
+ notation, which generates all numbers in sequence from 3 to 50.
+ One can also do things like
+\end_layout
+
+\begin_layout Scrap
+
+<<keep.source = TRUE>>=
+\begin_inset Newline newline
+\end_inset
+
+2 * 3 * 4 * 5  # multiply
+\begin_inset Newline newline
+\end_inset
+
+sqrt(10)       # square root
+\begin_inset Newline newline
+\end_inset
+
+pi             # pi
+\begin_inset Newline newline
+\end_inset
+
+sqrt(-2)
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+Notice that 
+\family typewriter
+NaNs
+\family default
+ were produced; this stands for 
+\begin_inset Quotes eld
+\end_inset
+
+not a number
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Also notice the number sign 
+\family typewriter
+#
+\family default
+, which means 
+\emph on
+comment
+\emph default
+.
+ Everything typed on the same line after the 
+\family typewriter
+#
+\family default
+ will be ignored by 
+\family sans
+R
+\family default
+.
+ There is also a continuation prompt 
+\family typewriter
++
+\family default
+ which occurs if you press 
+\family typewriter
+Enter
+\family default
+ before a statement is complete.
+ For example, if you forget to close the parentheses or a command you may
+ get something like the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{Schunk}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{Sinput}
+\end_layout
+
+\begin_layout Plain Layout
+
+> sqrt(27 + 32
+\end_layout
+
+\begin_layout Plain Layout
+
++
+\end_layout
+
+\begin_layout Plain Layout
+
++
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{Sinput}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{Schunk}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To exit out of the continuation prompt, you can either complete the command
+ - by entering a 
+\family typewriter
+\color red
+)
+\family default
+\color none
+ in the above example - or you may press the 
+\family typewriter
+Esc
+\family default
+ key.
+\end_layout
+
+\begin_layout Standard
+Some other fuctions that will be of use are 
+\family typewriter
+abs()
+\family default
+ for absolute value, 
+\family typewriter
+log()
+\family default
+ for the natural logarithm, 
+\family typewriter
+exp()
+\family default
+ for the exponential function, 
+\family typewriter
+factorial()
+\family default
+ for computing permutations, and 
+\family typewriter
+choose()
+\family default
+ for binomial coefficients.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Assignment.
+
+\series default
+ This is useful for storing values to be used later.
+\end_layout
+
+\begin_layout Scrap
+
+<<keep.source = TRUE>>=
+\begin_inset Newline newline
+\end_inset
+
+y = 5    # stores the value 5 in y
+\begin_inset Newline newline
+\end_inset
+
+y
+\begin_inset Newline newline
+\end_inset
+
+y <- 5   # also stores the value 5 in y
+\begin_inset Newline newline
+\end_inset
+
+7 -> z   # stores the value 7 in z
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+You do not have to use the 
+\family typewriter
+<-
+\family default
+ notation to store things; the equal sign 
+\family typewriter
+=
+\family default
+ works just as well.
+ I will use both symbols interchangeably.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Acceptable variable names.
+
+\series default
+ You can use letters, numbers, dots 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+.
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+, or underscore 
+\begin_inset Quotes eld
+\end_inset
+
+
+\family typewriter
+_
+\family default
+
+\begin_inset Quotes erd
+\end_inset
+
+ characters.
+ You cannot use mathematical operators, and a leading dot may not be followed
+ by a number.
+ Examples: 
+\family typewriter
+x
+\family default
+, 
+\family typewriter
+x1
+\family default
+, 
+\family typewriter
+y32
+\family default
+, 
+\family typewriter
+x.variable
+\family default
+, 
+\family typewriter
+x_variable
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Using
+\series default
+ 
+\family typewriter
+\series bold
+c()
+\family default
+\series default
+ 
+\series bold
+to enter data vectors.
+
+\series default
+ If you would like to enter the data 
+\family typewriter
+74,31,95,61,76,34,23,54,96
+\family default
+ into 
+\family sans
+R
+\family default
+, you may create a data vector with the 
+\family typewriter
+c()
+\family default
+ function (short for 
+\emph on
+concatenate
+\emph default
+).
+ 
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+fred = c(74, 31, 95, 61, 76, 34, 23, 54, 96)
+\begin_inset Newline newline
+\end_inset
+
+fred
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+The vector 
+\family typewriter
+fred
+\family default
+ has 9 entries.
+ We can access individual components with bracket 
+\family typewriter
+[ ]
+\family default
+ notation:
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+fred[3]
+\begin_inset Newline newline
+\end_inset
+
+fred[2:4]
+\begin_inset Newline newline
+\end_inset
+
+fred[c(1, 3, 5, 8)]
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+If you would like to reset the variable 
+\family typewriter
+fred
+\family default
+, you can do it by typing 
+\family typewriter
+fred = c()
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Using
+\series default
+ 
+\family typewriter
+\series bold
+scan()
+\family default
+\series default
+ 
+\series bold
+to enter numeric data vectors
+\series default
+.
+ If you would like to enter the data 76 34 23 54 96 into a vector 
+\family typewriter
+x
+\family default
+, perhaps the quickest way would be to use the 
+\family typewriter
+scan()
+\family default
+ function:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{Schunk}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{Sinput}
+\end_layout
+
+\begin_layout Plain Layout
+
+> x <- scan()
+\end_layout
+
+\begin_layout Plain Layout
+
+1: 76
+\end_layout
+
+\begin_layout Plain Layout
+
+2: 34
+\end_layout
+
+\begin_layout Plain Layout
+
+3: 23
+\end_layout
+
+\begin_layout Plain Layout
+
+4: 54
+\end_layout
+
+\begin_layout Plain Layout
+
+5: 9
+\end_layout
+
+\begin_layout Plain Layout
+
+66: 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{Sinput}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{Soutput}
+\end_layout
+
+\begin_layout Plain Layout
+
+Read 5 items
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{Soutput}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{Schunk}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This method is best suited for use with small data sets and 
+\series bold
+only works if the data are numeric
+\series default
+.
+ Notice that entering an empty line stops the scan.
+ Another use of this feature is when you have a long list of numbers (separated
+ by spaces or on different lines) already typed somewhere else, say in a
+ text file.
+ To enter all the data in one fell swoop, highlight and copy the list of
+ numbers to the Clipboard with 
+\emph on
+Edit 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ Copy
+\emph default
+, next type the
+\color none
+ 
+\family typewriter
+\color inherit
+x = scan()
+\family default
+\color none
+ command in the 
+\family sans
+R
+\family default
+ console, and paste the numbers at the 
+\family typewriter
+\color red
+1:
+\family default
+\color none
+ prompt with 
+\emph on
+Edit 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ Paste
+\emph default
+.
+ All of the numbers will automatically be entered into the vector 
+\family typewriter
+x
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Data vectors have type
+\series default
+.
+ There are numeric, character, and logical type vectors.
+ If you mix and match then usually it will be character.
+ Notice that characters can be identified with either single or double quotes.
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+simpsons = c("Homer", "Marge", "Bart", "Lisa", "Maggie")
+\begin_inset Newline newline
+\end_inset
+
+names(simpsons) = c("dad", "mom", "son", "daughter 1", "daughter 2")
+\begin_inset Newline newline
+\end_inset
+
+simpsons
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+Here is an example of a logical vector:
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+x = c(5, 7)
+\begin_inset Newline newline
+\end_inset
+
+v = (x < 6)
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Applying functions to a data vector.
+
+\series default
+ Once we have stored a data vector then we can evaluate functions on it.
+ 
+\end_layout
+
+\begin_layout Scrap
+
+<<keep.source = TRUE>>=
+\begin_inset Newline newline
+\end_inset
+
+fred
+\begin_inset Newline newline
+\end_inset
+
+sum(fred)
+\begin_inset Newline newline
+\end_inset
+
+length(fred)
+\begin_inset Newline newline
+\end_inset
+
+sum(fred)/length(fred)
+\begin_inset Newline newline
+\end_inset
+
+mean(fred)                 # sample mean, should be same answer
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+Other popular functions for vectors are 
+\family typewriter
+range()
+\family default
+, 
+\family typewriter
+min()
+\family default
+, 
+\family typewriter
+max()
+\family default
+, 
+\family typewriter
+sort()
+\family default
+, and 
+\family typewriter
+cumsum()
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Vectorizing functions.
+
+\series default
+ Arithmetic in 
+\family sans
+R
+\family default
+ is almost always done element-wise, also known as 
+\emph on
+vectorizing functions
+\emph default
+.
+ Some examples follow.
+\end_layout
+
+\begin_layout Scrap
+
+<<>>=
+\begin_inset Newline newline
+\end_inset
+
+fred.2 = c(4, 5, 3, 6, 4, 6, 7, 3, 1)
+\begin_inset Newline newline
+\end_inset
+
+fred + fred.2
+\begin_inset Newline newline
+\end_inset
+
+fred - fred.2
+\begin_inset Newline newline
+\end_inset
+
+fred - mean(fred)
+\begin_inset Newline newline
+\end_inset
+
+@
+\end_layout
+
+\begin_layout Standard
+The operations 
+\family typewriter
++
+\family default
+ and 
+\family typewriter
+-
+\family default
+ are performed element-wise.
+ Notice in the last vector that 
+\family typewriter
+mean(fred)
+\family default
+ was subtracted from each entry, in turn.
+ This is also known as 
+\emph on
+data recycling
+\emph default
+.
+ Other popular vectorizing functions are 
+\family typewriter
+sin()
+\family default
+, 
+\family typewriter
+cos()
+\family default
+, 
+\family typewriter
+exp()
+\family default
+, 
+\family typewriter
+log()
+\family default
+, and 
+\family typewriter
+sqrt()
+\family default
+.
+\end_layout
+
+\begin_layout Section
+Getting Help
+\end_layout
+
+\begin_layout Standard
+When you are using 
+\family sans
+R
+\family default
+, it will not take long before you find yourself needing help.
+ Fortunately, 
+\family sans
+R
+\family default
+ has extensive help resources and you should immediately become familiar
+ with them.
+ Begin by clicking 
+\emph on
+Help
+\emph default
+ on the console.
+ The following options are available.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Console
+\series default
+: gives useful shortcuts, for instance, 
+\family typewriter
+Ctrl+L
+\family default
+, to clear the 
+\family sans
+R
+\family default
+ console screen.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+FAQ on 
+\family sans
+R
+\family default
+\series default
+: frequently asked questions concerning general 
+\family sans
+R
+\family default
+ operation.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+FAQ on 
+\family sans
+R
+\family default
+ for Windows
+\series default
+: frequently asked questions about 
+\family sans
+R
+\family default
+, tailored to the Windows operating system.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Manuals
+\series default
+: technical manuals about all features of the 
+\family sans
+R
+\family default
+ system including installation, the complete language definition, and add-on
+ packages.
+\end_layout
+
+\begin_layout Itemize
+
+\family sans
+\series bold
+R
+\family default
+ functions (text)\SpecialChar \ldots{}
+
+\series default
+: use this if you know the 
+\emph on
+exact
+\emph default
+ name of the function you want to know more about, for example, 
+\family typewriter
+mean
+\family default
+ or 
+\family typewriter
+plot.
+
+\family default
+ Typing mean in the window is equivalent to typing 
+\family typewriter
+help("mean")
+\family default
+ at the command line, or more simply, 
+\family typewriter
+?mean
+\family default
+.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Html Help
+\series default
+: use this to browse the manuals with point-and-click links.
+ It also has a Search Engine & Keywords for searching the help page titles,
+ with point-and-click links for the search results.
+ This is possibly the best help method for beginners.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Search help\SpecialChar \ldots{}
+
+\series default
+: use this if you do not know the exact name of the function of interest.
+ For example, you may enter 
+\family typewriter
+plo
+\family default
+ and a text window will return listing help files with an alias, concept,
+ or title matching 'plo' using regular expression matching; it is equivalent
+ to typing 
+\family typewriter
+help.search("plo")
+\family default
+ at the command line.
+ The advantage is that you do not need to know the exact name of the function;
+ the disadvantage is that you cannot point-and-click the results.
+ Therefore, one may wish to use the Html Help search engine instead.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+search.r-project.org\SpecialChar \ldots{}
+
+\series default
+: this will search for words in help lists and archives of the 
+\family sans
+R
+\family default
+ Project.
+ It can be very useful for finding other questions that useRs have asked.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Apropos\SpecialChar \ldots{}
+
+\series default
+: use this for more sophisticated partial name matching of functions.
+ Try 
+\family typewriter
+?apropos
+\family default
+ for details.
+\end_layout
+
+\begin_layout Standard
+Note also 
+\family typewriter
+example()
+\family default
+.
+ This initiates the running of examples, if available, of the use of the
+ function specified by the argument.
+\end_layout
+
+\begin_layout Section
+Other tips
+\end_layout
+
+\begin_layout Standard
+It is unnecessary to retype commands repeatedly, since 
+\family sans
+R
+\family default
+ remembers what you have entered on the command line.
+ To cycle through the previous commands, just push the 
+\begin_inset Formula $\uparrow$
+\end_inset
+
+ (up arrow) key.
+ 
+\end_layout
+
+\begin_layout Standard
+Missing values in 
+\family sans
+R
+\family default
+ are denoted by 
+\family typewriter
+NA
+\family default
+.
+ Operations on data vector 
+\family typewriter
+NA
+\family default
+ values treat them as if the values can't be found.
+ This means adding (as well as subtracting and all of the other mathematical
+ operations) a number to 
+\family typewriter
+NA
+\family default
+ results in 
+\family typewriter
+NA
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+To find out what all variables are in the current work environment, use
+ the commands 
+\family typewriter
+ls()
+\family default
+ or 
+\family typewriter
+objects()
+\family default
+.
+ These list all available objects in the workspace.
+ If you wish to remove one or more variables, use 
+\family typewriter
+remove(var1, var2)
+\family default
+, and to remove all of them use 
+\family typewriter
+rm(list=ls())
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Section
+Some References
+\end_layout
+
+\begin_layout Itemize
+Dalgaard, P.
+ (2002).
+ 
+\emph on
+Introductory Statistics with
+\emph default
+ 
+\family sans
+R
+\family default
+.
+ Springer.
+\end_layout
+
+\begin_layout Itemize
+Everitt, B.
+ (2005).
+ 
+\emph on
+An
+\emph default
+ 
+\family sans
+R
+\family default
+ 
+\emph on
+and
+\emph default
+ 
+\family typewriter
+S-Plus
+\family default
+ 
+\emph on
+Companion to Multivariate Analysis
+\emph default
+.
+ Springer.
+\end_layout
+
+\begin_layout Itemize
+Heiberger, R.
+ and Holland, B.
+ (2004).
+ 
+\emph on
+Statistical Analysis and Data Display.
+ An Intermediate Course with Examples in
+\emph default
+ 
+\family typewriter
+S-Plus
+\family default
+, 
+\family sans
+R
+\family default
+, 
+\emph on
+and
+\emph default
+ 
+\family typewriter
+SAS
+\family default
+.
+ Springer.
+\end_layout
+
+\begin_layout Itemize
+Maindonald, J.
+ and Braun, J.
+ (2003).
+ 
+\emph on
+Data Analysis and Graphics Using
+\emph default
+ 
+\family sans
+R
+\family default
+: 
+\emph on
+an Example Based Approach
+\emph default
+.
+ Cambridge University Press.
+\end_layout
+
+\begin_layout Itemize
+Venables, W.
+ and Smith, D.
+ (2005).
+ 
+\emph on
+An Introduction to
+\emph default
+ 
+\family sans
+R
+\family default
+.
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.r-project.org/Manuals
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Verzani, J.
+ (2005).
+ 
+\emph on
+Using
+\emph default
+ 
+\family sans
+R
+\family default
+ for 
+\emph on
+Introductory Statistics
+\emph default
+.
+ Chapman and Hall.
+\end_layout
+
+\end_body
+\end_document

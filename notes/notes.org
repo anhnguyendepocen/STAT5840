@@ -1,0 +1,1932 @@
+#+TITLE:   \fontsize{30}{35}\selectfont STAT 5840: STATISICAL COMPUTING
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 ^:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output raw
+#+LaTeX_CLASS: scrbook
+#+LaTeX_CLASS_OPTIONS: [captions=tableheading]
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{notesformat}
+#+LATEX: \input{frontmatter}
+
+
+\pagenumbering{arabic}
+* Introduction
+
+** Likelihood Methods
+
+Review: Maximum likelihood, Sir Ronald Aylmer Fisher (1921)
+
+*** Examples 
+
+**** Bernoulli.  
+Write $X \sim \mathrm{Bern}(p)$.
+\[
+f(x|\theta) = \theta^{x}(1-\theta)^{1-x},\ x=0,1,\quad, 0 < \theta < 1.
+\]
+The likelihood function is
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
+ & = & \theta^{\sum x_{i}}(1-\theta)^{n-\sum x_{i}},\quad0<\theta<1.
+\end{eqnarray*}
+
+If $n = 5$ and $x = (1,0,1,1,0)$, then $\sum x_{i}=3$ and $n - \sum x_{i}=2$.
+
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/bernlike.pdf
+f <- function(x) dbinom(3, size = 5, prob = x)
+curve(f)
+#+end_src
+#+latex: \end{center}
+
+**** Normal.  
+Write $X\sim N(\mu,\sigma^2)$. Then 
+\[
+f(x|\theta) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x-\mu)^{2}}{2\sigma^{2}}\right],\quad-\infty<x<\infty.
+\]
+Here $\theta = (\mu,\sigma^2)$.  The likelihood function is
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x_{i}-\mu)^{2}}{2\sigma^{2}}\right]\\
+ & = & (2\pi\sigma^{2})^{-n/2}\exp\left[-\frac{1}{2\sigma^{2}}\sum_{i=1}^{n}(x_{i}-\mu)^{2}\right],
+\end{eqnarray*}
+for $-\infty < \mu < \infty$ and $\sigma > 0$.
+
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/norm2like.pdf
+library(LearnBayes)
+data(marathontimes)
+attach(marathontimes)
+mycontour(normchi2post, c(220, 330, 500, 9000), time, xlab="mean",ylab="variance")
+#+end_src
+#+latex: \end{center}
+
+*** Statistical Inference
+
+**** Point estimation: maximize $L(\theta)$ to get $\hat{\theta}$.  
+- \(\hat{\theta}\) is called an "MLE".
+
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/bernMLE.pdf
+dat <- rbinom(27, size = 1, prob = 0.3)
+like <- function(x){
+  r <- 1
+  for (k in 1:27){ 
+    r <- r*dbinom(dat[k], size = 1, prob = x)
+  }
+  return(r)
+}
+curve(like, from = 0, to = 1, xlab = "parameter space", 
+      ylab = "Likelihood", lwd = 3, col = "blue")
+abline(h = 0, lwd = 1, lty = 3, col = "grey")
+mle <- mean(dat)
+mleobj <- like(mle)
+lines(mle, mleobj, type = "h", lwd = 2, lty = 3, col = "red")
+points(mle, 0, pch = 4, lwd = 2, cex = 2, col = "red")
+text(mle, mleobj/6, substitute(hat(theta)==a, 
+     list(a=round(mle, 4))), cex = 2, pos = 4)
+#+end_src
+#+latex: \end{center}
+
+**** Interval estimation: use
+\[
+\hat{\theta} \pm z_{\alpha/2}\cdot \sigma_{\hat{\theta}},
+\]
+where $\sigma_{\hat{\theta}}$ is the standard error of $\hat{\theta}$ which is $\sqrt{\mathrm{Var}(\hat{\theta})}$.  
+
+- Usually we don't know $\sigma_{\hat{\theta}}$.  We approximate it.  
+- If $l(\theta) = \log L(\theta)$ then when $n$ is large
+\[
+\mathrm{Var}(\hat{\theta}) \approx -\frac{1}{l''(\hat{\theta})}.
+\]
+
+- From a higher class... MLEs are aymptotically efficient; use the Delta method.
+
+*** Examples of MLEs
+
+**** Bernoulli
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
+ & = & \theta^{\sum x_{i}}(1-\theta)^{n-\sum x_{i}},\quad0<\theta<1.
+\end{eqnarray*}
+
+\[
+\mathrm{MLE} = \hat{\theta} = \frac{\sum x_{i}}{n} = \xbar. 
+\]
+
+**** Bivariate normal
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x_{i}-\mu)^{2}}{2\sigma^{2}}\right]\\
+ & = & (2\pi\sigma^{2})^{-n/2}\exp\left[-\frac{1}{2\sigma^{2}}\sum_{i=1}^{n}(x_{i}-\mu)^{2}\right],
+\end{eqnarray*}
+Can show (see 5844/6944 book)
+\[
+\frac{\partial}{\partial\mu}l(\theta) = 0 \mbox{ has solution } \hat{\mu}=\xbar,
+\]
+\[
+\frac{\partial}{\partial\sigma^{2}}l(\theta) = 0 \mbox{ has solution } \hat{\sigma^{2}}=\frac{1}{n}\sum_{i=1}^{n}(x_{i} - \xbar)^{2}.
+\]
+
+That is, $\hat{\theta} = \left(\xbar,\,n^{-1}\sum_{i=1}^{n}(x_{i} - \xbar)^{2}\right)$.  JOINT MLE.
+
+**** Beta - harder situation, but still possible.
+Write $X \sim \mathrm{Beta}(\alpha,\beta)$.
+\begin{equation}
+f_{X}(x)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: x^{\alpha-1}(1-x)^{\beta-1},\quad0 < x <1,
+\end{equation}
+where $\alpha > 0$ and $\beta > 0$ and
+\[
+\begin{equation}
+\Gamma(\alpha)=\int_{0}^{\infty}x^{\alpha-1}\me^{-x}\:\diff x,\quad\mbox{for }\alpha>0.
+\end{equation}
+\]
+
+- Pictures of some Betas.
+
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/betaexamples.pdf
+par(mfrow = c(2,3))
+a <- c(0.5, 2, 5, 1, 0.5, 5)
+b <- c(3, 3, 2, 1, 0.5, 0.5)
+for (i in 1:6){
+  f <- function(x){dbeta(x, shape1 = a[i], shape2 = b[i])}
+  curve(f, main = paste("alpha = ", a[i], ", beta = ", b[i], sep = ""))
+}
+par(mfrow = c(1,1))
+#+end_src
+#+latex: \end{center}
+
+Then 
+\[
+L(\theta) = \prod_{i=1}^{n}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: x_{i}^{\alpha-1}(1-x_{i})^{\beta-1}, \quad \alpha > 0,\ \beta > 0.
+\]
+
+The likelihood equations simplify to
+\[
+\begin{cases}
+\frac{1}{n}\sum\ln x_{i} & =\Psi(\alpha)-\Psi(\alpha+\beta),\\
+\frac{1}{n}\sum\ln(1-x_{i}) & =\Psi(\beta)-\Psi(\alpha+\beta),
+\end{cases}
+\]
+where $\Psi(z)=\Gamma'(z)/\Gamma(z)$ is the /digamma/ function.
+
+- This looks hard!
+  - analytically impossible
+  - numerically trivial.
+
+** Why are we in Statistical Computing?
+
+Likelihood functions can be complicated!
+
+*** Censored or missing data
+
+- Data are right censored, say, we are doing a study  about the effectiveness of a drug on a disease.
+
+- Let \(X_{i} =\) time until onset of disease for \(i^{\mathrm{th}}\) patient, \(i=1,\ldots,n\).
+
+- Suppose \(X_{1},\ldots X_{n}\) are IID
+   \[
+   f(x|\theta),\quad \mbox{``survival density''}\quad \mathrm{PDF}
+   \]
+   \[
+   F(x|\theta),\quad \mbox{``survival CDF''},\quad =\int_{-\infty}^{x}f(t|\theta)\diff t
+   \]
+
+- However, the length of the study is LIMITED to $c$ duration (/e.g./ $c=5$ years).
+
+- The data are  \(X_{1},\ldots X_{n}\), but we actually observe
+  \[
+  Y_{i}=
+  \begin{cases}
+  X_{i}, & \mbox{if }X_{i}<c,\\
+  c, & \mbox{if }X_{i}\geq c.
+  \end{cases}
+  \]
+
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/rightcensdata.pdf
+curve(dchisq(x, df = 4))
+abline(v = 5, lty = 2)
+points(c(1.5, 1.7, 2.7, 4.3, 4.9, 6.3, 8.5), rep(0,7), pch = 4, lwd = 2, cex = 2)
+#+end_src
+#+latex: \end{center}
+
+- Likelihood function
+  \[
+  L(\theta | y_{1},\ldots,y_{n}) = \prod_{y_{i} < c} f(y_{i}|\theta)\cdot \prod_{y_{i}\geq c}\left[ 1 - F(c|\theta) \right]
+  \]
+
+- This is a typical/common problem.  We will return often.
+
+*** Robust modelling/Likelihood can be multimodal
+
+- Typically we assume \(X_{1},\ldots X_{n}\) are IID \(N(\mu,\sigma^{2})\).
+
+- Then \( L(\mu,\sigma^{2}) = \) EASY.  \(\hat{\mu} = \xbar\).
+
+- Is this always appropriate?  NO!  Why?
+
+**** Alternative (Nonnormal) Models
+
+Often we have heavy-tailed distributions.
+
+- Student's /t/ distribution.  $T(r,\mu,\sigma^2)$
+    \begin{equation}
+    f(x)=\frac{\Gamma\left[(r+1)/2\right]}{\sigma\sqrt{r\pi}\,\Gamma(r/2)}\left(1+\frac{(x - \mu)^{2}}{\sigma^{2}r}\right)^{-(r+1)/2},\quad-\infty<x<\infty,
+    \end{equation}
+
+    where $-\infty < \mu < \infty$, $\sigma > 0$, and $r = 1, 2,\ldots$ are the /degrees of freedom/.
+    #+latex: \begin{center}
+    #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+    #+begin_src R :exports results :results graphics :file img/tdistpdf.pdf
+    curve(dt(x, df = 4))
+    #+end_src
+    #+latex: \end{center}
+  - We see that 
+    \begin{equation}
+    f(x) \propto \sigma^{-1}\left(1+\frac{(x - \mu)^{2}}{\sigma^{2}r}\right)^{-(r+1)/2},
+    \end{equation}
+
+  - Usually $r$ is known and $\mu,\sigma^{2}$ are unknown.
+
+  - Given SRS  \(X_{1},\ldots X_{n}\), the likelihood is
+    \begin{align*}
+    L(\mu,\sigma^{2}) & = \prod \sigma^{-1}\left(1+\frac{(x_{i} - \mu)^{2}}{\sigma^{2}r}\right)^{-(r+1)/2}\\
+    & =  \sigma^{-n} \left[\prod \left(1+\frac{(x_{i} - \mu)^{2}}{\sigma^{2}r}\right) \right]^{-(r+1)/2}
+    \end{align*}
+
+  - For fixed $\sigma$, by playing with the data one can choose the number of modes of the likelihood.  Notice the inside is a polynomial in $\mu$ of degree $2n$.  It may have many (up to $n$) minima.  Then the likelihood has $n$ maxima, each of which has to be checked.  As $n \to \infty$, this is very difficult.
+
+
+- Cauchy distribution (take $r = 1$ in Student's /t/).
+  - Write \(X_{1},\ldots X_{n} \sim \mathrm{Cauchy}(m,\sigma)\), where $m$ is the median and $\sigma$ is a scale parameter.
+  - The PDF is 
+    \begin{equation}
+    f(x|m,\sigma)=\frac{1}{\sigma\pi}\left[1+\left(\frac{x-m}{\sigma}\right)^{2}\right]^{-1},\quad -\infty < x <\infty,
+    \end{equation}
+    where $-\infty < m < \infty$ and $\sigma > 0$.
+  - We use the median and scale parameter because the mean and variance DNE! (it's /very/ heavy-tailed.)
+
+- Double Exponential (AKA Laplace).
+    \begin{equation}
+    f(x|\mu,\sigma)=\frac{1}{2\sigma}\exp\left(-\frac{|x - \mu|}{\sigma}\right),\quad -\infty < x <\infty,
+    \end{equation}
+    where $-\infty < \mu < \infty$ and $\sigma > 0$. 
+   - the MLE is \(\hat{\mu} = \mathrm{sample median}\)
+
+*** Mixture distributions
+Here we have \(X_{1},\ldots, X_{n} \sim f(x|\theta)\), but $f$ takes the form
+\[
+f(x|\theta) = \sum_{j=1}^{k}p_{j}f_{j}(x|\theta_{j}),
+\]
+where $p_{j}\geq 0$ and \(\sum_{j}p_{j}=1\).
+
+- Have $k$ different groups/subpopulations
+  - the proportion of people in group $j$ is $p_{j}$
+  - the $j^{\mathrm{th}}$ subpop. has distribution $f_{j}(\cdot |\theta_{j})$ 
+
+**** Example: Studying heights of students
+- Let \(X = \mbox{height in inches}  \).
+- Male heights $\approx N(71, 3^2)$
+- Female heights $\approx N(63, 2^2)$
+- Suppose there are 66% males, 34% females
+
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/normalmix.pdf
+curve(dnorm(x, mean = 63, sd = 2), xlim = c(55, 77), ylim = c(0, 0.2), lty = 2)
+curve(dnorm(x, mean = 71, sd = 3), add = TRUE, lty = 2)
+f <- function(x) dnorm(x, mean = 63, sd = 2) + dnorm(x, mean = 71, sd = 3)
+curve(f, lwd = 2, add = TRUE)
+#+end_src
+#+latex: \end{center}
+
+Then the population density is 
+
+\begin{eqnarray*}
+f(x) & = & p\,N(\mu_{1},\sigma_{1}^{2}) + (1 - p)\,N(\mu_{2},\sigma_{2}^{2})\\
+     & \approx & 0.66\,f(x|71, 3^{2}) + 0.34\,f(x|63,2^{2})
+\end{eqnarray*}
+
+In general, the likelihood is 
+
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n} \left( \sum_{j=1}^{k}p_{j}f_{j}(x_{i}|\theta_{j}) \right) \\
+     & = & \prod_{i=1}^{n} \left( p_{1}f_{1}(x_{i}|\theta_{1}) + \cdots + p_{1}f_{k}(x_{i}|\theta_{k}) \right)
+\end{eqnarray*}
+The product, when expanded, will have $k^{n}$ terms.  This explodes as $n \to \infty$, so not only do we have multimodality, we have SMALL RESOURCES, too.
+
+*** Dependent Bernoulli trials
+YET ANOTHER MODEL!
+
+- Coin tossing model: \(X_{1},\ldots, X_{n}\) IID Bern($p$), where 
+   - $\P(\mbox{success}) = p$, constant, and 
+   - the trials are independent.
+
+**** BUT - 
+- Maybe the $p$'s change across trials
+- Maybe there is dependence in the sequence
+
+Suppose we have belief in STREAKY behavior
+- Two (2) states:
+   - $p_{H} \to \mbox{hot state}$
+   - $p_{C} \to \mbox{cold state}$
+
+If you are hot, you are more likely to stay hot in the next trial...
+
+| Trial | $i + 1$ | hot    | cold         |
+|-------+---------+--------+--------------|
+| $i$   |         |        |              |
+| hot   |         | $0.9a$ | $0.1(1 - a)$ |
+| cold  |         | 0.1    | 0.9          |
+
+- We don't know: $p_{H}$, $p_{C}$, $a$.
+- Observe a vector of $X$'s, for example,
+  \[
+  x = (1,1,1,0,0,1,0,0,0,1,0,0,1,1,1)
+  \]
+- One possible configuration of states
+  \[
+  s = (H,H,H,C,C,H,C,C,C,H,C,C,H,H,H)
+  \]
+- Probability in this configuration would be
+  \[
+  \frac{1}{2}p_{H}ap_{H}ap_{H}a(1-a)p_{C}(1-a)p_{C}\cdots
+  \]
+
+The Likelihood is
+\[
+L(p_{H},p_{C},a) = \sum_{\mbox{all possible configurations}}\P(\mbox{observe $x$}|\mbox{state is $s$})
+\]
+- AKA "Markov Switching Model"
+- Number of terms in above sum: $2^{n}$ - very complicated.
+
+** Introduction to Bayesian Statistics
+- Named for Reverend Thomas Bayes (1702-1761)
+- Based on the theory of subjective probability
+
+*** Central Theme
+- the quantity of interest, $\theta$, is unknown and considered to be a /random variable/.
+- we have beliefs / existing knowledge about $\theta$, represented by
+  \[
+  \pi(\theta) \leadsto \mbox{the \textbf{PRIOR distribution} of $\theta$.}
+  \]
+- $\pi$ is a PDF, nonnegative, integral one.
+We wish to learn about \(\theta\)! To this end we conduct an experiment, and consequently we observe a random variable $X$ which depends (in some way) on $\theta$. The conditional distribution of $X$ given $\theta$ is represented by
+\[
+f(x|\theta) \leadsto \mbox{ the \textbf{LIKELIHOOD function}}.
+\]
+We wish to UPDATE our beliefs about $\theta$, using the information contained in the observation $X=x$ combined with our prior beliefs. Our new beliefs will be represented by
+\[
+\pi(\theta|x) \leadsto \mbox{the \textbf{POSTERIOR distribution} of $\theta$.}
+\]
+
+- Method: :: BAYES' RULE
+
+\[
+\pi(\theta|x)=\frac{f(x|\theta)\, \pi(\theta)}{\int f(x|\theta)\, \pi(\theta)
+\diff\theta}, \quad \mbox{for $\theta \in \Theta$.}
+\]
+
+**** Remarks:
+
+- Once beliefs are updated, we then go out and do another experiment to learn even more!  Update again.  Schematic Diagram.
+
+- From Bayes' Rule
+   \begin{align*}
+   \pi(\theta|x)&=\frac{f(x|\theta)\, \pi(\theta)}
+   {\int f(x|\theta)\, \pi(\theta)d\theta}\\
+   &= M \, f(x|\theta)\, \pi(\theta)\\
+   &\propto f(x|\theta)\, \pi(\theta).
+   \end{align*}
+   Hence, Bayes' Rule is often written in the form POSTERIOR $\propto$ LIKELIHOOD $\times$ PRIOR
+
+- Notice the difference in interpretations:
+   For a Frequentist:
+   \[
+   \mbox{LIKELIHOOD}=L(\theta)=f(\mathbf{x}|\,\theta)= \mbox{a function of $\theta$}.
+   \]
+   While for a Bayesian:
+   \[
+   \mbox{LIKELIHOOD}=f(\mathbf{x}|\,\theta)= \mbox{a function of $\mathbf{x}$}.
+   \]
+
+**** Examples.  
+Want to learn about
+\[
+p = \mbox{proportion of goldfish in lake}
+\]
+
+1. Construct a continuous prior for $p$.
+
+   #+latex: \begin{center}
+   #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+   #+begin_src R :exports results :results graphics :file img/fishprior.pdf
+   par(mfrow = c(1,2))
+   curve(dbeta(x, shape1 = 4, shape2 = 3))
+   curve(dbeta(x, shape1 = 0.5, shape2 = 1))
+   par(mfrow = c(1,1))
+   #+end_src
+   #+latex: \end{center}
+   Let $p$ have a Beta density,
+   \begin{equation}
+   p \sim \pi(p)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1},\quad 0 < p < 1. \quad \mbox {this is the prior.}
+   \end{equation}
+   - Some properties
+      1.  \(\E[p] = \frac{\alpha}{\alpha+\beta}=\eta  \)
+      2.  \(\mbox{Var}(p) = \frac{\eta(1 - \eta)}{\alpha + \beta + 1} = \frac{\alpha\beta}{(\alpha + \beta)^{2}(\alpha + \beta + 1)}   \)
+      3. Think of $\eta$ as a /prior guess/ at $p$
+      4. Think of \(\kappa = \alpha + \beta\) as /precision/ of belief
+      5. The CDF is
+      \[
+      \P(p \leq x) = \int_{0}^{x}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1}\,\diff p,
+      \]
+      The above is the /incomplete beta function/.
+
+2. Want to learn about $p$:  Go fishing! We catch $n$ fish, and let
+   \[
+   Y = \mbox{number of goldfish caught.} 
+   \]
+   Then \( Y = X_{1}+\cdots+X_{n} \), where 
+   \[
+   X_{i}=
+   \begin{cases}
+   1, & \mbox{if $i^{\mathrm{th}}$ fish is a goldfish},\\
+   0, & \mbox{otherwise}.
+   \end{cases}
+   \]
+   so \(X_{i} \sim \mathrm{Bern}(p)\).  Then \(Y \sim \mathrm{Binom}(p)\) with
+   \[
+   f(y|p) = {n \choose y}\,p^{y}(1-p)^{n - y},\quad y = 1,2,\ldots,n. \quad \mbox{(this is the Likelihood)}
+   \]
+
+3. Update beliefs with Bayes' Rule.
+   \[
+   \mbox{POSTERIOR \(\propto\) LIKELIHOOD $\times$ PRIOR}
+   \]
+   This means
+   \begin{align*}
+   \pi(\theta|y)& \propto f(y|p) \times \pi(p)\\
+   &= {n \choose y}\,p^{y}(1 - p)^{n - y}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1}\\
+   &= M \cdot p^{\alpha + y - 1}\cdot (1 - p)^{\beta + n - y - 1}.
+   \end{align*}
+   where $M$ is such that
+   \[
+   \int_{0}^{1}\pi(p|y)\,\diff p = 1.
+   \]
+   By inspection, we see that
+   \[
+   p|y \sim \mathrm{Beta}(\alpha + y,\beta + n- y)
+   \]
+   and so we conclude
+   \begin{align*}
+   M &= \frac{\Gamma((\alpha + y)+(\beta+n-y))}{\Gamma(\alpha+y)\Gamma(\beta+n-y)}\\
+   &= \frac{\Gamma(\alpha+\beta+n)}{\Gamma(\alpha+y)\Gamma(\beta+n-y)}.
+   \end{align*}
+
+   *Summary:*
+   - Started with prior, \(p \sim \mathrm{Beta}(\alpha,\beta).  \)
+   - Did experiment, observed $Y = y$.
+   - Get posterior, \(p|y \sim \mathrm{Beta}(\alpha + y,\ \beta + n - y).  \)
+
+*** Bayesian Statistics 
+Draw all inference from the posterior distribution $\mathrm{Beta}(\alpha + y,\ \beta + n - y)$.
+
+Our new guess at $p$:
+\begin{align*}
+\eta^{\ast} &= \frac{\alpha^{\ast}}{\alpha^{\ast}+\beta^{\ast}} \\
+&= \frac{\alpha + y}{(\alpha + y) + (\beta + n - y)} \\
+&= \frac{\alpha + y}{\alpha + \beta + n} \\
+&= \frac{\alpha}{\alpha + \beta + n}\cdot\frac{\alpha + \beta}{\alpha + \beta} + \frac{y}{\alpha + \beta + n}\cdot\frac{n}{n} \\
+&= \frac{\alpha}{\alpha + \beta}\cdot\frac{\alpha + \beta}{\alpha + \beta + n} + \frac{y}{n}\cdot\frac{n}{\alpha + \beta + n} \\
+&= \eta\cdot\frac{\kappa}{\kappa + n} + \frac{y}{n}\cdot\frac{n}{\kappa + n}
+\end{align*}
+
+That is, the POSTERIOR MEAN is a /weighted average/ or the MLE and the PRIOR MEAN.  It's called a /shrinkage estimator/.
+
+- As $\kappa \to \infty$, we have $\eta^{\ast} \to \eta$.
+- As $n \to \infty$, we have $\eta^{\ast} \to \mathrm{MLE}$.
+
+*Remarks:*
+
+**** How do we choose a prior?
+Notice:
+- Prior $\to$ Beta
+- Posterior $\to$ Beta, too.
+
+\(\mathrm{Beta}(\alpha,\beta)\) is called a CONJUGATE FAMILY.
+
+Beta/Binomial is called a CONJUGATE PAIR.
+
+Another conjugate pair: if \(\pi(\theta) = N(\mu,\,\tau^{2})\) and  \(f(x|\theta) = N(\theta,\,\sigma^{2})\), then
+\[
+\pi(\theta|x) = N\left(\frac{\xbar\tau^{2}+\mu\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n},\,\frac{\tau^{2}\cdot\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n}  \right)
+\]
+
+- Other pairs:
+  - Gamma/Normal
+  - Gamma/Poisson
+  - Gamma/Gamma
+
+Here, \(\mathrm{Gamma}(\alpha,\beta)\) has PDF
+\[
+f(x|\alpha,\beta) = \frac{1}{\Gamma(\alpha)\beta^{\alpha}}\,x^{\alpha - 1} \me^{-x/\beta},\ x > 0,
+\]
+where $\alpha > 0$ and $\beta > 0$.
+
+Special cases:
+- \(\mathrm{Exp}(\beta) = \mathrm{Gamma}(1,\beta)\)
+- Chi-square \(\chi^{2}(\nu) = \mathrm{Gamma}(\nu/2,\,2),\ \nu =1,2,\ldots\)
+
+Conjugate families were chosen for priors historically because they are traqctable, convenient, easy.  Turns out, conjugate families are /very/ restricted (that is, most families of priors are not conjugate).  This used to be a problem, but computing advances have made this last difficulty negligible.
+
+**** Bayesian Point Estimation
+
+Our new guess at $\theta$:  the POSTERIOR MEAN $\E [\theta|x]$.
+
+Fact: the posterior mean is optimal in almost every sense, under the assumption of /squared error loss/.
+
+The squared error loss of an estimator $\delta$ which estimates $\theta$ is 
+\[
+L(\delta,\theta) = (\delta - \theta)^{2}.
+\]
+
+We will often need to compute the posterior mean.  Therefore we will need to compute things like
+\begin{align*}
+\E [\theta|x] &= \int \, \theta\, \pi(\theta|x)\,\diff \theta,  \\
+&= \int \frac{\theta\, f(x|\theta)\,\pi(\theta)}{\int f(x|u)\pi(u)\diff u} \,\diff \theta, \\
+&= M \cdot \int \theta f(x|\theta)\pi(\theta)\,\diff \theta.
+\end{align*}
+
+This will often be complicated, with no closed form solution.  Therefore we will need to resort to computing techniques.
+
+**** Bayesian Interval Estimation
+Here we have a probability interval of probability content $\gamma$, AKA "credible regions".
+
+The Bayesian has many options:
+
+- Equal-Tails interval
+
+- Shortest interval of content $\gamma$, or "HDR (highest density region)" interval
+
+Since posteriors are often complicated, calculation of credible regions is difficult and we need Monte Carlo techniques.
+
+
+* Random Variable Generation
+We will talk about the following:
+
+- Basic Methods: generating pseudo-random uniform numbers
+- Linear Congruential and Shift Register generators
+- Generating non-uniforms
+- Accept – Reject Methods
+
+** Basic Methods: generating pseudo-random uniform numbers 
+
+*** Requirements of a Uniform Pseudo-Random Generator
+1. Want the distribution of the numbers to be uniform 
+2. Want independence of variates 
+3. Should be repeatable, portable 
+4. High computational speed 
+
+_Repeatability_: the ability to repeat the same stream of numbers at any time during the simulation. Useful for comparing simulations using different methods.
+
+*** History 
+Guiding principle is that the validity of any simulation rests on the validity of the uniform generator.
+
+People first used "random sources" to supply random numbers.
+- census reports
+- mechanical devices
+- drums, ping-pong balls in state lotteries 
+
+- Famous random number tables (tables with over a million numbers)
+
+- We use an algorithm to generate pseudo-random numbers. We call it random since the output resembles a random sequence, at least in the sense that it passes standard statistical tests of randomness. But we will be using a deterministic sequence to generate/simulate a "random" sequence.
+
+*** Early Method: von Neumann's Midsquare Method
+
+Generates a random integer between 0 and 99,999
+
+1. Choose any 5-digit number as the seed (12345) 
+2. Square seed and add leading zeros, to make it 10 digits (0152399025) 
+3. Take 3-7 digits as your random number (52399) 
+
+We want values uniformly distributed. Since the method is iterative, the sequence will eventually repeat in cycles. For poor choices of the seed, unfortunately, the cycle length can be very short.
+
+The output CAN behave "randomly". To statistically verify the apparent randomness we could use Chi-Square Goodness of Fit test:
+- Generate 5000 values, normalize by dividing by 100,000
+- Hypothesis: $X_{1},X_{2},\ldots,X_{5000}\sim\mathrm{Unif}(0,1)$
+- Partition \( [0,1] \) into, say, 10 intervals and calculate frequencies $f_{1},f_{2},\ldots,f_{10}$ 
+- Compute the statistic: $\chi^{2}=\sum(O_{i}-E_{i})^{2}/E_{i}$ 
+
+** Linear Congruential and Shift Register Generators
+
+In current algorithms, most generators generate pseudo-random 32-bit integers.  
+
+*** Congruential algorithm:
+Based on the formula 
+\[
+U_{i}=(aU_{i-1}+c)\mod m,
+\]
+where $U_{i}$ is the random integer, $U_{0}$ is the seed, and $a,c,m$ are selected constants.
+
+
+- Properties: :: of the congruential algorithm
+  1. Generates values $0,1,\ldots,m-1$. 
+  2. After some iterations the sequence will repeat, and the length of the sequence is the /period/. 
+  3. The maximum period is $m$.
+  4. If we want Unif(0,1) numbers, we will get values $0/m,1/m,\ldots,(m-1)/m$. 
+  5. Problem is how to choose $a,c,m$. This determines the number of possible uniforms and period. 
+
+- NUMBER THEORY RESULTS: :: Choosing $a,c,m$.  
+  - Choose $m$ as large as possible. 
+  - Given $m$, the constants $a$ and $c$ can be chosen such that the period is $m$. 
+
+- *Result:* A linear congruential generator has maximal cycle length $m$ if and only if:
+  - $c$ is nonzero and relatively prime to $m$.
+  - \( (a \mod q) = 1 \) for each prime factor $q$ of $m$.
+  - \( (a \mod 4) = 1 \) if 4 is a factor of $m$. 
+
+Researchers have found values of $a,c,m$ which give a long period and appear to be uniformly distributed.
+
+- Bad Generator: :: RANDU.  
+  \[
+  c = 0,\quad a=2^{16}+3,\quad m=2^{31}
+  \]
+  This generator is very fast, but has poor statistical properties. In particular, $U_{i}$ and $U_{i+2}$ are highly positively correlated.
+ 
+
+PICTURE 
+
+\vspace{1in}
+
+- Good Generator: :: here we go   
+  \[
+  U_{i}=(16,807U_{i-1})\mod(2^{31}-1),
+  \]
+  It's good because:
+  - simple 
+  - widespread use 
+  - long cycle length $2^{31}-2$ (all numbers besides 0 and $2^{31}-1$ can be generated). 
+
+*** Shift Register generators
+These operate on /n/-bit pseudo-random binary vectors.
+- *Example:* Generate a random 7 bit vector.
+  1. Choose a seed. (1001101) 
+  2. Shift it to the right by 2 units. (0010011) 
+  3. Add lines 1) and 2). (1011110) 
+  4. Shift sum to the left by three bits. (1110000) 
+  5. Add lines 3) and 4). *result* (0101110) 
+
+Parameters of the algorithm: 
+- the length of the binary vector, 
+- the shift right length, and 
+- the shift left length.
+
+This is a popular algorithm... why? Because it is easy to implement on a computer! One can have hybrid methods, or those that combine several methods. A popular one is the KISS algorithm (Keep it simple, stupid!)
+
+** Generating Non-Uniform Random Numbers
+
+There are three general methods: 
+1. CDF Inversion, 
+2. Transformations, and 
+3. Accept/Reject methods.
+
+*** CDF Inversion
+
+The inversion method is based on the following.
+
+- Probability Integral Transformation: :: Suppose \(X\) has a continuous CDF $F_{X}(x)=\P(X \leq x)$. Define the inverse CDF $F_{X}^{-1}(y)$.  If $U\sim\mathrm{Unif}(0,1)$, then $F_{X}^{-1}(U)$ is distributed according to $F_{X}$.
+
+- Proof: :: Let \(Y = F_{X}^{-1}(U)\). Then 
+  \[
+  \P(Y \leq y)=\P(F_{X}^{-1}(U)\leq y)=\P(U\leq F_{X}(y)).
+  \]
+  But a Unif(0,1) random variable satisfies $\P(\mbox{uniform}\leq x) = x$, and we are done.
+
+Thus, if we can find $F_{X}^{-1}$, the inverse CDF, all we have to do is apply $F_{X}^{-1}(U)$ to a uniform $U$ to get random numbers from $F_{X}$.
+
+- Note: ::We assumed above that the CDF was continuous, but we didn't need to... the statement is true in all generality. In the general case we must define 
+  \[
+  F_{X}^{-1}(t)=\inf\{x:\ F_{X}(x)\geq t\}.
+  \]
+
+**** Example. Exponential. \(\mathrm{Exp}(\theta)\).  
+$X$ has $f(x)=\frac{1}{\theta}\, \me^{-x/\theta}$, $x > 0$.  The CDF is $\P(X\leq x)=1 - \me^{-x/\theta}$, $x > 0$. Now set $F_{X}(x) = y$, and solve for $x$. 
+
+\begin{align*}
+1 - \me^{-x/\theta} & = y\\
+\me^{-x/\theta} & = 1 - y\\
+-x/\theta & = \ln(1-y)\\
+x & = -\theta\ln(1-y) = F_{X}^{-1}(y).
+\end{align*}
+
+#+begin_src R :eval never :tangle yes
+u <- runif(100)
+x <- -log(1 - u)
+#+end_src
+
+*R code:* To generate 100 Exp(1)'s: write
+#+begin_src R :eval never :tangle yes
+u <- runif(100)
+x <- -log(1 - u)
+#+end_src
+
+*Note:* If \(U\sim \mathrm{Unif}(0,1)\), then \( (1-U)\sim \mathrm{Unif}(0,1) \). Therefore, \(-\log(1-(1-U))\sim \mathrm{Exp}(1)\), that is, \(-\log(U)\sim \mathrm{Exp}(1)\).
+
+*Example.* Logistic (standard). \( \mathrm{Logis}(0,1) \)
+\[
+f(x)=\frac{\me^{-x}}{(1 + \me^{-x})^{2}},\quad -\infty < x <\infty.
+\]
+\vspace{1.5in}
+and 
+\[
+F(x)=\frac{\me^{x}}{1 + \me^{x}} = y
+\]
+Solving for $x$, 
+\begin{align*}
+\me^{x} & = y(1 + \me^{x})\\
+\me^{x}(1-y) & = y\\
+\me^{x} & = \frac{y}{1 - y} \\
+x & = \ln \frac{y}{1 - y} = F_{X}^{-1}(y) = \mbox{logit}\ y.
+\end{align*}
+
+Therefore, to generate standard Logistic, we write 
+#+begin_src R :eval never :tangle yes
+u = runif(100);
+x = log(u/(1 - u));
+#+end_src
+
+
+*Example.* Normal, \( N(\mu,\sigma^{2}) \). 
+\[
+F(x)=\int_{-\infty}^{x}\frac{1}{\sigma\sqrt{2\pi}}\exp\{\frac{-1}{2\sigma^{2}}(t-\mu)^{2}\}\:\diff t
+\]
+
+This function doesn't have a closed form representation, yet we can approximate $F$ and $F^{-1}$ arbitrarily closely with numerical methods. For example, for $N(0,1)$ we have 
+\[
+\Phi^{-1}(\alpha)\approx t-\frac{a_{0}+a_{1}t}{1+b_{1}t+b_{2}t^{2}},
+\]
+where $t^{2}=\log(\alpha^{-2})$ and 
+\[
+\begin{array}{cccc}
+a_{0}=2.30753, & a_{1}=0.27061, & b_{1}=0.99229, & b_{2}=0.04481.
+\end{array}
+\]
+ These are accurate up to order \(10^{-8}\). This sounds good, but we can do BETTER!
+
+*** Transformation Methods
+
+- Location-Scale families: :: here the family of PDFs $f(x|\theta),\ \theta\in\Theta$ are of the form 
+  \[
+  f(x|\mu,\sigma)=\frac{1}{\sigma}h\left(\frac{x-\mu}{\sigma}\right),
+  \]
+  for some PDF $h$. If it is desired to generate an RV $X\sim f(\cdot|\mu,\sigma)$, then it is only necessary to generate $V\sim f(\cdot|0,1)$, for then we make the transformation 
+  \[
+  X = \mu + \sigma V.
+  \]
+  By a change of variables, \( X \sim f(\cdot|\mu,\sigma) \).
+
+**** Example. Logistic. \( \mathrm{Logis}(\mu,\beta) \).
+If \( Y \sim \mathrm{Logis}(\mu,\beta) \) then $Y$ has PDF
+\[
+f_{Y}(y)=\frac{\beta^{-1}\me^{-\frac{y-\mu}{\beta}}}{(1 + \me^{-\frac{y-\mu}{\beta}})^{2}},\quad -\infty< y <\infty.
+\]
+To generate 100 IID $Y$'s distributed Logis(3,7) we may use the =R= code:
+
+#+begin_src R :eval never :tangle yes
+u <- runif(100)   # 100 uniforms
+x <- log(u(1-u))  # 100 std logistics
+y <- 3 + 0.7*x    # 100 Log(3,7)'s
+#+end_src
+
+**** Using Exponentials to build other distributions.
+
+*Example.* Generating Gammas.
+
+- Know: :: If \(U \sim\mathrm{Unif}(0,1)\), then \( -\theta\log(U)\sim\mathrm{Exp}(\theta) \).
+
+- Know: :: Let $X_{1},X_{2},\ldots,X_{n}\sim\mathrm{Exp}(\theta)$ be IID.  Let $Y=\sum_{i}X_{i}$. Then $Y\sim\mathrm{Gamma}(n,\theta)$.
+
+
+*R:* To simulate \( \mathrm{Gamma}(n,\theta) \):
+#+begin_src R :eval never
+u <- runif(n)             # n uniforms
+x <- -theta * log(u)      # n Exp(theta)s
+y <- sum(x)               # a gamma(n, theta)  
+#+end_src
+
+A shorter way would be:
+#+begin_src R :eval never
+u <- sum(-theta * log(runif(n)))
+#+end_src
+
+This only works for $n$ = a positive integer. We need another algorithm for non-integral $n$.
+
+
+*Example.* Generating Betas.
+
+- Know: :: If \( U\sim\mathrm{Gamma}(\alpha,1)\) and \(V\sim\mathrm{Gamma}(\beta,1)\), then \(\frac{U}{U+V}\sim\mathrm{Beta}(\alpha,\beta)\).
+
+*R:* To simulate $\mathrm{Beta}(m,n)$:
+#+begin_src  R :eval never :tangle yes
+u <- sum(-log(runif(m)))     # a Gamma(a,1)
+v <- sum(-log(runif(n)))     # a Gamma(b,1)
+y <- u/(u+v)                 # a Beta(a,b)
+#+end_src
+
+Unfortunately, this method only works for integral $\alpha$ and $\beta$.
+
+
+*Example.* Generating Chi-Squares.
+
+- Know: :: $\chi^{2}(\nu)=\mathrm{Gamma}(\nu/2,2)$.
+
+*R:* To simulate $\chi^{2}(2k)$:
+#+begin_src  R :eval never
+y <- sum(-2*log(runif(k)))   # a Gamma(k,2)
+y <- rchisq(1, df = k)       # same thing
+#+end_src
+
+This only works for even degrees of freedom, unfortunately.
+
+
+*Example.* Generating Fs.
+
+- Know: :: Fisher's $F$ distribution $F(\alpha,\beta)$.
+  \[
+  f(x|\alpha,\beta)=\frac{\Gamma((\alpha+\beta)/2)\alpha^{\beta/2}\beta^{\alpha/2}}{\Gamma(\alpha/2)\Gamma(\beta/2)}\frac{x^{(\alpha-2)/2}}{(\alpha+\beta x)^{(\alpha+\beta)/2}},\quad x>0,\quad\alpha,\beta>0.
+  \]
+
+- Know: :: If $U\sim\chi^{2}(m)$ and $V\sim\chi^{2}(n)$ are independent, then $\frac{U/m}{V/n}\sim F(m,n)$.
+
+*R:* To simulate $F(2k,2l)$:
+
+#+begin_src R :eval never
+u <- sum(-2*log(runif(k)))        # a Chi-square(2k)
+v <- sum(-log(runif(a)))          # a Chi-square(2l)
+y <- (u/k)/(v/l)                  # an F(2k,2l)
+#+end_src
+
+Again, this will only work for even degrees of freedom. We need another method.
+
+ 
+
+
+*Using the Order statistics.*
+
+- Know: :: Let $X_{1},X_{2},\ldots,X_{n}$ be IID from a continuous population with PDF $f(x)$ and CDF $F(x)$. Denote the order statistics by $X_{(1)}\leq X_{(2)}\leq\cdots\leq X_{(n)}$. Then the p.d.f.\ of $X_{(k)}$ is 
+  \[
+  f_{X_{(k)}}(x)=\frac{n!}{(k-1)!(n-k)!}[F(x)]^{k-1}f(x)[1-F(x)]^{n-k}.
+  \]
+
+
+*Special Case:* $f(x)=1$, $0<x<1$.   Then $F(x)=x$ and the above simplifies to 
+\[
+X_{(k)}\sim f_{X_{(k)}}(x)=\frac{n!}{(k-1)!(n-k)!}\, x^{k-1}\,(1-x)^{n-k},
+\]
+which is a $\mathrm{Beta(k,n-k+1)}$ distribution.
+
+*R:* An alternative to simulate $\mathrm{Beta}(k,n-k+1)$:
+
+#+begin_src  R :eval never
+u <- runif(n)  # n uniforms
+v <- sort(u)   # order the uniforms
+y <- v[k]      # the kth order statistic  
+#+end_src
+
+This algorithm is somewhat costly for large $k$ and $n$, since sorting a vector is often difficult for computers.
+
+
+*Example.* Generating $N(0,1)$s /exactly/.
+
+- Know: :: If $X_{1}$ and $X_{2}$ are i.i.d. $N(0,1)$, then the point $(X_{1},X_{2})$ in the Cartesian plane satisfies
+  - $r^{2}=X_{1}+X_{2}\sim\chi^{2}(2)$. 
+  - $\theta \sim \mathrm{Unif}(0,2\pi)$. 
+  - $r$ and $\theta$ are independent. 
+
+GREAT! Now we can generate normals. It turns out that R has a built in algorithm for calculating Normals, which is called with the command =rnorm=.
+
+*R:* To simulate IID Normals.
+
+#+begin_src  R :eval never
+u <- rnorm(n)  # n standard Normals, IID
+#+end_src
+
+
+*R:* The Box-Muller Algorithm to simulate two standard normals:
+
+#+begin_src  R :eval never
+theta <- 2*pi*runif(1)       #  a uniform angle
+r <- sqrt(-2*log(runif(1)))  #  sqrt of chi-squared radius
+x1 <- r*cos(theta);          #  use polar coordinates
+x2 <- r*sin(theta);          #  use polar coordinates  
+#+end_src
+
+
+*The Inversion Method for simulating discrete random variables.*  
+
+When $X$ is discrete, $F^{-1}$ is not uniquely defined without additional clarification. One way to define $F^{-1}$ is with 
+\[
+F_{X}^{-1}(t)=\inf\{x:\ F_{X}(x)\geq t\}.
+\]
+Below is a typical discrete random variable $X$, together with its PMF $p(x)$.
+
+| x    |   1 |   2 |   3 |
+|------+-----+-----+-----|
+| p(x) | 0.2 | 0.3 | 0.5 |
+
+PICTURE 
+
+\vspace{1.5in}
+
+To generate a discrete RV $X$ with $\P(X=x_{j})=p_{j}$, $j=0,1,2,\ldots$
+1. Simulate $U \sim \mathrm{Unif}(0,1)$. 
+2. If $U<p_{0}$ then $X=x_{0}$. 
+3. Else if $p_{0}\leq U<(p_{0}+p_{1})$ then $X=x_{1}$. 
+4. Else if $(p_{0}+p_{1})\leq U<(p_{0}+p_{1}+p_{2})$ then $X=x_{2}$. 
+5. $\ldots$ 
+ 
+In general, we let $X$ take the value $x_{j}$ when $F_{X}(x_{j-1})\leq U<F_{X}(x_{j})$.
+
+*Example.* $\mathrm{Bern}(p)$, $x=0,1$.
+ 
+*R:* To simulate $n$ coin flips, probability $p$
+
+#+begin_src R :eval never
+u <- runif(n)             #  n uniforms
+y <- as.integer(u < p)    #  entry is 1 with probability p 
+#+end_src
+
+
+*Example.* $\mathrm{DiscUniform}\{1,2,\ldots,k\}$.  For a die roll $\{1,2,3,4,5,6\}$, partition $[0,1]$ into six equally likely classes.
+
+*R:*
+#+begin_src R :eval never
+y <- round(runif(1)*6 + 0.5)  # from 1 to 6 equally likely
+y <- sample(1:6, size = 1)    # same thing
+#+end_src
+
+
+*Example.* $\mathrm{Binom}(n,p)$.
+ 
+Know: If $X_{1},\ldots,X_{n}$ are IID $\mathrm{Bern(p)}$ and $Y=\sum_{i}X_{i}$ then $Y\sim\mathrm{Binom}(n,p)$.
+
+*R:*
+#+begin_src  R :eval never
+y <- sum(runif(n) < p)              # a Binomial(n,p)
+y <- rbinom(1, size = n, prob = p)  # same thing
+#+end_src
+
+We can also generate RVs with /mixture models/, which we will discuss in more detail later.
+
+*** Accept--Reject Methods
+
+*Situation:* Suppose that we have a complicated PDF $f$ (called the /target density/ )from which we would like to simulate. The function is so complicated that inverting the CDF is not possible, at least in a practical sense. Further, no applicable transformation methods are apparent. What do we do?
+
+We have spent much time developing efficient methods to generate uniform random numbers, and we would like to build on all of our hard work.
+
+*Idea:* Draw the PDF $f$ on a piece of paper inside a box and tack it on the wall. Throw darts uniformly inside the box. If the dart falls "outside" the PDF, then try again. Suppose the dart falls "inside" the PDF at the point $(x,y)$. Then $x$ is an observation from a random variable $X\sim f$!
+
+PICTURE:
+
+\vspace{1.5in}  
+
+*The Fundamental Theorem of Simulation:* Simulating $X\sim f(x)$ is equivalent to simulating $(X,U)\sim \mathrm{Unif}\{(x,u):0 < u < f(x)\}$.
+
+ 
+*Intuitive Algorithm:* To generate $X \sim f(x)$, where (for simplicity) $f$ is a PDF on $[a,b]$ with $0\leq f(x)\leq M$.
+1. Generate $X\sim\mathrm{Unif}(a,b)$ and $U\sim\mathrm{Unif}(0,m)$; 
+2. Accept $Y = X$ if $0 \leq U < f(X)$; 
+3. Return to 1. otherwise. 
+
+Of course, some $X$'s we will keep, and some $X$'s we will throw away. What are the chances that we will accept one on a given trial?
+\begin{align*}
+\P(\mbox{Accept}) & =\P(U < f(X))\\
+ & =\int_{a}^{b}\P(U < f(x)|X=x)\,\frac{1}{b-a}\diff x\\
+ & =\int_{a}^{b}\int_{0}^{f(x)}\,\frac{1}{m}\,\frac{1}{b-a}\diff u\,\diff x\\
+ & =\frac{1}{m}\,\frac{1}{b-a}\int_{a}^{b}f(x)\diff x\\
+ & =\frac{1}{m}\,\frac{1}{b-a}.
+\end{align*}
+Clearly, in order to /maximize/ our acceptance probability, we would like to choose a /small/ value for $m$. In fact, it will be convenient to let $m=m(x)$ depend on $x$. The result is the following general Accept-Reject Algorithm.
+
+*The Accept--Reject Algorithm:* Given a /target density/ $f(x)$ and a related /instrumental density/ $g(x)$ which *a)* is simpler than $f(x)$ (simulationwise) and *b)* satisfies $f(x)\leq M g(x)$ for some constant $M \geq 1$.
+
+*Procedure:*
+1. Generate $X\sim g(x)$ and $U \sim \mathrm{Unif}(0,1)$; 
+2. Accept $Y=X$ if $U\leq f(X)/M g(X)$; 
+3. Return to 1. otherwise. 
+
+*Example.* Simulating from Discrete distributions. We want to simulate from a discrete RV $X$ that takes values $1,2,\ldots,10$ with probabilities
+
+| x    |    1 |    2 |    3 |    4 |    5 |    6 |    7 |    8 |    9 |   10 |
+|------+------+------+------+------+------+------+------+------+------+------|
+| f(x) | 0.11 | 0.12 | 0.09 | 0.08 | 0.12 | 0.10 | 0.09 | 0.09 | 0.10 | 0.10 |
+
+These are the target $p_{j}$'s. Now let $Y\sim\mathrm{Unif}\{1,2,\ldots,10\}$ with $q_{j}=0.1$, $j=1,\ldots,10$. Next, we need to find 
+\[ 
+M=\max_{j}\frac{p_{j}}{q_{j}}=\frac{0.12}{0.10}=1.2.
+\]
+
+*Algorithm:*
+1. Generate $Y \sim \mathrm{DiscUnif}\{1,10\}$ and $U\sim\mathrm{Unif}(0,1)$; 
+2. Accept $Y = X$ if $U < p_{Y}/1.2 q_{Y}$; 
+3. Return to 1. otherwise. 
+ 
+*R:*
+#+begin_src  R :eval never
+mydiscrete <- function(){
+  accept <- FALSE
+  p <- c(.11, .12, .09, .08, .12, .10, .09, .09, .10, .10)
+  while (!accept){
+    y <- sample(10, size = 1);
+    u <- runif(1)
+    accept <- (u < p[y]/(1.2*0.1));
+  }
+  return(y)
+}
+#+end_src
+
+
+*At the COMMAND prompt:*
+#+begin_src R :eval never
+y <- mydiscrete()
+#+end_src
+
+
+
+What if we would like to simulate a whole vector of discrete RVs, all IID with density $\mathbf{p}$? We can generalize our function to include arguments $\mathbf{p}$ and $n$, the density and length of the simulation, called =mydiscretev=.
+
+ 
+
+(SEE PRINTOUT).
+
+ How good is the algorithm? $\P($accept$)=1/M$. If $N$ is the number of iterations needed to wait until an Accept, then $N\sim\mathrm{Geom}(1/M)$. Thus, on average, we would expect to wait $M$ trials before we accept. The closer $M$ is to 1, the more efficient the algorithm.
+
+*The Continuous Case*
+
+Want $X\sim f(x)$. Find a $Y\sim g(y)$ such that 1) $Y$ is easy to simulate and 2) $f(x)\leq Mg(x)$ for all $x$.
+
+*Example.* Simulating Normals using Cauchy random variables.
+Here our target density is the standard Normal distribution with PDF
+\[
+f(x) = \frac{1}{\sqrt{2\pi}} \me^{-x^{2}/2}.
+\]
+
+KNOW: A Cauchy(0,1) RV has the instrumental PDF
+\[
+g(x)=\frac{1}{\pi}\,\frac{1}{1+x^{2}},\quad-\infty<x<\infty
+\]
+With associated CDF
+\begin{align*}
+F(x) & =\P(X\leq x)\\
+ & =\int_{-\infty}^{x}\frac{1}{\pi}\,\frac{1}{1+t^{2}}\diff t\\
+ & =\left.\frac{1}{\pi}\tan^{-1}(t)\right|_{t=-\infty}^{x}\\
+ & =\frac{1}{\pi}\left(\tan^{-1}x+\frac{\pi}{2}\right).
+\end{align*}
+It is now easy to calculate the inverse transformation to simulate:
+\begin{align*}
+\pi y & =\tan^{-1}x+\pi/2\\
+\pi(y-1/2) & =\tan^{-1}x\\
+\tan(\pi(y-1/2)) & =x=F^{-1}(y).
+\end{align*}
+
+Thus it is EASY to simulate from a Cauchy, and further, we know already that Cauchy has /heavier tails/ than the Normal, suggesting that there is an $M$ such that Normal $\leq$ $M\cdot$ /Cauchy/.  That is, we should find $M$ that satisfies 
+\begin{align*}
+\frac{1}{\sqrt{2\pi}} \me^{-x^{2}/2} & \leq M\,\frac{1}{\pi(1+x^{2})},\quad\mbox{or}\\
+\sqrt{\frac{\pi}{2}}(1+x^{2}) \me^{-x^{2}/2} & \leq M\quad\mbox{for all \ensuremath{x}.}
+\end{align*}
+
+We can approximate this last bound numerically. It turns out that the maximum of the LHS occurs when $x=1$, and that maximum value is $M\approx1.5203469$. This means that on the average we need to generate approximately 1.52 Cauchys before we will get a Normal. This translates to a probability of acceptance approximately 0.6548.
+
+*Algorithm:*
+1. Generate $U \sim \mathrm{Unif}(0,1)$ and $Y \sim \mathrm{Cauchy}(0,1)$; 
+2. Accept $Y = X$ if $U < f(Y)/Mg(Y)$; 
+3. Return to 1. otherwise. 
+
+(SEE PRINTOUT).
+
+*Comment:* Since the function $g$ only needs to satisfy $f\leq Mg$ for some $M$, we may take any constants in $f$ and /absorb/ them into $g$; then we find our constant $M$. Thus, we only need to know $f$ up to a multiplicative constant (this will be handy later when we do Bayesian calculations).
+
+*Example.* We want to simulate 1000 Beta(3,3)'s.
+
+Here our target density is /Beta/ distribution with PDF 
+\[
+f(x)\propto x^{2}(1-x)^{2}.
+\]
+
+_PICTURE_
+
+\vspace{1in}
+
+- Find a suitable instrumental density $g(x)$. (Choose $g=1$) 
+- Compute $M$: 
+   \[
+   \max_{0<x<1}x^{2}(1-x)^{2}=0.5^{4}=0.0625
+   \]
+
+*Algorithm:*
+1. Generate $U \sim \mathrm{Unif}(0,1)$ and $Y \sim \mathrm{Unif}(0,1)$; 
+2. Accept $Y = X$ if $U < Y^{2}(1-Y)^{2}/0.0625$; 
+3. Return to 1. otherwise. 
+
+Notice, the exact same trick works for generating any $\mathrm{Beta}(\alpha,\beta)$, where $\alpha,\beta>1$.
+
+*Remarks:*
+- We only need to know $f$ up to a multiplicative factor.
+  $f=\mathrm{Beta}(2.5,4.5)$, then the /kernel/ is $x^{1.5}(1-x)^{3.5}$.
+
+- $\P(\mbox{accept})=1/M$ when evaluated for normalized densities, and \newline $\E\{\mbox{number of trials}\}$ until the variate is accepted is $M$.
+
+- When $f$ and $g$ are normalized, $M \geq 1$. 
+- How do we choose $g$?
+  - We want $f/g$ to be bounded. 
+  - Rule of Thumb: $g$ should have /thicker tails/ than $f$. 
+- Are there /optimal/ choices for the covering density?
+  - we may choose $g$ in a parametric family, and then for our optimal choice we may choose the value of the parameter which /minimizes/ $M$.
+
+
+*Example.* Generating $N(0,1)$ using Double Exponential.
+
+Here the target density is the standard Normal distribution with PDF
+\[
+f(x)=\frac{1}{\sqrt{2\pi}}\me^{-x^{2}/2}.
+\]
+and the instrumental density is 
+\[
+g(x)=\frac{1}{2\sigma}\me^{-|x|/\sigma}
+\]
+We next find an /optimal/ $M$ that satisfies 
+\[
+\frac{1}{\sqrt{2\pi}}\me^{-x^{2}/2}\leq M\,\frac{1}{2\sigma}\me^{-|x|/\sigma}.
+\]
+Alternatively, we may find the $\sigma$ that minimizes the maximum of $f/g$:
+
+\begin{align*}
+\frac{f(x)}{g(x)} & =\frac{(2\pi)^{-1/2}\exp\{-x^{2}/2\}}{(2\sigma)^{-1}\exp\{-|x|/\sigma\}}\\
+ & =\sqrt{2}{\pi}\,\sigma \me^{\left(-x^{2}/2+|x|/\sigma\right)}.
+\end{align*}
+
+We may now maximize this last quantity in $x$, which amounts to maximizing the parabola in the exponent, whose vertex has $x$-coordinate $-b/2a = 1/\sigma$. Thus to find the optimal $M(\sigma)$ we must minimize the function (plug in $x=1/\sigma$) 
+\[
+M(\sigma)=\sqrt{\frac{2}{\pi}}\,\sigma \me^{1/2\sigma^{2}}
+\]
+which has derivative 
+\begin{align*}
+M'(\sigma) & \propto \me^{1/2\sigma^{2}}+\sigma \me^{1/2\sigma^{2}}\left(\frac{-1}{\sigma^{3}}\right)\\
+ & = \me^{1/2\sigma^{2}}\left(1-\frac{1}{\sigma^{2}}\right).
+\end{align*}
+The global minimum of the bound occurs when $\sigma=1$ and the bound's value is 
+\[
+M^{\ast}=\sqrt{\frac{2}{\pi}}\me^{1/2}=\sqrt{\frac{2e}{\pi}}\approx 1.315489.
+\]
+The conclusion is that on the average we expect to need to generate around 1.3 uniforms to get a normal, with probability of success $\sqrt{\pi/2e}\approx0.7601734505$.
+ 
+*Remark:* Even though the A/R Algorithm is quite successful for our purposes, in some cases the functional form of $f$ is complicated, making it difficult to compute in the classical A/R Algorithm. A modification based on envelope methods follows:
+
+*The Envelope Accept/Reject Algorithm.* Suppose there exists an instrumental density $g_{m}$, a function $g_{l}$, and a constant $M$ such that 
+\[
+g_{l}(x)\leq f(x)\leq Mg_{m}(x),\quad\mbox{for all \ensuremath{x}}.
+\]
+Then the algorithm
+1. Generate $X\sim g_{m}(x)$ and $U\sim\mathrm{Unif}(0,1)$; 
+2. Accept $X$ if $U < g_{l}(X)/Mg_{m}(X)$; 
+3. Else accept $X$ if $U \leq f(X)/M g_{m}(X)$; 
+4. Return to 1. otherwise. 
+
+generates a random variable $X \sim f$.
+
+
+* Monte Carlo Integration
+
+The main drive of this section is the desire to evaluate an integral
+\[
+H=\E_{f}h(X)=\int\, h(x)\, f(x)\diff x
+\]
+ where $h$ is some function of interest and $f$ is a given density function.
+
+*Why:*
+- Classical Decision Theory (standard Statistics) 
+- Bayesian Inference (subjective approach) 
+
+** An Introduction to Classical Decision Theory
+
+The usual scenario concerns an unknown quantity, $\theta$ (a /parameter/ ) about which we would like to learn. The particular value is uncertain, but it is usually considered a member of some set of possible values, the /parameter space/, represented by the symbol $\Theta$.
+
+To learn about $\theta$, one usually goes and collects information information, often by conducting an experiment of some kind. In the light of the information gathered, one takes some /action/. This action could be any number of things, for example, one might give a point estimate of $\theta$, or construct an interval estimate of $\theta$, or even perform a Statistical test. Whatever the action is, it is denoted by $a$, and the set of all possible actions is written $\mathfrak{A}$, called the /Action space/.
+
+PICTURE: 
+
+\vspace{1.5in}
+
+
+We measure the consequences of using action $a$ when the true value of the parameter is $\theta$ with a /Loss function/ $L(\theta,a)$.
+
+*Example.* Decision Problems.
+
+- Point Estimation: in this case $a$ is a /guess/ at the parameter $\theta$. Two popular Loss Functions are given by 
+   \begin{align*}
+   L(\theta,a) & =|a-\theta|\quad\mbox{absolute error loss}\\
+   L(\theta,a) & =(a-\theta)^{2}\quad\mbox{squared error loss }
+   \end{align*}
+
+- Testing: here in the parameter space there are two subsets of interest.
+   \begin{align*}
+   H_{0} & :\theta\in\Theta_{0}\quad(\theta\leq\theta_{0})\\
+   H_{1} & :\theta\in\Theta_{1}\quad(\theta>\theta_{0})
+   \end{align*}
+   In this case, $\mathfrak{A}=\{a_{0},a_{1}\}$, which represent "accept $H_{0}$" or "reject $H_{0}$", respectively. A popular loss function in this case would be 
+   \begin{align*}
+   L(\theta,a_{0}) & =0\quad\mbox{if \ensuremath{\theta\in\Theta_{0}},}\\
+   & =k_{0}\quad\mbox{if \ensuremath{\theta\in\Theta_{1}}.}
+   \end{align*}
+   where $k_{0}$ is a positive constant, usually called a "Type II Error (penalty)". Also there is 
+   \begin{align*}
+   L(\theta,a_{1}) & =0\quad\mbox{if \ensuremath{\theta\in\Theta_{1}},}\\
+ & =k_{1}\quad\mbox{if \ensuremath{\theta\in\Theta_{0}}.}
+   \end{align*}
+   where $k_{0}$ is another positive constant, usually called the "Type I Error (penalty)".
+
+- Confidence Intervals: here we still are concerned with the location of the parameter $\theta$, but in this case the action (instead of a point estimate) is an /interval/ $(L,U)$, where $L$ and $U$ are determined by the data. A typical loss function in this case is given by 
+   \[
+   L(\theta,a)=1_{(\theta\notin(L,U))}+c(U-L),
+   \]
+   where $c\geq0$ is a predetermined constant. The task is to balance in some sense two desires; we want both $\theta\in(L,U)$ and also we want $(U-L)$ small. 
+
+*Decision Rules.*
+
+The idea is that there exists an unknown quantity of interest about which we would like to learn, and so we go out and perform a random experiment resulting in the observation of a quantity $x$. It is now time to make a /decision/ about $\theta$, and we do so with the aid of a /decision rule/ $\delta(x)$. Notice that $\delta$ is a function from the sample space $\mathfrak{X}$ to the action space
+$\mathfrak{A}$, 
+\[
+\delta:\mathfrak{X}\to\mathfrak{A}.
+\]
+
+*Example.* Common Decision Rules
+- $X_{1},\ldots X_{n}\sim f(x|\theta)$, where $\theta$ is a location parameter. We have many choices for our decision rule:
+   - $\delta_{1}(x)=\Xbar$, 
+   - $\delta_{2}(x)=\overset{\sim}{X}=\mathrm{median}\{X_{i}\}$, 
+   - $\delta_{3}(x)=\Xbar_{\alpha}$, /trimmed mean/ (trim $\alpha$ from each end and average the rest). 
+
+- For the testing situation \(X_{1},\ldots X_{n}\sim f(x|\theta)\) and
+   \begin{align*}
+   H_{0} & :\theta \leq \theta_{0}\\
+   H_{1} & :\theta > \theta_{0}
+   \end{align*}
+   the typical decision rules are of the form 
+   \begin{align*}
+   \delta(x) & =a_{1}\quad\mbox{if \ensuremath{x\in R},}\\
+   & =a_{0}\quad\mbox{if \ensuremath{x\notin R}.}
+   \end{align*}
+   where $R$ is a /rejection region/ determined to have some optimal properties. 
+- For Confidence intervals, the decision rule often looks like 
+   \[
+   \delta(x)=[L(x),U(x)]
+   \]
+   where $L$ and $U$ are functions of the sample that satisfy some optimality properties, for example, they have minimal expected length. 
+ 
+
+*Evaluating Statistical Procedures.* For each of the above decision rules, and for each value of $x$, there is a penalty or loss associated with any particular decision. Next, we would like to gather some global notion of the loss incurred by using the decision rule $\delta$, and we do that with what is called the /Risk Function/ $R_{\delta}(\theta)$ defined by 
+\begin{align*}
+R_{\delta}(\theta) & =\E_{\theta}[L(\theta,\delta(X))]\\
+ & =\int_{\mathfrak{X}}L(\theta,\delta(x))f(x|\theta)\diff x
+\end{align*}
+In this form it is easy to see that the risk can be interpreted as an average Loss incurred by the decision rule $\delta$.
+
+
+*Example.* Suppose $X_{1},\ldots,X_{n}\sim N(\theta,\sigma^{2})$.
+- Point estimation of $\theta$. Let $L(\theta,a)=(a-\theta)^{2}$ and let $\delta(x)=\Xbar$. Then the risk is given by 
+   \begin{align*}
+   R_{\delta}(\theta) & =\E_{\theta}[L(\theta,\delta(X))]\\
+   & =\E_{\theta}[(\Xbar-\theta)^{2}]
+   \end{align*}
+   And we know that $\Xbar\sim N(\theta,\sigma^{2}/n)$. Therefore the above quantity is merely 
+   \begin{align*}
+   R_{\Xbar}(\theta) & =\E_{\theta}[(\Xbar-\theta)^{2}]\\
+   & =\mathrm{Var}(\Xbar)\\
+   & =\sigma^{2}/n.
+   \end{align*}
+   The risk of $\Xbar$ is constant as a function of $\theta$ because $\Xbar$ is unbiased for $\theta$. 
+
+- Testing Hypotheses. Let 
+   \begin{align*}
+   H_{0} & :\theta \leq \theta_{0}\\
+   H_{1} & :\theta > \theta_{0}
+   \end{align*}
+   and the decision rule take the form 
+   \begin{align*}
+   \delta(x) & =\mbox{Reject \ensuremath{H_{0}}when \ensuremath{\Xbar<1},}\\
+ & =\mbox{Accept \ensuremath{H_{0}}if \ensuremath{\Xbar\leq1}.}
+   \end{align*}
+   Then we will use the Loss function 
+   \begin{align*}
+   L(\theta,a) & =0\quad\mbox{if the right decision is made,}\\
+ & =k_{0}\quad\mbox{if \ensuremath{\theta\leq\theta_{0}}and we reject \ensuremath{H_{0}},}\\
+ & =k_{1}\quad\mbox{if \ensuremath{\theta>\theta_{0}}and we accept \ensuremath{H_{0}}}
+   \end{align*}
+   Then the risk is given by 
+   \begin{align*}
+   R_{\delta}(\theta) & =\E_{\theta}[L(\theta,\delta(X))]\\
+   & =\int L(\theta,\delta(x))\prod f(x_{i}|\theta)\diff x
+   \end{align*}
+   Now, when $\theta \leq \theta_{0}$, the risk simplifies to 
+   \[
+   \int_{x:\mathrm{Reject}\ H_{0}}k_{0}\cdot\prod f(x)\diff x+\int_{x:\mathrm{Accept}\ H_{0}}0\cdot\prod f(x)\diff x
+   \]
+   which is just $k_{0}\cdot\P(\Xbar<1)$. Similarly, when $\theta>\theta_{0}$ the risk is \newline $k_{1}\cdot\P(\Xbar\leq1)$. In the special case $k_{0}=k_{1}=1$, we get the familiar formulas 
+   \begin{align*}
+   R_{\delta}(\theta) & =\alpha=\P(\mbox{Type I error}),\quad\theta\in\Theta_{0},\\
+ & =\beta=\P(\mbox{Type II error}),\quad\theta\notin\Theta_{0}.
+   \end{align*}
+
+** Classical Monte Carlo
+
+We want to compute an integral 
+\[
+H=\E_{f}h(X)=\int\, h(x)\, f(x)\diff x
+\]
+where $h$ is some function of interest and $f$ is a given density function.
+
+KNOW: *The Strong Law of Large Numbers (SLLN).* Let $X_{1},X_{2},\ldots$ be IID random variables with $\E X_{i} = \mu < \infty$, and define $\Xbar_{n}=(1/n)\sum_{i=1}^{n}X_{i}$. Then, for every $\epsilon>0$, 
+\[
+\P(\lim_{n\to\infty}|\Xbar_{n}-\mu|<\epsilon)=1,
+\]
+that is, $\Xbar_{n}$ converges almost surely to $\mu$.
+
+*Idea:* Sample \(X_{1},X_{2},\ldots,X_{m}\sim f(x)\). Then $H$ is approximated with 
+\[
+\overline{h}_{m}=\frac{1}{m}\sum_{i=1}^{m}h(X_{i})
+\]
+and by the SLLN, we have $\overline{h}_{m}\to H$ as $m\to\infty$.
+
+We will also want to measure the /speed/ of convergence. We may do so with 
+\begin{align*}
+\mathrm{Var}(\overline{h}_{m}) & =\frac{1}{m}\int(h(x)-H)^{2}f(x)\diff x\\
+ & =\frac{1}{m}\E[(h(X)-H)^{2}]
+\end{align*}
+This last quantity is, unfortunately, unknown but we can estimate it with 
+\[
+v_{m}=\frac{\mathrm{Sample\ Variance}\ h(x_{j})}{m}=\frac{1}{m^{2}}\sum_{j=1}^{m}[h(x_{j})-\overline{h}]^{2}.
+\]
+And by the Central Limit Theorem, 
+\[
+\frac{\overline{h}_{m}-H}{\sqrt{v_{m}}}\to N(0,1)\quad\mbox{as \ensuremath{m\to\infty}}.
+\]
+
+
+*Example.* Comparison of Three Estimators. Here $X_{1},\ldots,X_{n}\sim f(x|\theta)$, where $\theta$ is a location parameter. We have many choices for $f$:
+1. $f = N(\theta,1)$. 
+2. $f = \mathrm{Laplace}(\theta,1)$ with $f(x)=1/2 \me^{-|x-\theta|}$. 
+3. $f = \mathrm{Logis}(\theta,1)$ with 
+   \[
+   f(x)=\frac{\me^{-(x-\theta)}}{(1 + \me^{-(x - \theta)})^{2}}.
+   \]
+
+We will compare the three estimators
+1. sample mean $\Xbar$ 
+2. sample median $\overset{\sim}{X}=\mbox{median}\{X_{1},\ldots,X_{n}\}$ 
+3. trimmed mean $\Xbar_{\alpha}$ 
+
+Our comparison criterion will be Risk under squared error Loss. 
+\begin{align*}
+R_{\delta}(\theta) & =\E_{\theta}[(\delta(X)-\theta)^{2}]\\
+ & =\int(\delta(x)-\theta)^{2}f(x|\theta)\diff x
+\end{align*}
+
+We will conduct a Monte Carlo Experiment.
+
+- Let $n=20$, $\theta=0$, and we will use =Iter = 1000= iterations. 
+- For the MC algorithm, in one iteration we will do:
+   1. simulate \(X_{1},\ldots,X_{n}\sim f\)
+   2. compute $\Xbar$, $\overset{\sim}{X}$, and $\Xbar_{\alpha}$ ($\alpha=0.05$)
+   3. compute the loss for each estimator and store it 
+- Iterate 1000 times, then take the average of the =Iter= deviations. 
+
+This empirical average will approximate the true mean value, and if we wish to have a better approximation, we need only increase our number of iterations.
+
+_Question:_ How do we simulate a Laplace(0,1)?
+
+The PDF is $f(x) = \me^{-|x|}/2$, and the CDF is 
+\[
+F(x)=(1/2)\int_{-\infty}^{x} \me^{-|t|}\diff t.
+\]
+When $x < 0$ this quantity is 
+\[
+(1/2)\int_{-\infty}^{x}\me^{t}\diff t=(1/2)\me^{t}\,|_{t=-\infty}^{x} = \me^{x}/2,\quad x < 0.\]
+On the other hand, when $x \geq 0$ we get 
+\begin{align*}
+(1/2)\int_{-\infty}^{0}\me^{t}\diff t+(1/2)\int_{0}^{x}\me^{-t}\diff t & =1/2+\left.(-1/2)\me^{-t}\right|_{t=0}^{x}\\
+ & =1-\me^{-x}/2,\quad x>0.
+\end{align*}
+ In other words, the CDF $F$ takes the values 
+\begin{align*}
+F(x) & =\me^{x}/2,\quad x < 0,\\
+ & =1 - \me^{-x}/2\quad x \geq 0.
+\end{align*}
+ We may solve for the inverse CDF $F^{-1}$ to get 
+\begin{align*}
+F^{-1}(y) & =\ln(2y),\quad y < (1/2),\\
+ & =-\ln[2(1-y)],\quad y\geq (1/2).
+\end{align*}
+ We should also compute $\sqrt{v_{m}}$ to get an idea of how good
+our answer is: 
+\[
+\sqrt{v_{m}}=\sqrt{\frac{1}{m^{2}}\sum_{j=1}^{m}(h_{j}-\overline{h})^{2}}.
+\]
+
+
+From the PRINTOUT:
+
+$R_{\Xbar}(0)=0.0983\pm2(0.0043)$
+$R_{\overset{\sim}{X}}(0)=0.0622\pm2(0.0035)$
+$R_{\Xbar_{\alpha}}(0)=0.0830\pm2(0.0037)$
+
+In this case, the median is the best estimator when $\theta=0$, followed by the trimmed mean, and lastly the sample mean.  
+
+*Example.* The Two-Sample $t$-Test.
+In this setting we are given 
+\[
+X_{1},\ldots,X_{m}\sim f(x|\mu_{1},\sigma_{1}),\quad Y_{1},\ldots,Y_{n}\sim g(y|\mu_{2},\sigma_{2}).
+\]
+We want to test $H_{0}:\mu_{1}=\mu_{2}$. A popular test is based on 
+\[
+T=\frac{\Xbar-\overline{Y}-(\mu_{1}-\mu_{2})}{S_{p}\sqrt{(1/m)+(1/n)}},
+\]
+where $S_{p}$ is the /pooled standard deviation/ given by the
+formula 
+\[
+S_{p}^{2}=\frac{(m-1)s_{1}^{2}+(n-1)s_{2}^{2}}{m+n-2}.
+\]
+ The rejection region $R$ of the test can be written in the form
+\[
+\mbox{Reject \ensuremath{H_{0}}if \ensuremath{|T|>t^{\ast}}},
+\]
+where $t^{\ast}$ is chosen so that $\P(\mbox{Reject \ensuremath{H_{0}}}|\mbox{ \ensuremath{H_{0}}is true})=\alpha$. The popularity of the test in part stems from the fact that under certain assumptions on the underlying populations $T$ has a known distribution, namely, Student's $t$ distribution with $m+n-2$ degrees of freedom. The assumptions are:
+- the populations are Normally distributed, and 
+- the spreads are equal, $\sigma_{1}=\sigma_{2}$. 
+
+_How do we evaluate a $t$-test?_ Consider the /power function/ $\beta(\theta)$ defined by 
+\[
+\beta(\theta)=\P_{\theta}(\mbox{Reject \ensuremath{H_{0}}}).
+\]
+ We can see that *IF* the assumptions on the populations are true then 
+\[
+\P(|T|>t^{\ast}\mbox{ when \ensuremath{\mu_{1}=\mu_{2}}})=\alpha.
+\]
+The quantity $\alpha$ is called the /level/ of the test and is usually some small number, say $\alpha=0.10$ or $\alpha=0.05$.
+
+_Question:_ How does the size of the $t$-test vary as one violates the assumptions? There are two possible directions to investigate:
+
+1. non-normal populations (skewed, heavy-tailed, bounded support,$\ldots$) 
+2. unequal variances $\sigma_{1}^{2}\neq\sigma_{2}^{2}$. 
+
+We will focus on 2.
+
+*Monte Carlo Simulation:* (Assume $\mu_{1}=\mu_{2}=0$.)
+1. Generate $X_{1},\ldots,X_{m}\sim N(0,\sigma_{1}^{2})$ and $Y_{1},\ldots,Y_{n}\sim N(0,\sigma_{2}^{2})$. 
+2. Compute $T$. 
+3. Record if $|T|>t_{m+n-2}(\alpha/2)=1.7341$. (Here we set $\alpha=0.10$.) 
+4. Repeat. 
+
+When the simulation is finished, a Monte Carlo estimate of the size of the test will be given by $\hat{p}=\mathit{num\ rejections/TotalSimulations}$, that is, the proportion of rejections. To evaluate the accuracy of our estimate we may find the standard error, estimated with the quantity
+\[
+\mathrm{s.e.}\approx\sqrt{\frac{\hat{p}\,(1-\hat{p})}{\mathrm{Iter}}}
+\]
+From the output, we see that our estimate of the size is right at 0.10 when the variances are equal ($0.1017-2*0.0030225=0.095655$), and the size appears to be approximately 0.12 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.1155-2*0.0031962=0.1091076$).  
+
+** Bayesian Applications of Monte Carlo 				:NEW:
+
+** Importance Sampling
+
+*Example.* Cauchy tail probabilities. (Ripley) We would like to estimate the quantity 
+\[
+p=\int_{2}^{\infty}\frac{1}{\pi}\frac{1}{1+x^{2}}\diff x,
+\]
+that is, we want to know $\P(X > 2)$ where $X \sim \mathrm{Cauchy}(0,1)$. (It turns out that $p\approx 0.14758362$.) We will try estimating $p$ in many different ways:
+
+1. The most naive way to estimate $p$ would be to simulate $X_{1},\ldots,X_{m} \sim \mathrm{Cauchy}(0,1)$ and use 
+   \[
+   \hat{p}_{1}=\frac{1}{m}\sum_{i=1}^{m}1(X_{i}>2).
+   \]
+   Of course, $\hat{p}_{1}$ converges to $p$ as $m\to\infty$, but to get an idea of the speed of convergence we ma take a look at 
+   \[
+   \mbox{Var}(\hat{p}_{1})=\frac{p(1-p)}{m}\approx\frac{0.1258026951}{m}.
+   \]
+   Perhaps we are not satisfied with this rate of convergence and we wish to look for ways to improve our estimator. 
+
+- We notice that the Cauchy distribution is symmetric about zero, so we may be tempted to investigate what happens if we try to estimate
+   \[
+   p_{2}=\frac{1}{2}\P(|X|>2).
+   \]
+   The obvious method we be to use 
+   \[
+   \hat{p}_{2}=\frac{1}{2m}\sum_{i=1}^{m}1(|X_{i}|>2).
+   \]
+   This also converges to the right place but has the improved variance
+   \[
+   \mbox{Var}(\hat{p}_{2})=\frac{2p(1-2p)}{2^{2}m}\approx\frac{0.0520108851}{m}.
+   \]
+   (That is nearly a 59% reduction in variance!) Suppose that we /still/ are not satisfied. We notice that even now we are throwing away all observations falling in $[-2,2]$. We are thus motivated to look for a method that allows us to use all of the simulations. 
+
+- We write 
+   \begin{align*}
+   p & =\frac{1}{2}-\int_{0}^{2}\frac{1}{\pi(1+x^{2})}\diff x,\\
+   & =\frac{1}{2}-\int_{0}^{2}\frac{2}{\pi(1+x^{2})}\,\frac{1}{2}\,\diff x,\\
+   & =\frac{1}{2}-\E\left[\frac{2}{\pi(1+X^{2})}\right],
+   \end{align*}
+   where $X\sim\mathrm{Unif}(0,2)$, and by a shift in our thinking we have transformed our original integral to an expectation of a Uniform random variable. The natural candidate estimator would be to simulate $X_{1},\ldots,X_{m}\sim\mathrm{Unif}(0,2)$ and calculate
+   \[
+   \hat{p}_{3}=\frac{1}{2}-\frac{1}{m}\sum_{i=1}^{m}\frac{2}{\pi(1+X_{i}^{2})}.
+   \]
+   We evaluate our estimator by examining the variance: $\mbox{Var}(\hat{p}_{3})=(\E h^{2}-(\E h)^{2})/m$.
+
+_BONUS:_ Use integration by parts to show that this last quantity is approximately $0.02850879/m$.
+
+*Solution.* (Due to Jeremy Hamilton, 6/20/05.)
+
+First, to find ${\displaystyle \int\cfrac{1}{(1+x^{2})^{2}}\ dx}$, we use the substitution $x=\tan{\theta}$. So we have $dx=\sec^{2}{\theta}\ d\theta$, $\theta=\arctan{x}$, ${\displaystyle \sin{\theta}=\cfrac{x}{\sqrt{1+x^{2}}}}$, and ${\displaystyle \cos{\theta}=\cfrac{1}{\sqrt{1+x^{2}}}}$. This gives 
+\begin{align*}
+\int\cfrac{1}{(1+x^{2})^{2}}\ dx & =\int\cos^{2}{\theta}\ d\theta\\
+ & =\cfrac{1}{2}\int(1+\cos{2\theta})\ d\theta\\
+ & =\cfrac{1}{2}\left(\theta+\cfrac{\sin{2\theta}}{2}\right)+C\\
+ & =\cfrac{\theta+\sin{\theta}\cos{\theta}}{2}+C\\
+ & =\cfrac{\arctan{x}}{2}+\cfrac{x}{2(1+x^{2})}+C.
+\end{align*}
+Thus, we obtain
+\begin{align*}
+\text{Var}(\hat{p}_{3}) & =\cfrac{\mathbb{E}[h^{2}(x)]-\mathbb{E}[h(x)]^{2}}{m}\\
+\\ & =\cfrac{\left[\cfrac{4}{\pi^{2}}{\displaystyle \int_{0}^{2}\cfrac{1}{(1+x^{2})^{2}}\cdot\cfrac{1}{2}\ dx}-\left(\cfrac{2}{\pi}{\displaystyle \int_{0}^{2}\cfrac{1}{1+x^{2}}\cdot\cfrac{1}{2}\ dx}\right)^{2}\right]}{m}\\
+\\ & =\cfrac{\left[\cfrac{2}{\pi^{2}}\left(\cfrac{\arctan{2}}{2}+\cfrac{1}{5}\right)-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}\\
+\\ & =\cfrac{\left[\cfrac{5\arctan{2}+2}{5\pi^{2}}-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}.
+\end{align*}
+Hence
+\[
+\text{Var}(\hat{p}_{3})=\cfrac{\left[\cfrac{5\arctan{2}+2}{5\pi^{2}}-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}.
+\]
+Which yields our result,
+\[
+\text{Var}(\hat{p}_{3})\approx\cfrac{0.02850878546357}{m}.
+\]
+Note: that is another 45% reduction in variance! As good as this is, we will investigate a final method for estimating $p$.
+
+3. In the integral 
+\[
+p=\int_{2}^{\infty}\frac{1}{\pi}\frac{1}{1+x^{2}}\diff x
+\]
+make the substitution $u=x^{-1}$ with $\diff u=-x^{-2}\diff x$ or $-u^{-2}\diff u=\diff x$.
+Then we may rewrite the integral as 
+\[
+\int_{0}^{1/2}\frac{1}{\pi}\frac{u^{-2}}{1+u^{-2}}\diff u
+\]
+and after multiplying the numerator and denominator by $y^{2}$ this integral may be viewed as the expectation of $h(Y)/4=1/2\pi(1+Y^{2})$ where $Y\sim\mathrm{Unif}(0,1/2)$. and $h$ is the function used for $\hat{p}_{3}$. To estimate $p$ this last time we may simulate $Y_{1},\ldots,Y_{m}\sim\mathrm{Unif}(0,1)$ and use 
+\[
+\hat{p}_{4} = \frac{1}{4m}\sum_{i=1}^{m} h(Y_{i}).
+\]
+Since the functional form is the same, we may complete another integration by parts and we will find that the variance of $\hat{p}_{4}$ is $\mbox{Var}(\hat{p}_{4})=0.000095525/m$ which is /an additional 99.6% reduction in variance/! If we compare the variance of $\hat{p}_{1}$ with that of $\hat{p}_{4}$
+we find: 
+\[
+\frac{\hat{p}_{1}}{\hat{p}_{4}}=1316.960954
+\]
+and in particular, the standard error will be approximately $\sqrt{1316.960954}\approx 36.28$ times smaller if we use $\hat{p}_{4}$, which translates to 36 times fewer simulations. 
+
+ 
+The above suggests a general method to improve Monte Carlo estimates.
+
+*Idea:* As usual, we want to compute 
+\[
+H = \E_{f}h(X) = \int\, h(x)\, f(x)\diff x
+\]
+where $h$ is some function of interest and $f$ is a given density function. However, it may be difficult to simulate directly from $f$, either because it is too complicated or simply intractable. Instead, we find a suitable $g(x)$ called the /instrumental density/ and write 
+\begin{align*}
+\E_{f}h(X) & =\int\,\frac{h(x)f(x)}{g(x)}\, g(x)\diff x\\
+ & =\E_{g}\left[\frac{h(X)f(X)}{g(X)}\right]
+\end{align*}
+Thus, now we simulate \(X_{1},X_{2},\ldots,X_{m}\sim g(x)\) and the revised Monte Carlo estimate of $H$ will be 
+\[
+\hat{H} = \frac{1}{m}\sum_{i=1}^{m}\frac{h(x_{i})f(x_{i})}{g(x_{i})}.
+\]
+
+
+*Natural Question:* How do we choose $g$?
+
+*Comments:*
+
+- The Monte Carlo estimate does indeed converge to $H$ as $m \to \infty$, for any $g$ (with the same support as $f$).  
+
+- However, the variance of the new estimator will be finite only when $\E_{g}[h^{2}(X)f^{2}(X)/g^{2}(X)] < \infty$. But 
+   \begin{align*}
+   \E_{g}\left[\frac{h^{2}(X)f^{2}(X)}{g^{2}(X)}\right] & =\int\frac{h^{2}(x)f^{2}(x)}{g^{2}(x)}\, g(x)\,\diff x\\
+   & =\int h^{2}(x)\frac{f(x)}{g(x)}\, f(x)\,\diff x\\
+   & =\E_{f}\left[h^{2}(X)\frac{f(X)}{g(X)}\right].
+   \end{align*}
+   What does this mean? If the variance is infinite, then the estimate may vary widely, even for large iteration sizes.
+
+- How do we know which are good $g$'s? Instrumental distributions with tails lighter than $f$ are inappropriate. Why? Because then the ratio $f/g$ will be unbounded. In this case the weights given to different observations $f(x_{i})/g(x_{i})$ will fluctuate widely. Then the estimate of $H$ will fluctuate too, even for large values of $m$.
+
+
+_PICTURE:_ 
+
+\vspace{1in}
+
+- One way to address the infinite variance issue is to use the new estimator
+\[
+\frac{\sum_{i=1}^{m}h(x_{i})f(x_{i})/g(x_{i})}{\sum_{i=1}^{m}f(x_{i})/g(x_{i})}.
+\]
+The estimator is just like before except that instead of $m$ we use the sum of the weights (which will explode), conceivably faster than $m$. This is an /ad hoc/ solution, but it seems to perform well in certain circumstances. 
+
+- We want to choose $g$ which essentially "matches" $f$, but is 1) easy to simulate, and 2) has heavier tails. 
+
+- Is there an OPTIMAL choice for $g$? *Theorem:* the choice of $g$ which minimizes the variance of the Monte Carlo estimator is given by 
+   \[
+   g^{\ast}(x)=\frac{|h(x)|f(x)}{\int|h(x)|f(x)\diff x}.
+   \]
+   Unfortunately, if $h > 0$ then we are right back where we started, because then in order to find $g^{\ast}$ we need to know $\int h(x)f(x)\diff x$, the integral we originally wanted!
+
+*Example.* Exponential and Lognormal Comparison (book). Here we wish to estimate the parameter $\lambda$ based on the observation of a random variable $X$, where $X$ is distributed from two different populations. The first is exponential, $X\sim\mathrm{Exp}(\lambda)$ with PDF 
+\[
+f_{1}(x)=\frac{1}{\lambda}\me^{-x/\lambda},\quad x>0
+\]
+ and the second is $X\sim\mathrm{Lnorm}(0,\sigma^{2})$, with PDF
+\[
+f_{2}(x)=\frac{1}{\sigma\sqrt{2\pi}}\,\frac{1}{x}\,\exp^{-(\ln x)^{2}/2\sigma^{2}},\quad-\infty<x<\infty,
+\]
+where $\me^{\sigma^{2}/2}=\lambda$. Note that a $\mathrm{Logn}(0,\sigma^{2})$ RV $Y$ may be thought of as $Y=\me^{\sigma Z}$, with $Z \sim N(0,1)$.
+
+We will compare the two estimators with the /weighted square error loss/ 
+\[
+L(\lambda,\delta)=\frac{(\delta-\lambda)^{2}}{\lambda^{2}}.
+\]
+The estimator $\delta$ is of course $X$, and the Risk functions are 
+\[
+R_{1}(\lambda)=\E\left[\frac{(X-\lambda)^{2}}{\lambda^{2}}\right]=\int\frac{(x-\lambda)^{2}}{\lambda^{2}}f_{1}(x)\diff x
+\]
+and 
+\[
+R_{2}(\lambda)=\int\frac{(x - \lambda)^{2}}{\lambda^{2}}f_{2}(x)\diff x.
+\]
+We would like to compute these integrals using Monte Carlo methods, so we will simulate and take an empirical average.  
+
+*Remark:*  We do not need to simulate two sets of random variables. We may use importance sampling to simulate from one random variable, and then use it in the other estimate. Question: which distribution should be our instrumental density?... The one with heavier tails. Since $x$ approaches infinity faster than $(\ln x)^{2}$, we will use the Lognormal as our instrumental density.
+
+The risks will be estimated therefore by
+1. For given $\lambda$, Simulate $X_{1},\ldots,X_{m} \sim \mathrm{Lnorm}(0,\sigma^{2})$. 
+2. Estimate $R_{2}(\lambda)$ with 
+   \[
+   \frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}
+   \]
+3. Estimate $R_{1}$ with 
+   \begin{align*}
+   \frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}\,\frac{f_{1}(x_{i})}{f_{2}(x_{i})} & =\frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}\frac{1/\lambda\, \me^{-x_{i}/\lambda}}{1/x_{i}\sigma\sqrt{2\pi}\,\exp^{-(\ln x_{i})^{2}/2\sigma^{2}}}\\
+ & =\frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}\lambda^{-1}\, \me^{-x_{i}/\lambda}x_{i}\sigma\sqrt{2\pi}\, \me^{(\ln x_{i})^{2}/2\sigma^{2}}
+   \end{align*}
+
+
+
+* Resampling Methods: the Bootstrap and Related Procedures
+
+** Introduction
+
+These days computers are changing the face of Statistics. Their quick computational speed and flawless accuracy, coupled with large datasets acquired by the researcher, make them indispensable for any modern analysis. In particular, resampling methods (due in large part to Bradley Efron) have gained prominence in the modern statistician's repertoire. Let us look at a classical problem to get some insight
+why.
+
+*A Classical Question:* Given a population of interest, how may we effectively learn some of its salient features, /e.g./, the population's mean? Answer: one way is through representative random sampling. Given a random sample, how do we summarize the information contained therein? Answer: by calculating a reasonable statistic, /e.g./, the sample mean. Given a value of a statistic, how do we know whether that value is significantly different from that which was expected?
+
+\begin{center}
+Answer: we don't. 
+\end{center}
+
+Instead, we look at the /sampling distribution/ of the statistic, and we try to make probabilistic assertions, based on some confidence level or other considerations. For example, we may find ourselves saying things like, "With 95% confidence, the true population mean is greater than zero."
+
+*Problem:* Unfortunately, in most cases the sampling distribution is /unknown/. Thus in the past, in efforts to say something useful, statisticians have been obligated to place some restrictive assumptions on the underlying population. For example, if we suppose that the population is normal, then we know that the distribution of $\xbar$ is normal, too, with the same mean (and a smaller standard deviation). It is then easy to draw conclusions, make inferences, and go about our business.
+
+*An Alternative:* We don't know what the underlying population distributions is, so let us /estimate/ it, just like we would with any other parameter. The "statistic" we use is the /empirical CDF/, that is, the function that places mass $1/n$ at each of the observed data points $x_{1},\ldots,x_{n}$. As the sample size increases, we would expect the approximation to get better and better (with IID observations it does, and there is a wonderful theorem by Glivenko and Cantelli that proves it). Given the (estimated) population distribution, it is easy to find the sampling distribution of any statistic we like: just *sample* from the empirical CDF many, many times, calculate the statistic each time, and make a histogram. Done! Of course, the number of samples needed to get a representative histogram is prohibitively large$\ldots$ we simply are too slow (and clumsy) to do this tedious procedure.
+
+\begin{center}
+Enter the computer. 
+\end{center}
+
+Fortunately, computers are very skilled at doing simple, repetitive tasks very quickly and accurately. So we employ them to give us a reasonable idea about the sampling distribution of our statistic, and we use the generated SD to base our inferences and draw our conclusions. If we would like to have a better approximation for the sampling distribution, we merely tell the computer to sample more. In that sense, we are limited only by our current computational speed and expense.
+
+*Remark:* Due to the special structure of the ECDF, to get an IID sample one needs only to take a random sample of size $n$, without replacement, from the observed data $x_{1},\ldots,x_{n}$. Repeats are expected and acceptable. Since we already sampled to get the original data, the term /resampling/ is used to describe the procedure.
+
+*A Summary of the Advantages of Resampling Methods:*
+
+- Fewer assumptions. :: We are no longer required to assume the population is Normal or the sample size is large. 
+- Greater accuracy. :: Many classical methods are based on rough upper bounds or Taylor expansions. The bootstrap procedures can be iterated long enough to give results accurate to several decimal places, often beating classical approximations. 
+- Generality. :: Resampling methods are easy to understand and apply to a large class of seemingly unrelated procedures. One no longer needs to memorize long complicated formulas and algorithms. 
+
+** Bootstrapping Parameter Estimates
+
+*Procedure for Bootstrapping:* To approximate the Sampling distribution of a Statistic $S(x)$ based on a $SRS$ $x$ of size $n$.
+
+1. Create many many samples $x_{1}^{\ast},\ldots,x_{M}^{\ast}$, called /resamples/, by sampling with replacement from the data.
+
+2. Calculate the statistic of interest $S(x_{1}^{\ast}),\ldots,S(x_{M}^{\ast})$ for each resample. The distribution of the resample statistics is called a /bootstrap distribution/. 
+
+3. The bootstrap distribution gives information about the sampling distribution of the statistic. In particular, it gives us some idea about the center, spread, and shape of the sampling distribution of $S$. 
+
+*Example.* Bootstrapping Standard Errors: the Mean.  In this example we illustrate the bootstrap by trying to estimate the standard error of the sample mean. We do this in the special case when the underlying population is normal, mean 2, standard deviation 1. Of course, we don't need a bootstrap distribution: $\Xbar$ has a normal sampling distribution, with mean 1 and standard deviation $1/\sqrt{(}n)$, where $n$ is the sample size. We will use what we already know to see how the bootstrap method performs.
+
+ 
+
+Please see the handout, "Bootstrapping the Standard Error of the Mean"  
+
+
+ 
+*Example.* Bootstrapping the Standard Error of the Median. In this example we extend our study to include more complicated statistics and distributions such that we do not know the answer ahead of time. This example uses a simulated dataset on the settlement amounts of 250 lawsuits. Lawsuit amounts are notoriously right-skewed, so a natural estimate of center would be the sample median. Unfortunately, then the sampling distribution falls out of our reach. We use the bootstrap to help us with this problem, and the modifications to the last example are scarcely more than trivial.
+
+ 
+
+Please see the handout, "Bootstrapping the Standard Error of the Median".  
+
+
+ 
+
+*Example.* The =boot= package in =R=. It turns out that there are many bootstrap procedures and commands already built into =R=, in the =boot= package. Further, inside the =boot= packacge there is a function =boot=! The general syntax is of the form:
+
+:  boot(data, statistic, R, ...)
+
+Here, =data= is a vector (or matrix) containing the data to be resampled, =statistic= is a defined function, /of two arguments/, that tells which statistic to be computed, and the parameter =R= specifies how many resamples should be taken. See the handout, "Bootstrapping in =R=".
+
+ 
+
+We notice that the output from both methods of estimating the standard errors produced similar results. In fact, the =boot= procedure is to be preferred, since it invisibly returns much more information than our naive program, (which we will use later), and it is much quicker in its computation.  
+
+
+*Remarks:*
+- For many statistics, the bootstrap distribution closely resembles the sampling distribution with respect to spread and shape. However, the distributions will differ in their centers. While the sampling distribution is centered at the population mean (plus any bias), the bootstrap distribution is centered at the original value of the statistic (plus any bias). We saw that the =boot= function gives an empirical estimate of the bias in the statistic. 
+
+- We tried to estimate the standard error, but we could have (in principle) tried to estimate something else. Note from the previous remark, however, that it would be useless to try to estimate the population mean $\mu$ using the bootstrap, since the mean of the bootstrap distribution is the observed $\xbar$.
+
+- _You don't get something from nothing._ We have seen that we can take a random sample from a population and use bootstrap methods to get a very good idea about standard errors, bias, and the like. However, one must not get lured into believing that by doing some random resampling somehow one gets more information about the parameters than that which was contained in the original sample. Indeed, there is some uncertainty about the parameter due just to the original random sampling, and there is more introduced by resampling. One should think of the bootstrap as just another method of estimating parameters of interest. 
+
+** Bootstrap Confidence Intervals
+
+*A First Method: Percentile Confidence Intervals.*
+
+As a first try, we want to obtain a 95% confidence interval for a parameter. Usually the statistic is centered (or at least close by) the parameter; therefore, as in the normal case, a 95% confidence interval for the parameter is nothing more than a 95% confidence interval for the statistic. And to find a 95% confidence interval for the statistic we need only go to its sampling distribution and find an interval that contains 95% of the area. (The most popular choice is the equal-tailed interval with 2.5% in each tail.)
+
+This is incredibly easy to accomplish with the Bootstrap. We need only to take a bunch of bootstrap resamples, order them, and choose the $\alpha/2$th and $(1-\alpha)$th percentiles. There is a function =boot.ci= in =R= already created to do just this. Note that in order to use the function =boot.ci= you must first run the program =boot= and save the output in a variable, for example, =data.boot=.  You then plug =data.boot= into the function =boot.ci=.
+
+ 
+
+Please see the handout, "Bootstrapping Confidence Intervals for the Median".
+
+ Please see the handout, "Bootstrapping Confidence Intervals for the Median, $2^{\mathrm{nd}}$ try."
+
+*An Alternative Method: Student's $t$ Intervals.*
+
+Intuitively, the idea is to use confidence intervals that we already know, and let the bootstrap help us when we get into trouble. We know that a $100(1-\alpha)%$ confidence interval for the mean of a $SRS$, size $n$, from a normal distribution is given by 
+\[
+\xbar\pm t_{\alpha/2}(n-1)*\mathrm{SE}(\xbar)
+\]
+where $t_{\alpha/2}(n-1)$ is the appropriate critical value from Student's $t$ distribution and we remember from our classes that SE($\xbar$)=$\sigma/\sqrt{n}$. Of course, the standard error will change when the underlying population distribution in not Normal, or when we use a statistic more complicated than $\xbar$. What should we do? Use the Bootstrap! It will give us quite reasonable estimates for the standard error. And as long as the sampling distribution of our /statistic/ is approximately bell-shaped with small bias, the interval 
+\[
+\mathit{statistic}\pm t_{\alpha/2}(n-1)*\mathrm{SE}(\mathit{statistic})
+\]
+will have approximately $100(1-\alpha)\%$ confidence of containing the population mean.
+
+*Example.* Lawsuit data revisited. We will use the t-interval method to find the bootstrap CI for the Median. We have looked at the bootstrap distribution; it appears to be symmetric and approximately mound shaped. Further, we may check that the bias is approximately 40, which on the scale of these data is practically negligible. Thus, we may consider looking at the $t$-Intervals. Note that, since our sample is so large, instead of $t$-intervals we will actually be using $z$-intervals.
+
+ 
+
+Please see the handout, "Bootstrapping Confidence Intervals for the Median, $3^{\mathrm{rd}}$ try."
+
+ 
+
+We see that, considering the scale of the data, the confidence intervals compare with each other quite well.
+
+ 
+*Remark.* We have seen two methods for bootstrapping confidence intervals for a statistic. Which method should we use? If the bias of the bootstrap distribution is small and if the distribution is close to Normal, then the percentile and $t$-intervals will agree closely. If the intervals are noticeably different, then it should be considered evidence that the normality and bias conditions are not met. In this case, *NEITHER* interval should be used.
+
+** Resampling in Hypothesis Tests
+
+The classical two-sample problem can be stated as such: Given two groups of interest, we would like to know whether these two groups are significantly different from one another, or whether the groups are reasonably similar. The standard way to decide is to
+
+1. Go collect some information from the two groups and calculate an associated statistic, for example, $\xbar_{1}-\xbar_{2}$. 
+
+2. Suppose that there is no difference in the groups, and find the distribution
+of the statistic in 1. 
+
+3. Locate the observed value of the statistic with respect to the distribution found in 2. a value in the main body of the distribution is not spectacular, it could reasonably have occurred by chance. A value in the tail of the distribution is unlikely, and hence provides evidence /AGAINST/ the null hypothesis. 
+
+
+PICTURE
+
+\vspace{1in}
+
+
+Of course, we usually compute a $p$-value, defined to be the probability of the observed value of the statistic or more extreme, when the null hypothesis is true. Small $p$-values are evidence against the null hypothesis. It is not immediately obvious how to use resampling methods here, so we discuss an example.
+
+*Example.* A study concerned differing dosages of the antiretroviral drug AZT. The common dosage is 300mg daily. Higher doses cause more side affects, but are they significantly higher? We examine for a 600mg dose. The data are as follows: We compare the scores from the two groups by computing the difference in their sample means. The 300mg data were entered in x1 and the 600mg data were entered into x2. The observed difference was
+
+\begin{center}
+\begin{tabular}{l|cccccccccc}
+300 mg  & 284  & 279  & 289  & 292  & 287  & 295  & 285  & 279  & 306  & 298 \tabularnewline
+600 mg  & 298  & 307  & 297  & 279  & 291  & 335  & 299  & 300  & 306  & 291 \tabularnewline
+\end{tabular}
+\par\end{center}
+
+The average amounts can be found:
+
+#+begin_src  R :eval never  
+mean(x1)
+mean(x2)
+#+end_src
+
+
+with an observed difference of =mean(x2) - mean(x1) = 10.9=. As expected, the 600 mg measurements seem to have a higher average, and we might be interested in trying to decide if the average amounts are /significantly/ different. The null hypothesis should be that there is no difference in the amounts, that is, the groups are more or less the same. If the null hypothesis were true, then the two groups would indeed be the same, or just one big group. In that case, the observed difference in the sample means just reflects the random assignment into the arbitrary =x1= and =x2= categories.
+It is now clear how we may resample, consistent with the null hypothesis.
+
+*Procedure:*
+
+1. Randomly resample 10 scores from the combined scores of =x1= and =x2=, and assign then to the =x1= group.  The rest will then be in the =x2= group. Calculate
+the difference in (re)sampled means, and store that value.  
+
+2. Repeat this procedure many, many times and draw a histogram of the resampled statistics, called the /permutation distribution/.  Locate the observed difference 10.9 on the histogram to get the $p$-value. If the $p$-value is small, then we consider that evidence against the hypothesis that the groups are the same. 
+
+
+Please see the handout, "Two Sample Permutation Tests in =R=."
+
+*Note:* In calculating the permutation test $p$-value, the formula is essentially the proportion of resample statistics that are greater than or equal to the observed value. Of course, this is merely an /estimate/ of the true $p$-value. As it turns out, an adjustment of $+1$ to both the numerator and denominator of the
+proportion improves the performance of the estimated $p$-value, and this adjustment is implemented in the =ts.perm= function.
+
+*Comparison with the Two-Sample $t$-test.*
+
+We know from earlier classes that in order to tell whether there is an improvement as a result of taking the intervention class the procedure to use is the two-sample $t$-test. We use the $t$-test because we assume a normal underlying population, with unknown variance, and we have a small sample $n=10$. *Question:* what does the $t$-test say? It is easy to do in =R=; below is the output.
+
+#+begin_src  R :eval never
+t.test(x2,x1, alt = "greater", var.equal = TRUE)
+#+end_src
+
+
+The $p$-value for the $t$-test was 0.02848, while for the permutation test it was 0.02948526. These are actually really close! But they are not necessarily close, in other situations. Note that there is an underlying normality assumption for the $t$-test, which isn't present in the permutation test. If the normality assumption may be questionable, then the permutation test would be more reasonable. We see what can happen when using a test in a situation where the assumptions are not met: smaller $p$-values. In situations where the normality assumptions are not met, for example, small sample scenarios, the permutation test is to be preferred. In particular, if accuracy is very important, then one should use the permutation test.
+
+ 
+*Remarks.*
+
+- When are Permutation tests valid? While the permutation test doesn't require normality of the populations (as contrasted with the $t$-test), nevertheless it still requires that the two groups have identical distributions -- they must have not only the same means, but they must also have the same spread and shape. This assumption may or may not be true in a given example, but rarely will that cause the $t$-test to outperform the permutation test. Why? Because even if the sample standard deviations are markedly different, that doesn't mean that the population standard deviations are different. Many problems if the permutation test will also carry over to the $t$-test.  
+
+- If the distribution of the groups is close to normal, then the $t$-test $p$-value and the bootstrap $p$-value will be approximately equal. If they differ markedly, then this should be considered evidence that the normality assumptions do not hold. 
+
+- The generality of the Permutation test is such that one can use all kinds of statistics to compare the two groups. One could compare the difference in variances, or the difference in (just about anything). Alternatively, one could compare the ratio of sample means, $\xbar_{1}/\xbar_{2}$. Of course, under the null hypothesis this last quantity should be near 1. 
+
+- Just as with the bootstrap, the answer we get is subject to variability due to the inherent randomness of resampling from the data. We can make the variability as small as we like by taking sufficiently many resamples. How many? If the conclusion is very important (that is, if lots of money is at stake), then take thousands (Verizon in some of its studies uses $R=50,000$). Typically, $R=1000$ resamples is
+enough. In general, if the true $p$-value is $p$ then the standard error of the estimated $p$-value is $\sqrt{p(1-p)/R}$. You can choose $R$ to get whatever accuracy desired. 
+
+- Other possible testing designs:
+   - Matched Pairs Designs. 
+   - Relationship between two variables. 
+
+%%%%%%%%%%  The Bibliography %%%%%%%%%%%%%%%%%%%%%%5
+
+\begin{thebibliography}{14}
+\bibitem{jA00}Albert, J. (2000). Introduction to Monte Carlo Methods.
+BGSU.
+
+\bibitem{mBnB01}Benedict, M.E., and Boudreau, N. (2001) SAS\textregistered{}
+Workshop.
+
+\bibitem{gCcR05}Casella, G. and Robert, C. (2005). Monte Carlo Statistical
+Methods. Springer.
+
+\bibitem{pD02}Dalgaard, P. (2002). Introductory Statistics with R.
+Springer.
+
+\bibitem{bE05}Everitt, B. (2005). An R and S-Plus Companion to Multivariate
+Analysis. Springer.
+
+\bibitem{lHeS94}Hatcher, L and Stepanski, E. (1994). A Step-by-Step
+Approach to using the SAS System. SAS publishing.
+
+\bibitem{rHbH04}Heiberger, R. and Holland, B. (2004). Statistical
+Analysis and Data Display. An Intermediate Course with Examples in
+S-Plus, R, and SAS. Springer.
+
+\bibitem{rHea03}Hesterberg et al. (2003). Bootstrap Methods and Permutation
+Tests. Companion Chapter 18 to the Practice of Business Statistics.
+$http://bcs.whfreeman.com/ips5e/content/cat_{0}80/pdf/moore14.pdf$
+
+\bibitem{jMjB}Maindonald, J. and Braun, J. (2003). Data Analysis
+and Graphics Using R - an Example Based Approach. Cambridge University
+Press.
+
+\bibitem{rM02}McGrath, R. (2002). Introduction to Applied Linear Regression Models. BGSU.
+
+\bibitem{cR03}Rozell, C. (2003). Matlab Tutorial. $http://www.owlnet.rice.edu/~elec241/matlab.html$
+
+\bibitem{wVdS}Venables, W. and Smith, D. (2005). An Introduction
+to R. $http://www.r-project.org/Manuals$.
+
+\bibitem{VR99}Venables and Ripley (1999). Modern Applied Statistics
+with S-Plus. Springer.
+
+\bibitem{jV}Verzani, J. (2005). Using R for Introductory Statistics.
+Chapman and Hall. 
+\end{thebibliography}
+

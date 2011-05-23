@@ -1,0 +1,46 @@
+#+TITLE:   Accept-Reject Algorithm
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil ^:nil num:nil author:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Simulating Beta(2.5, 4.5) Random Variables: Which method is better?
+We wish to simulate Beta(2.5,4.5) random variables with target density
+\[
+f(x) \propto x^{1.5}(1-x)^{3.5}.
+\]
+To do this we will use the Accept/Reject Algorithm with two different instrumental densities.
+
+- Method I: :: Use uniform RV’s with instrumental density
+   \[
+   g_{1}(x) = 1,\quad 0 < x < 1.
+   \]
+   *Notes:*
+   - you may use \(M \approx 0.0472\).
+   - to simulate from \(g_{1}\) use the command =x <- runif(1)=.
+- Method II: :: Use the average of two uniform RV’s with instrumental density
+   \[
+   g_{2}(x) = 2 - |4x - 2|,\quad 0 < x <1.
+   \]
+   *Notes:*
+   - you may use \(M \approx 0.0554\).
+   - the =R= function for absolute value is =abs=.
+   - to simulate from \(g_{2}\) use the command =x <- mean(runif(2))=.
+
+
+* Question: Which method is better?
+1. Write a program that simulates 10,000 Beta(2.5,4.5) random variables using both methods.  
+2. Compare the acceptance rates and decide which one is the better algorithm.
+3. Graph histograms of your results.
+4. Write a report that includes your program, your histograms, and a paragraph that summarizes your findings.
+
+*Hints:*
+- Download =rand_norm.R= and modify it to suit your needs by changing the target and instrumental densities.  You could call the new one =rand_beta.R=.
+- It may help to write two separate programs, =rand_beta1.R= and =rand_beta2.R=.
