@@ -5,7 +5,7 @@
 #+LANGUAGE:  en
 #+OPTIONS:   H:3 ^:nil
 #+EXPORT_EXCLUDE_TAGS: answer
-#+BABEL: :session *R* :results output raw
+#+BABEL: :session *R* :results output raw :tangle yes
 #+LaTeX_CLASS: scrbook
 #+LaTeX_CLASS_OPTIONS: [captions=tableheading]
 #+LaTeX_CLASS_OPTIONS: [11pt,english]
@@ -1882,6 +1882,27 @@ enough. In general, if the true $p$-value is $p$ then the standard error of the 
 - Other possible testing designs:
    - Matched Pairs Designs. 
    - Relationship between two variables. 
+
+* The Bootstrap and Jackknife
+
+** The Bootstrap
+*** Bootstrap Estimation of Standard Error
+*** Bootstrap Estimation of Bias
+** The Jackknife
+** Jackknife After Bootstrap
+** Bootstrap Confidence Intervals
+*** Standard Normal Bootstrap Confidence Interval
+*** Basic Bootstrap Confidence Interval
+*** Percentile Bootstrap Confidence Interval
+*** Bootstrap /t/ Interval
+\[
+\left( \hat{\theta} - t_{1 - \alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta}),\  \hat{\theta} - t_{\alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta})
+\]
+** Better Bootstrap Confidence Intervals
+
+
+
+
 
 %%%%%%%%%%  The Bibliography %%%%%%%%%%%%%%%%%%%%%%5
 
