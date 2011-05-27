@@ -1,4 +1,5 @@
-
+% An Sweave Demo, by Charles Geyer
+% foo.Rnw
 \documentclass{article}
 
 \usepackage{amsmath}
@@ -14,18 +15,22 @@
 \author{Charles J. Geyer}
 \maketitle
 
-This is a demo for using the \texttt{Sweave} command in R.  To
+This is a demo for using the \verb@Sweave@ command in R.  To
 get started make a regular \LaTeX\ file (like this one) but
-give it the suffix \texttt{.Rnw} instead of \verb@.tex@ and then
-turn it into a \LaTeX\ file (\texttt{foo.tex}) with the (unix) command
+give it the suffix \verb@.Rnw@ instead of \verb@.tex@ and then
+turn it into a \LaTeX\ file (\verb@foo.tex@) with the (unix) command
+
 \begin{verbatim}
 R CMD Sweave foo.Rnw
 \end{verbatim}
+
 So you can do
+
 \begin{verbatim}
 latex foo
 xdvi foo
 \end{verbatim}
+
 and so forth.
 
 So now we have a more complicated file chain
@@ -41,10 +46,11 @@ $$
 \end{CD}
 $$
 and what have we accomplished other than making it twice as annoying
-to the WYSIWYG crowd (having to run both \texttt{Sweave} and \texttt{latex}
+to the WYSIWYG crowd (having to run both \verb@Sweave@ and \verb@latex@
 to get anything that looks like the document)?
 
 Well, we can now include R in our document.  Here's a simple example
+
 \begin{Schunk}
 \begin{Sinput}
 > 2 + 2
@@ -53,17 +59,20 @@ Well, we can now include R in our document.  Here's a simple example
 [1] 4
 \end{Soutput}
 \end{Schunk}
+
 What I actually typed in \verb@foo.Rnw@ was
+
 \begin{tabbing}
 \verb@<<two>>=@ \\
 \verb@2 + 2@ \\
 \verb+@+ \\
 \end{tabbing}
-This is not \LaTeX.  It is a ``code chunk'' to be processed by \texttt{Sweave}.
-When \texttt{Sweave} hits such a thing, it processes it, runs R to get the
+
+This is not \LaTeX.  It is a ``code chunk'' to be processed by \verb@Sweave@.
+When \verb@Sweave@ hits such a thing, it processes it, runs R to get the
 results, and stuffs (by default) the output in the \LaTeX\ file it is
 creating.  The \LaTeX\ between code chunks is copied verbatim (except
-for \texttt{Sexpr}, about which see below).  Hence to create a Rnw document
+for \verb@Sexpr@, about which see below).  Hence to create a Rnw document
 you just write plain old \LaTeX\ interspersed with ``code chunks'' which
 are plain old R.
 
@@ -89,22 +98,22 @@ lm(formula = y ~ x)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--52.559  -7.388  -0.527   6.503  45.565 
+-43.043 -13.744  -1.892   9.671  36.509 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  -5.7962     5.0593  -1.146    0.258    
-x             1.6707     0.1727   9.676 7.37e-13 ***
+(Intercept)   1.2914     4.8720   0.265    0.792    
+x             1.5090     0.1663   9.075  5.5e-12 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 17.62 on 48 degrees of freedom
-Multiple R-squared: 0.6611,	Adjusted R-squared: 0.654 
-F-statistic: 93.62 on 1 and 48 DF,  p-value: 7.368e-13 
+Residual standard error: 16.97 on 48 degrees of freedom
+Multiple R-squared: 0.6318,	Adjusted R-squared: 0.6241 
+F-statistic: 82.36 on 1 and 48 DF,  p-value: 5.496e-12 
 \end{Soutput}
 \end{Schunk}
 
-(for once we won't show the code chunk itself, look at \texttt{foo.Rnw}
+(for once we won't show the code chunk itself, look at \verb@foo.Rnw@
 if you want to see what the actual code chunk was).
 
 Figure~\ref{fig:one} (p.~\pageref{fig:one})
@@ -125,22 +134,20 @@ is produced by the following code
 \label{fig:one}
 \end{figure}
 
-Note that \texttt{x}, \texttt{y}, and \texttt{out1} are remembered from
+Note that \verb@x@, \verb@y@, and \verb@out1@ are remembered from
 the preceding code chunk.  We don't have to regenerate them.
 All code chunks are part of one R ``session''.
 
 Now this was a little tricky.  We did this with two code chunks,
 one visible and one invisible.  First we did
-
 \begin{tabbing}
 \verb@<<label=fig1plot,include=FALSE>>=@ \\
 \verb@plot(x, y)@ \\
 \verb@abline(out1)@ \\
 \verb+@+
 \end{tabbing}
-
-where the \texttt{include=FALSE} indicates that the output (text and graphics)
-should not go here (they will be some place else) and the \texttt{label=fig1plot}
+where the \verb@include=FALSE@ indicates that the output (text and graphics)
+should not go here (they will be some place else) and the \verb@label=fig1plot@
 gives the code chunk a name (to be used later).  And ``later'' is almost
 immediate.  Next we did
 
@@ -156,10 +163,10 @@ immediate.  Next we did
 \verb@\end{figure}@
 \end{tabbing}
 
-In this code chunk the \texttt{fig=TRUE} indicates that the chunk
-generates a figure.  \texttt{Sweave} automagically makes both EPS and PDF
+In this code chunk the \verb@fig=TRUE@ indicates that the chunk
+generates a figure.  \verb@Sweave@ automagically makes both EPS and PDF
 files for the figure and automagically generates an
-appropriate \LaTeX\ \texttt{\includegraphics} command
+appropriate \LaTeX\ \verb@\includegraphics@ command
 to include the plot in the \verb@figure@ environment.
 The \verb@echo=FALSE@ in the code chunk means just what it says
 (we've already seen the code---it was produced by the preceding chunk---and
@@ -176,6 +183,7 @@ done a \LaTeX\ figure.
 
 So making a figure is a bit more complicated in some ways but much simpler
 in others.  Note the following virtues
+
 \begin{itemize}
 \item The figure is guaranteed to be the one described by the text
 (at least by the R in the text).
@@ -189,10 +197,11 @@ in others.  Note the following virtues
 \caption{Scatter Plot with Cubic Regression Curve}
 \label{fig:two}
 \end{figure}
+
 Note that if you don't care to show the R code to make the figure,
 it is simpler still.  Figure~\ref{fig:two} (p.~\pageref{fig:two})
-shows another plot.
-What I actually typed in \verb@foo.Rnw@ was
+shows another plot. What I actually typed in \verb@foo.Rnw@ was
+
 \begin{tabbing}
 \verb@\begin{figure}@ \\
 \verb@\begin{center}@ \\
@@ -206,6 +215,7 @@ What I actually typed in \verb@foo.Rnw@ was
 \verb@\label{fig:two}@ \\
 \verb@\end{figure}@
 \end{tabbing}
+
 Now we just included the code for the plot in the figure
 (with \verb@echo=FALSE@ so it doesn't show).
 
@@ -216,23 +226,27 @@ just works.  This should tell you the main virtue of Sweave.
 It's always correct.  There is never a problem with stale
 cut-and-paste.
 
+
 Simple numbers can be plugged into the text with the \verb@\Sexpr@
 command, for example, the quadratic and cubic regression coefficients
 in the preceding regression were
-$\beta_2 = -0.0136$
+$\beta_2 = 0.0055$
 and
-$\beta_3 = 0.0001$.
+$\beta_3 = -0.0004$.
 Just magic!
 What I actually typed in \verb@foo.Rnw@ was
+
 \begin{tabbing}
 \verb@in the preceding regression@ \\
 \verb@were $\beta_2 = \Se@\verb@xpr{round(out3$coef[3], 4)}$@ \\
 \verb@and $\beta_3 = \Se@\verb@xpr{round(out3$coef[4], 4)}$.@
 \end{tabbing}
 
+
 The \verb@xtable@ command is used to make tables.  (The following
 is the \verb@Sweave@ of another code chunk that we don't explicitly
 show.  Look at \verb@foo.Rnw@ for details.)
+
 \begin{Schunk}
 \begin{Sinput}
 > out2 <- lm(y ~ x + I(x^2))
@@ -245,10 +259,12 @@ Analysis of Variance Table
 Model 1: y ~ x
 Model 2: y ~ x + I(x^2)
 Model 3: y ~ x + I(x^2) + I(x^3)
-  Res.Df   RSS Df Sum of Sq      F Pr(>F)
-1     48 14902                           
-2     47 14884  1   17.9026 0.0553 0.8150
-3     46 14879  1    5.1015 0.0158 0.9006
+  Res.Df   RSS Df Sum of Sq      F  Pr(>F)  
+1     48 13819                              
+2     47 12637  1   1181.74 4.3177 0.04333 *
+3     46 12590  1     47.25 0.1726 0.67972  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 \end{Soutput}
 \begin{Sinput}
 > class(foo)
@@ -267,16 +283,18 @@ Model 3: y ~ x + I(x^2) + I(x^3)
 > foo
 \end{Sinput}
 \begin{Soutput}
-  Res.Df      RSS Df Sum of Sq          F    Pr(>F)
-1     48 14901.86 NA        NA         NA        NA
-2     47 14883.96  1 17.902582 0.05534825 0.8150495
-3     46 14878.86  1  5.101537 0.01577209 0.9006061
+  Res.Df      RSS Df Sum of Sq         F     Pr(>F)
+1     48 13818.96 NA        NA        NA         NA
+2     47 12637.22  1 1181.7437 4.3177388 0.04332509
+3     46 12589.97  1   47.2479 0.1726297 0.67971699
 \end{Soutput}
 \end{Schunk}
+
 So now we are ready to turn the matrix \verb@foo@
 into Table~\ref{tab:one}
+
 % latex table generated in R 2.13.0 by xtable 1.5-6 package
-% Thu May 19 10:50:06 2011
+% Wed May 25 11:34:48 2011
 \begin{table}[tbp]
 \begin{center}
 \caption{ANOVA Table}
@@ -285,13 +303,15 @@ into Table~\ref{tab:one}
   \hline
  & Res.Df & RSS & Df & Sum of Sq & F & Pr($>$F) \\ 
   \hline
-1 & 48 & 14901.86 &  &  &  &  \\ 
-  2 & 47 & 14883.96 & 1 & 17.90 & 0.055 & 0.815 \\ 
-  3 & 46 & 14878.86 & 1 & 5.10 & 0.016 & 0.901 \\ 
+1 & 48 & 13818.96 &  &  &  &  \\ 
+  2 & 47 & 12637.22 & 1 & 1181.74 & 4.318 & 0.043 \\ 
+  3 & 46 & 12589.97 & 1 & 47.25 & 0.173 & 0.680 \\ 
    \hline
 \end{tabular}
 \end{center}
-\end{table}using the R chunk
+\end{table}
+using the R chunk
+
 \begin{tabbing}
 \verb@<<label=tab1,echo=FALSE,results=tex>>=@ \\
 \verb@library(xtable)@ \\
@@ -300,11 +320,13 @@ into Table~\ref{tab:one}
 \verb@    caption.placement = "top")@ \\
 \verb+@+
 \end{tabbing}
+
 (note the difference between arguments to the \verb@xtable@ function
 and to the \verb@xtable@ method of the \verb@print@ function).
 
 To summarize, \verb@Sweave@ is terrific, so important that soon
 we'll not be able to get along without it.  It's virtues are
+
 \begin{itemize}
 \item The numbers and graphics you report are actually what they
 are claimed to be.
