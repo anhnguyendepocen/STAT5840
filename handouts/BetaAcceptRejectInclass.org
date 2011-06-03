@@ -1,4 +1,4 @@
-#+TITLE:   Accept-Reject Algorithm
+#+TITLE:   Assignment: Accept-Reject Algorithm
 #+AUTHOR:    G. Jay Kerns
 #+EMAIL:     gkerns@ysu.edu
 #+DATE:      STAT 5840: Summer 2011

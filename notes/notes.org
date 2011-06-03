@@ -16,6 +16,12 @@
 \pagenumbering{arabic}
 * Introduction
 
+#+begin_src R :exports none
+library(ggplot2)
+library(lattice)
+library(distr)
+#+end_src
+
 ** Likelihood Methods
 
 Review: Maximum likelihood, Sir Ronald Aylmer Fisher (1921)
@@ -212,7 +218,7 @@ Likelihood functions can be complicated!
 #+latex: \begin{center}
 #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
 #+begin_src R :exports results :results graphics :file img/rightcensdata.pdf
-curve(dchisq(x, df = 4))
+curve(dchisq(x, df = 4), xlim = c(0,9))
 abline(v = 5, lty = 2)
 points(c(1.5, 1.7, 2.7, 4.3, 4.9, 6.3, 8.5), rep(0,7), pch = 4, lwd = 2, cex = 2)
 #+end_src
@@ -246,7 +252,8 @@ Often we have heavy-tailed distributions.
     #+latex: \begin{center}
     #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
     #+begin_src R :exports results :results graphics :file img/tdistpdf.pdf
-    curve(dt(x, df = 4))
+    curve(dt(x, df = 4), xlim = c(-4,4))
+    curve(dnorm(x), lty = 2, add = TRUE)
     #+end_src
     #+latex: \end{center}
   - We see that 
@@ -273,6 +280,18 @@ Often we have heavy-tailed distributions.
     \end{equation}
     where $-\infty < m < \infty$ and $\sigma > 0$.
   - We use the median and scale parameter because the mean and variance DNE! (it's /very/ heavy-tailed.)
+    #+latex: \begin{center}
+    #+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+    #+begin_src R :exports results :results graphics :file img/cauchydistpdf.pdf
+    library(ggplot2)
+    p1 <- qplot(-4:4, geom = 'blank', xlab = "x", ylab = "density") + 
+          stat_function(fun = dnorm, lty = 2) + 
+          stat_function(fun = dcauchy, lwd = 1)
+    print(p1)
+    #+end_src
+    #+latex: \end{center}
+
+
 
 - Double Exponential (AKA Laplace).
     \begin{equation}
@@ -280,6 +299,15 @@ Often we have heavy-tailed distributions.
     \end{equation}
     where $-\infty < \mu < \infty$ and $\sigma > 0$. 
    - the MLE is \(\hat{\mu} = \mathrm{sample median}\)
+    #+latex: \begin{center}
+    #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+    #+begin_src R :exports results :results graphics :file img/laplacedistpdf.pdf
+    curve(exp(-abs(x))/2, xlim = c(-3,3))
+    curve(dnorm(x), lty = 2, add = TRUE)
+    #+end_src
+    #+latex: \end{center}
+
+
 
 *** Mixture distributions
 Here we have \(X_{1},\ldots, X_{n} \sim f(x|\theta)\), but $f$ takes the form
@@ -437,7 +465,7 @@ p = \mbox{proportion of goldfish in lake}
    #+latex: \end{center}
    Let $p$ have a Beta density,
    \begin{equation}
-   p \sim \pi(p)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1},\quad 0 < p < 1. \quad \mbox {this is the prior.}
+   p \sim \pi(p)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1},\quad 0 < p < 1. \quad \mbox {This is the prior.}
    \end{equation}
    - Some properties
       1.  \(\E[p] = \frac{\alpha}{\alpha+\beta}=\eta  \)
@@ -446,7 +474,7 @@ p = \mbox{proportion of goldfish in lake}
       4. Think of \(\kappa = \alpha + \beta\) as /precision/ of belief
       5. The CDF is
       \[
-      \P(p \leq x) = \int_{0}^{x}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1}\,\diff p,
+      \P(p \leq x) = \int_{0}^{x}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1}\,\diff p.
       \]
       The above is the /incomplete beta function/.
 
@@ -462,7 +490,7 @@ p = \mbox{proportion of goldfish in lake}
    0, & \mbox{otherwise}.
    \end{cases}
    \]
-   so \(X_{i} \sim \mathrm{Bern}(p)\).  Then \(Y \sim \mathrm{Binom}(p)\) with
+   So \(X_{i} \sim \mathrm{Bern}(p)\).  Then \(Y \sim \mathrm{Binom}(p)\) with
    \[
    f(y|p) = {n \choose y}\,p^{y}(1-p)^{n - y},\quad y = 1,2,\ldots,n. \quad \mbox{(this is the Likelihood)}
    \]
@@ -483,11 +511,11 @@ p = \mbox{proportion of goldfish in lake}
    \]
    By inspection, we see that
    \[
-   p|y \sim \mathrm{Beta}(\alpha + y,\beta + n- y)
+   p|y \sim \mathrm{Beta}(\alpha + y,\beta + n- y),
    \]
    and so we conclude
    \begin{align*}
-   M &= \frac{\Gamma((\alpha + y)+(\beta+n-y))}{\Gamma(\alpha+y)\Gamma(\beta+n-y)}\\
+   M &= \frac{\Gamma((\alpha + y)+(\beta+n-y))}{\Gamma(\alpha+y)\Gamma(\beta+n-y)},\\
    &= \frac{\Gamma(\alpha+\beta+n)}{\Gamma(\alpha+y)\Gamma(\beta+n-y)}.
    \end{align*}
 
@@ -527,7 +555,7 @@ Beta/Binomial is called a CONJUGATE PAIR.
 
 Another conjugate pair: if \(\pi(\theta) = N(\mu,\,\tau^{2})\) and  \(f(x|\theta) = N(\theta,\,\sigma^{2})\), then
 \[
-\pi(\theta|x) = N\left(\frac{\xbar\tau^{2}+\mu\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n},\,\frac{\tau^{2}\cdot\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n}  \right)
+\pi(\theta|x) = N\left(\frac{\xbar\tau^{2}+\mu\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n},\,\frac{\tau^{2}\cdot\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n}  \right).
 \]
 
 - Other pairs:
@@ -589,13 +617,13 @@ We will talk about the following:
 
 ** Basic Methods: generating pseudo-random uniform numbers 
 
-*** Requirements of a Uniform Pseudo-Random Generator
+*** Desires for a Uniform Pseudo-Random Generator
 1. Want the distribution of the numbers to be uniform 
 2. Want independence of variates 
 3. Should be repeatable, portable 
 4. High computational speed 
 
-_Repeatability_: the ability to repeat the same stream of numbers at any time during the simulation. Useful for comparing simulations using different methods.
+*Repeatability:* the ability to repeat the same stream of numbers at any time during the simulation. Useful for comparing simulations using different methods.
 
 *** History 
 Guiding principle is that the validity of any simulation rests on the validity of the uniform generator.
@@ -607,11 +635,11 @@ People first used "random sources" to supply random numbers.
 
 - Famous random number tables (tables with over a million numbers)
 
-- We use an algorithm to generate pseudo-random numbers. We call it random since the output resembles a random sequence, at least in the sense that it passes standard statistical tests of randomness. But we will be using a deterministic sequence to generate/simulate a "random" sequence.
+We use an algorithm to generate pseudo-random numbers. We call it random since the output resembles a random sequence, at least in the sense that it passes standard statistical tests of randomness. But we will be using a deterministic sequence to generate/simulate a "random" sequence.
 
 *** Early Method: von Neumann's Midsquare Method
 
-Generates a random integer between 0 and 99,999
+Generates a random integer between 0 and 99,999.
 
 1. Choose any 5-digit number as the seed (12345) 
 2. Square seed and add leading zeros, to make it 10 digits (0152399025) 
@@ -619,7 +647,7 @@ Generates a random integer between 0 and 99,999
 
 We want values uniformly distributed. Since the method is iterative, the sequence will eventually repeat in cycles. For poor choices of the seed, unfortunately, the cycle length can be very short.
 
-The output CAN behave "randomly". To statistically verify the apparent randomness we could use Chi-Square Goodness of Fit test:
+The output CAN behave "randomly", but how do we know? To statistically check apparent randomness we could use a Chi-Square Goodness of Fit test:
 - Generate 5000 values, normalize by dividing by 100,000
 - Hypothesis: $X_{1},X_{2},\ldots,X_{5000}\sim\mathrm{Unif}(0,1)$
 - Partition \( [0,1] \) into, say, 10 intervals and calculate frequencies $f_{1},f_{2},\ldots,f_{10}$ 
@@ -636,7 +664,6 @@ U_{i}=(aU_{i-1}+c)\mod m,
 \]
 where $U_{i}$ is the random integer, $U_{0}$ is the seed, and $a,c,m$ are selected constants.
 
-
 - Properties: :: of the congruential algorithm
   1. Generates values $0,1,\ldots,m-1$. 
   2. After some iterations the sequence will repeat, and the length of the sequence is the /period/. 
@@ -650,8 +677,8 @@ where $U_{i}$ is the random integer, $U_{0}$ is the seed, and $a,c,m$ are select
 
 - *Result:* A linear congruential generator has maximal cycle length $m$ if and only if:
   - $c$ is nonzero and relatively prime to $m$.
-  - \( (a \mod q) = 1 \) for each prime factor $q$ of $m$.
-  - \( (a \mod 4) = 1 \) if 4 is a factor of $m$. 
+  - \( (a\mod q) = 1 \) for each prime factor $q$ of $m$.
+  - \( (a\mod 4) = 1 \) if 4 is a factor of $m$. 
 
 Researchers have found values of $a,c,m$ which give a long period and appear to be uniformly distributed.
 
@@ -660,13 +687,18 @@ Researchers have found values of $a,c,m$ which give a long period and appear to 
   c = 0,\quad a=2^{16}+3,\quad m=2^{31}
   \]
   This generator is very fast, but has poor statistical properties. In particular, $U_{i}$ and $U_{i+2}$ are highly positively correlated.
- 
 
-PICTURE 
+   #+latex: \begin{center}
+   #+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
+   #+begin_src R :exports results :results graphics :file img/randu.pdf
+   print(splom(randu))
+   # or plotmatrix(randu) # from ggplot2
+   #+end_src
+   #+latex: \end{center}
 
 \vspace{1in}
 
-- Good Generator: :: here we go   
+- Good Generator: :: here's one: 
   \[
   U_{i}=(16,807U_{i-1})\mod(2^{31}-1),
   \]
@@ -682,7 +714,7 @@ These operate on /n/-bit pseudo-random binary vectors.
   2. Shift it to the right by 2 units. (0010011) 
   3. Add lines 1) and 2). (1011110) 
   4. Shift sum to the left by three bits. (1110000) 
-  5. Add lines 3) and 4). *result* (0101110) 
+  5. Add lines 3) and 4). *Result* (0101110) 
 
 Parameters of the algorithm: 
 - the length of the binary vector, 
@@ -702,7 +734,7 @@ There are three general methods:
 
 The inversion method is based on the following.
 
-- Probability Integral Transformation: :: Suppose \(X\) has a continuous CDF $F_{X}(x)=\P(X \leq x)$. Define the inverse CDF $F_{X}^{-1}(y)$.  If $U\sim\mathrm{Unif}(0,1)$, then $F_{X}^{-1}(U)$ is distributed according to $F_{X}$.
+- Probability Integral Transformation: :: Suppose \(X\) has a continuous strictly increasing CDF $F_{X}(x)=\P(X \leq x)$. Denote the inverse CDF $F_{X}^{-1}(y)$.  If $U\sim\mathrm{Unif}(0,1)$, then $F_{X}^{-1}(U)$ is distributed according to $F_{X}$.
 
 - Proof: :: Let \(Y = F_{X}^{-1}(U)\). Then 
   \[
@@ -712,14 +744,13 @@ The inversion method is based on the following.
 
 Thus, if we can find $F_{X}^{-1}$, the inverse CDF, all we have to do is apply $F_{X}^{-1}(U)$ to a uniform $U$ to get random numbers from $F_{X}$.
 
-- Note: ::We assumed above that the CDF was continuous, but we didn't need to... the statement is true in all generality. In the general case we must define 
+- Note: :: We assumed above that the CDF was strictly increasing, but we didn't need to... the statement is true for any continuous CDF. In the general case we must define 
   \[
   F_{X}^{-1}(t)=\inf\{x:\ F_{X}(x)\geq t\}.
   \]
 
 **** Example. Exponential. \(\mathrm{Exp}(\theta)\).  
 $X$ has $f(x)=\frac{1}{\theta}\, \me^{-x/\theta}$, $x > 0$.  The CDF is $\P(X\leq x)=1 - \me^{-x/\theta}$, $x > 0$. Now set $F_{X}(x) = y$, and solve for $x$. 
-
 \begin{align*}
 1 - \me^{-x/\theta} & = y\\
 \me^{-x/\theta} & = 1 - y\\
@@ -727,16 +758,18 @@ $X$ has $f(x)=\frac{1}{\theta}\, \me^{-x/\theta}$, $x > 0$.  The CDF is $\P(X\le
 x & = -\theta\ln(1-y) = F_{X}^{-1}(y).
 \end{align*}
 
-#+begin_src R :eval never :tangle yes
-u <- runif(100)
-x <- -log(1 - u)
-#+end_src
-
 *R code:* To generate 100 Exp(1)'s: write
 #+begin_src R :eval never :tangle yes
 u <- runif(100)
 x <- -log(1 - u)
 #+end_src
+
+Or we could do it more directly with
+#+begin_src R :eval never :tangle yes
+x <- rexp(100)
+x <- rexp(100, scale = theta)
+#+end_src
+
 
 *Note:* If \(U\sim \mathrm{Unif}(0,1)\), then \( (1-U)\sim \mathrm{Unif}(0,1) \). Therefore, \(-\log(1-(1-U))\sim \mathrm{Exp}(1)\), that is, \(-\log(U)\sim \mathrm{Exp}(1)\).
 
@@ -744,11 +777,22 @@ x <- -log(1 - u)
 \[
 f(x)=\frac{\me^{-x}}{(1 + \me^{-x})^{2}},\quad -\infty < x <\infty.
 \]
-\vspace{1.5in}
 and 
 \[
 F(x)=\frac{\me^{x}}{1 + \me^{x}} = y
 \]
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/logisdistpdf.pdf
+p2 <- qplot(-4:4, geom = 'blank') +
+      labs(x = "x", y = "density") + 
+      stat_function(fun = dnorm, aes(linetype = 'N(0,1)'))  +
+      stat_function(fun = dlogis, aes(linetype = 'Logis(0,1)')) +
+      scale_linetype_manual('Model', 2:1) + 
+      opts(legend.position = c(0.85, 0.85))
+print(p2)
+#+end_src
+#+latex: \end{center}
 Solving for $x$, 
 \begin{align*}
 \me^{x} & = y(1 + \me^{x})\\
@@ -757,10 +801,15 @@ Solving for $x$,
 x & = \ln \frac{y}{1 - y} = F_{X}^{-1}(y) = \mbox{logit}\ y.
 \end{align*}
 
-Therefore, to generate standard Logistic, we write 
+Therefore, to generate standard Logistic, we could do
 #+begin_src R :eval never :tangle yes
-u = runif(100);
-x = log(u/(1 - u));
+u <- runif(100)
+x <- log(u/(1 - u))
+#+end_src
+
+Or we could do it more directly in =R= with
+#+begin_src R :eval never :tangle yes
+x <- rlogis(100)
 #+end_src
 
 
@@ -796,7 +845,7 @@ a_{0}=2.30753, & a_{1}=0.27061, & b_{1}=0.99229, & b_{2}=0.04481.
 **** Example. Logistic. \( \mathrm{Logis}(\mu,\beta) \).
 If \( Y \sim \mathrm{Logis}(\mu,\beta) \) then $Y$ has PDF
 \[
-f_{Y}(y)=\frac{\beta^{-1}\me^{-\frac{y-\mu}{\beta}}}{(1 + \me^{-\frac{y-\mu}{\beta}})^{2}},\quad -\infty< y <\infty.
+f_{Y}(y)=\frac{1}{\beta}\frac{\me^{-\frac{y-\mu}{\beta}}}{(1 + \me^{-\frac{y-\mu}{\beta}})^{2}},\quad -\infty< y <\infty.
 \]
 To generate 100 IID $Y$'s distributed Logis(3,7) we may use the =R= code:
 
@@ -806,14 +855,16 @@ x <- log(u(1-u))  # 100 std logistics
 y <- 3 + 0.7*x    # 100 Log(3,7)'s
 #+end_src
 
-**** Using Exponentials to build other distributions.
+or more directly with =R= we could do
+#+begin_src R :eval never :tangle yes
+rlogis(100, location = 3, scale = 7)  # location/scale logistics
+#+end_src
 
-*Example.* Generating Gammas.
+- Using Exponentials to build other distributions :: Example: Generating Gammas.
 
 - Know: :: If \(U \sim\mathrm{Unif}(0,1)\), then \( -\theta\log(U)\sim\mathrm{Exp}(\theta) \).
 
 - Know: :: Let $X_{1},X_{2},\ldots,X_{n}\sim\mathrm{Exp}(\theta)$ be IID.  Let $Y=\sum_{i}X_{i}$. Then $Y\sim\mathrm{Gamma}(n,\theta)$.
-
 
 *R:* To simulate \( \mathrm{Gamma}(n,\theta) \):
 #+begin_src R :eval never
@@ -827,7 +878,12 @@ A shorter way would be:
 u <- sum(-theta * log(runif(n)))
 #+end_src
 
-This only works for $n$ = a positive integer. We need another algorithm for non-integral $n$.
+This only works for $n$ = a positive integer. We would need another algorithm for non-integral $n$, but with =R= we can do whatever we want.
+#+begin_src R :eval never
+u <- rgamma(1, shape = n, scale = theta)
+#+end_src
+
+Note that above we would change the first argument, =1=, to however many gammas we like.
 
 
 *Example.* Generating Betas.
@@ -841,7 +897,10 @@ v <- sum(-log(runif(n)))     # a Gamma(b,1)
 y <- u/(u+v)                 # a Beta(a,b)
 #+end_src
 
-Unfortunately, this method only works for integral $\alpha$ and $\beta$.
+Unfortunately, this method only works for integral $\alpha$ and $\beta$.  When we do it with =R= directly we can use whatever we like:
+#+begin_src R :eval never
+u <- rbeta(1, shape1 = a, shape2 = b)
+#+end_src
 
 
 *Example.* Generating Chi-Squares.
@@ -854,12 +913,15 @@ y <- sum(-2*log(runif(k)))   # a Gamma(k,2)
 y <- rchisq(1, df = k)       # same thing
 #+end_src
 
-This only works for even degrees of freedom, unfortunately.
+This only works for even degrees of freedom, unfortunately. When we do it with =R= directly we can use whatever we like:
+#+begin_src R :eval never
+u <- rchisq(500, df = m)
+#+end_src
 
 
 *Example.* Generating Fs.
 
-- Know: :: Fisher's $F$ distribution $F(\alpha,\beta)$.
+- Know: :: Snedecor's $F$ distribution $F(\alpha,\beta)$.
   \[
   f(x|\alpha,\beta)=\frac{\Gamma((\alpha+\beta)/2)\alpha^{\beta/2}\beta^{\alpha/2}}{\Gamma(\alpha/2)\Gamma(\beta/2)}\frac{x^{(\alpha-2)/2}}{(\alpha+\beta x)^{(\alpha+\beta)/2}},\quad x>0,\quad\alpha,\beta>0.
   \]
@@ -867,15 +929,16 @@ This only works for even degrees of freedom, unfortunately.
 - Know: :: If $U\sim\chi^{2}(m)$ and $V\sim\chi^{2}(n)$ are independent, then $\frac{U/m}{V/n}\sim F(m,n)$.
 
 *R:* To simulate $F(2k,2l)$:
-
 #+begin_src R :eval never
 u <- sum(-2*log(runif(k)))        # a Chi-square(2k)
 v <- sum(-log(runif(a)))          # a Chi-square(2l)
 y <- (u/k)/(v/l)                  # an F(2k,2l)
 #+end_src
 
-Again, this will only work for even degrees of freedom. We need another method.
-
+Again, the above method will only work for even degrees of freedom but the direct method can do anything.
+#+begin_src R :eval never
+y <- rf(500, df1 = m, df2 = n)    # 500 F(m,n)'s
+#+end_src
  
 
 
@@ -887,13 +950,13 @@ Again, this will only work for even degrees of freedom. We need another method.
   \]
 
 
-*Special Case:* $f(x)=1$, $0<x<1$.   Then $F(x)=x$ and the above simplifies to 
+*Special Case:* $f(x)=1$, $0 < x < 1$.   Then $F(x)=x$ and the above simplifies to 
 \[
 X_{(k)}\sim f_{X_{(k)}}(x)=\frac{n!}{(k-1)!(n-k)!}\, x^{k-1}\,(1-x)^{n-k},
 \]
-which is a $\mathrm{Beta(k,n-k+1)}$ distribution.
+which is a $\mathrm{Beta(k,\,n-k+1)}$ distribution.
 
-*R:* An alternative to simulate $\mathrm{Beta}(k,n-k+1)$:
+*R:* An alternative to simulate $\mathrm{Beta}(k,\,n-k+1)$:
 
 #+begin_src  R :eval never
 u <- runif(n)  # n uniforms
@@ -901,26 +964,17 @@ v <- sort(u)   # order the uniforms
 y <- v[k]      # the kth order statistic  
 #+end_src
 
-This algorithm is somewhat costly for large $k$ and $n$, since sorting a vector is often difficult for computers.
+This algorithm is costly for large $k$ and $n$, since sorting a vector is often difficult for computers.
 
 
-*Example.* Generating $N(0,1)$s /exactly/.
+*Example.* Generating \(N(0,1)\) /exactly/.
 
 - Know: :: If $X_{1}$ and $X_{2}$ are i.i.d. $N(0,1)$, then the point $(X_{1},X_{2})$ in the Cartesian plane satisfies
   - $r^{2}=X_{1}+X_{2}\sim\chi^{2}(2)$. 
   - $\theta \sim \mathrm{Unif}(0,2\pi)$. 
   - $r$ and $\theta$ are independent. 
 
-GREAT! Now we can generate normals. It turns out that R has a built in algorithm for calculating Normals, which is called with the command =rnorm=.
-
-*R:* To simulate IID Normals.
-
-#+begin_src  R :eval never
-u <- rnorm(n)  # n standard Normals, IID
-#+end_src
-
-
-*R:* The Box-Muller Algorithm to simulate two standard normals:
+*R:* The _Box-Muller Algorithm_ to simulate two standard normals:
 
 #+begin_src  R :eval never
 theta <- 2*pi*runif(1)       #  a uniform angle
@@ -929,12 +983,20 @@ x1 <- r*cos(theta);          #  use polar coordinates
 x2 <- r*sin(theta);          #  use polar coordinates  
 #+end_src
 
+GREAT! Now we can generate normals. But we can do it directly with =R= and the =rnorm= function.
+
+*R:* To simulate IID Normals.
+
+#+begin_src  R :eval never
+u <- rnorm(n)  # n standard Normals, IID
+#+end_src
+
 
 *The Inversion Method for simulating discrete random variables.*  
 
-When $X$ is discrete, $F^{-1}$ is not uniquely defined without additional clarification. One way to define $F^{-1}$ is with 
+When $X$ is discrete, $F^{-1}$ is not uniquely defined without additional clarification. The standard way to define $F^{-1}$ is 
 \[
-F_{X}^{-1}(t)=\inf\{x:\ F_{X}(x)\geq t\}.
+F_{X}^{-1}(t)=\inf\{x:\, F_{X}(x)\geq t\}.
 \]
 Below is a typical discrete random variable $X$, together with its PMF $p(x)$.
 
@@ -942,9 +1004,14 @@ Below is a typical discrete random variable $X$, together with its PMF $p(x)$.
 |------+-----+-----+-----|
 | p(x) | 0.2 | 0.3 | 0.5 |
 
-PICTURE 
-
-\vspace{1.5in}
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/discpmf.pdf
+library(distr)
+X <- DiscreteDistribution(supp = 1:3, prob = c(2,3,5)/10)
+plot(X, to.draw.arg = "d")
+#+end_src
+#+latex: \end{center}
 
 To generate a discrete RV $X$ with $\P(X=x_{j})=p_{j}$, $j=0,1,2,\ldots$
 1. Simulate $U \sim \mathrm{Unif}(0,1)$. 
@@ -992,15 +1059,18 @@ We can also generate RVs with /mixture models/, which we will discuss in more de
 
 We have spent much time developing efficient methods to generate uniform random numbers, and we would like to build on all of our hard work.
 
-*Idea:* Draw the PDF $f$ on a piece of paper inside a box and tack it on the wall. Throw darts uniformly inside the box. If the dart falls "outside" the PDF, then try again. Suppose the dart falls "inside" the PDF at the point $(x,y)$. Then $x$ is an observation from a random variable $X\sim f$!
+*Idea:* Draw the PDF $f$ on a piece of paper inside a box and tack it on the wall. Throw darts uniformly inside the box. If the dart falls "outside" the PDF, then try again. Suppose the dart falls "inside" the PDF at the point $(x,y)$. Then $x$ is an observation from a random variable \(X\sim f\)!
 
-PICTURE:
-
-\vspace{1.5in}  
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/acceptrejectidea.pdf
+curve(dchisq(x, df=4), xlim = c(0,9), lwd = 3)
+points(runif(1000, max = 9), runif(1000, max = 0.2), cex = 0.5)
+#+end_src
+#+latex: \end{center}
 
 *The Fundamental Theorem of Simulation:* Simulating $X\sim f(x)$ is equivalent to simulating $(X,U)\sim \mathrm{Unif}\{(x,u):0 < u < f(x)\}$.
 
- 
 *Intuitive Algorithm:* To generate $X \sim f(x)$, where (for simplicity) $f$ is a PDF on $[a,b]$ with $0\leq f(x)\leq M$.
 1. Generate $X\sim\mathrm{Unif}(a,b)$ and $U\sim\mathrm{Unif}(0,m)$; 
 2. Accept $Y = X$ if $0 \leq U < f(X)$; 
@@ -1053,21 +1123,16 @@ mydiscrete <- function(){
 }
 #+end_src
 
-
 *At the COMMAND prompt:*
 #+begin_src R :eval never
 y <- mydiscrete()
 #+end_src
 
-
-
 What if we would like to simulate a whole vector of discrete RVs, all IID with density $\mathbf{p}$? We can generalize our function to include arguments $\mathbf{p}$ and $n$, the density and length of the simulation, called =mydiscretev=.
 
- 
+(SEE PRINTOUT for =mydiscretev.pdf=).
 
-(SEE PRINTOUT).
-
- How good is the algorithm? $\P($accept$)=1/M$. If $N$ is the number of iterations needed to wait until an Accept, then $N\sim\mathrm{Geom}(1/M)$. Thus, on average, we would expect to wait $M$ trials before we accept. The closer $M$ is to 1, the more efficient the algorithm.
+How good is the algorithm? \(\P(\mbox{accept}) = 1/M\). If $N$ is the number of iterations needed to wait until an Accept, then $N\sim\mathrm{Geom}(1/M)$. Thus, on average, we would expect to wait $M$ trials before we accept. The closer $M$ is to 1, the more efficient the algorithm.
 
 *The Continuous Case*
 
@@ -1078,12 +1143,11 @@ Here our target density is the standard Normal distribution with PDF
 \[
 f(x) = \frac{1}{\sqrt{2\pi}} \me^{-x^{2}/2}.
 \]
-
-KNOW: A Cauchy(0,1) RV has the instrumental PDF
+*KNOW:* a Cauchy(0,1) random variable has the instrumental PDF
 \[
-g(x)=\frac{1}{\pi}\,\frac{1}{1+x^{2}},\quad-\infty<x<\infty
+g(x)=\frac{1}{\pi}\,\frac{1}{1+x^{2}},\quad -\infty < x < \infty,
 \]
-With associated CDF
+with associated CDF
 \begin{align*}
 F(x) & =\P(X\leq x)\\
  & =\int_{-\infty}^{x}\frac{1}{\pi}\,\frac{1}{1+t^{2}}\diff t\\
@@ -1096,21 +1160,20 @@ It is now easy to calculate the inverse transformation to simulate:
 \pi(y-1/2) & =\tan^{-1}x\\
 \tan(\pi(y-1/2)) & =x=F^{-1}(y).
 \end{align*}
-
-Thus it is EASY to simulate from a Cauchy, and further, we know already that Cauchy has /heavier tails/ than the Normal, suggesting that there is an $M$ such that Normal $\leq$ $M\cdot$ /Cauchy/.  That is, we should find $M$ that satisfies 
+So it is EASY to simulate from a Cauchy, and further, we know already that Cauchy has /heavier tails/ than the Normal, suggesting that there is an $M$ such that Normal $\leq$ $M\cdot$ /Cauchy/.  That is, we should find $M$ that satisfies 
 \begin{align*}
 \frac{1}{\sqrt{2\pi}} \me^{-x^{2}/2} & \leq M\,\frac{1}{\pi(1+x^{2})},\quad\mbox{or}\\
 \sqrt{\frac{\pi}{2}}(1+x^{2}) \me^{-x^{2}/2} & \leq M\quad\mbox{for all \ensuremath{x}.}
 \end{align*}
 
-We can approximate this last bound numerically. It turns out that the maximum of the LHS occurs when $x=1$, and that maximum value is $M\approx1.5203469$. This means that on the average we need to generate approximately 1.52 Cauchys before we will get a Normal. This translates to a probability of acceptance approximately 0.6548.
+We can approximate this last bound numerically. It turns out that the maximum of the LHS occurs when $x=1$, and that maximum value is \(M \approx 1.5203469\). This means that on the average we need to generate approximately 1.52 Cauchys before we will get a Normal. This translates to a probability of acceptance approximately 0.6548.
 
 *Algorithm:*
 1. Generate $U \sim \mathrm{Unif}(0,1)$ and $Y \sim \mathrm{Cauchy}(0,1)$; 
 2. Accept $Y = X$ if $U < f(Y)/Mg(Y)$; 
 3. Return to 1. otherwise. 
 
-(SEE PRINTOUT).
+(SEE PRINTOUT for =rand_norm.pdf=).
 
 *Comment:* Since the function $g$ only needs to satisfy $f\leq Mg$ for some $M$, we may take any constants in $f$ and /absorb/ them into $g$; then we find our constant $M$. Thus, we only need to know $f$ up to a multiplicative constant (this will be handy later when we do Bayesian calculations).
 
@@ -1120,11 +1183,12 @@ Here our target density is /Beta/ distribution with PDF
 \[
 f(x)\propto x^{2}(1-x)^{2}.
 \]
-
-_PICTURE_
-
-\vspace{1in}
-
+#+latex: \begin{center}
+#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+begin_src R :exports results :results graphics :file img/betapdfacceptreject.pdf
+curve(dbeta(x, shape1 = 3, shape2 = 3))
+#+end_src
+#+latex: \end{center}
 - Find a suitable instrumental density $g(x)$. (Choose $g=1$) 
 - Compute $M$: 
    \[
@@ -1354,7 +1418,7 @@ where $h$ is some function of interest and $f$ is a given density function.
 
 KNOW: *The Strong Law of Large Numbers (SLLN).* Let $X_{1},X_{2},\ldots$ be IID random variables with $\E X_{i} = \mu < \infty$, and define $\Xbar_{n}=(1/n)\sum_{i=1}^{n}X_{i}$. Then, for every $\epsilon>0$, 
 \[
-\P(\lim_{n\to\infty}|\Xbar_{n}-\mu|<\epsilon)=1,
+\P \left(\lim_{n\to\infty} |\Xbar_{n}-\mu| < \epsilon \right)=1,
 \]
 that is, $\Xbar_{n}$ converges almost surely to $\mu$.
 
