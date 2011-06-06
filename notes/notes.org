@@ -1367,7 +1367,7 @@ $\mathfrak{A}$,
    & =a_{0}\quad\mbox{if \ensuremath{x\notin R}.}
    \end{align*}
    where $R$ is a /rejection region/ determined to have some optimal properties. 
-- For Confidence intervals, the decision rule often looks like 
+- For confidence intervals, the decision rule often looks like 
    \[
    \delta(x)=[L(x),U(x)]
    \]
@@ -1403,14 +1403,14 @@ In this form it is easy to see that the risk can be interpreted as an average Lo
    \end{align*}
    and the decision rule take the form 
    \begin{align*}
-   \delta(x) & =\mbox{Reject \ensuremath{H_{0}}when \ensuremath{\Xbar<1},}\\
- & =\mbox{Accept \ensuremath{H_{0}}if \ensuremath{\Xbar\leq1}.}
+   \delta(x) & =\mbox{Reject \ensuremath{H_{0}} when \ensuremath{\Xbar<1},}\\
+ & =\mbox{Accept \ensuremath{H_{0}} if \ensuremath{\Xbar\leq1}.}
    \end{align*}
    Then we will use the Loss function 
    \begin{align*}
    L(\theta,a) & =0\quad\mbox{if the right decision is made,}\\
- & =k_{0}\quad\mbox{if \ensuremath{\theta\leq\theta_{0}}and we reject \ensuremath{H_{0}},}\\
- & =k_{1}\quad\mbox{if \ensuremath{\theta>\theta_{0}}and we accept \ensuremath{H_{0}}}
+ & =k_{0}\quad\mbox{if \ensuremath{\theta\leq\theta_{0}} and we reject \ensuremath{H_{0}},}\\
+ & =k_{1}\quad\mbox{if \ensuremath{\theta>\theta_{0}} and we accept \ensuremath{H_{0}}}
    \end{align*}
    Then the risk is given by 
    \begin{align*}
@@ -1523,11 +1523,11 @@ our answer is:
 \]
 
 
-From the PRINTOUT:
+From the PRINTOUT for =compare_estimators.pdf=:
 
-$R_{\Xbar}(0)=0.0983\pm2(0.0043)$
-$R_{\overset{\sim}{X}}(0)=0.0622\pm2(0.0035)$
-$R_{\Xbar_{\alpha}}(0)=0.0830\pm2(0.0037)$
+$R_{\Xbar}(0)=0.0994\pm2(0.0045)$
+$R_{\overset{\sim}{X}}(0)=0.0685\pm2(0.0037)$
+$R_{\Xbar_{\alpha}}(0)=0.0864\pm2(0.0039)$
 
 In this case, the median is the best estimator when $\theta=0$, followed by the trimmed mean, and lastly the sample mean.  
 
@@ -1573,20 +1573,20 @@ We will focus on 2.
 *Monte Carlo Simulation:* (Assume $\mu_{1}=\mu_{2}=0$.)
 1. Generate $X_{1},\ldots,X_{m}\sim N(0,\sigma_{1}^{2})$ and $Y_{1},\ldots,Y_{n}\sim N(0,\sigma_{2}^{2})$. 
 2. Compute $T$. 
-3. Record if $|T|>t_{m+n-2}(\alpha/2)=1.7341$. (Here we set $\alpha=0.10$.) 
+3. Record if the observed \(p\)-value is less than 0.05. 
 4. Repeat. 
 
 When the simulation is finished, a Monte Carlo estimate of the size of the test will be given by $\hat{p}=\mathit{num\ rejections/TotalSimulations}$, that is, the proportion of rejections. To evaluate the accuracy of our estimate we may find the standard error, estimated with the quantity
 \[
 \mathrm{s.e.}\approx\sqrt{\frac{\hat{p}\,(1-\hat{p})}{\mathrm{Iter}}}
 \]
-From the output, we see that our estimate of the size is right at 0.10 when the variances are equal ($0.1017-2*0.0030225=0.095655$), and the size appears to be approximately 0.12 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.1155-2*0.0031962=0.1091076$).  
+From the output, we see that our estimate of the size is right at 0.05   when the variances are equal ($0.0502-2*0.0022=0.0458$), and the size appears to be over 0.06 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.0659-2*0.0025=0.0609$).  
 
 ** Bayesian Applications of Monte Carlo 				:NEW:
 
 ** Importance Sampling
 
-*Example.* Cauchy tail probabilities. (Ripley) We would like to estimate the quantity 
+*Example.* Cauchy tail probabilities. (Ripley and Robert/Casella) We would like to estimate the quantity 
 \[
 p=\int_{2}^{\infty}\frac{1}{\pi}\frac{1}{1+x^{2}}\diff x,
 \]
@@ -1628,54 +1628,52 @@ that is, we want to know $\P(X > 2)$ where $X \sim \mathrm{Cauchy}(0,1)$. (It tu
    \]
    We evaluate our estimator by examining the variance: $\mbox{Var}(\hat{p}_{3})=(\E h^{2}-(\E h)^{2})/m$.
 
-_BONUS:_ Use integration by parts to show that this last quantity is approximately $0.02850879/m$.
+   _BONUS:_ Use integration by parts to show that this last quantity is approximately $0.02850879/m$.
 
-*Solution.* (Due to Jeremy Hamilton, 6/20/05.)
+   *Solution.* (Due to Jeremy Hamilton, 6/20/05.)
+   First, to find ${\displaystyle \int\cfrac{1}{(1+x^{2})^{2}}\ dx}$, we use the substitution $x=\tan{\theta}$. So we have $dx=\sec^{2}{\theta}\ d\theta$, $\theta=\arctan{x}$, ${\displaystyle \sin{\theta}=\cfrac{x}{\sqrt{1+x^{2}}}}$, and ${\displaystyle \cos{\theta}=\cfrac{1}{\sqrt{1+x^{2}}}}$. This gives 
+   \begin{align*}
+   \int\cfrac{1}{(1+x^{2})^{2}}\ dx & =\int\cos^{2}{\theta}\ d\theta\\
+   & =\cfrac{1}{2}\int(1+\cos{2\theta})\ d\theta\\
+   & =\cfrac{1}{2}\left(\theta+\cfrac{\sin{2\theta}}{2}\right)+C\\
+   & =\cfrac{\theta+\sin{\theta}\cos{\theta}}{2}+C\\
+   & =\cfrac{\arctan{x}}{2}+\cfrac{x}{2(1+x^{2})}+C.
+   \end{align*}
+   Thus, we obtain
+   \begin{align*}
+   \text{Var}(\hat{p}_{3}) & =\cfrac{\mathbb{E}[h^{2}(x)]-\mathbb{E}[h(x)]^{2}}{m}\\
+   \\ & =\cfrac{\left[\cfrac{4}{\pi^{2}}{\displaystyle \int_{0}^{2}\cfrac{1}{(1+x^{2})^{2}}\cdot\cfrac{1}{2}\ dx}-\left(\cfrac{2}{\pi}{\displaystyle \int_{0}^{2}\cfrac{1}{1+x^{2}}\cdot\cfrac{1}{2}\ dx}\right)^{2}\right]}{m}\\
+   \\ & =\cfrac{\left[\cfrac{2}{\pi^{2}}\left(\cfrac{\arctan{2}}{2}+\cfrac{1}{5}\right)-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}\\
+   \\ & =\cfrac{\left[\cfrac{5\arctan{2}+2}{5\pi^{2}}-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}.
+   \end{align*}
+   Hence
+   \[
+   \text{Var}(\hat{p}_{3})=\cfrac{\left[\cfrac{5\arctan{2}+2}{5\pi^{2}}-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}.
+   \]
+   Which yields our result,
+   \[
+   \text{Var}(\hat{p}_{3})\approx\cfrac{0.02850878546357}{m}.
+   \]
+   Note: that is another 45% reduction in variance! As good as this is, we will investigate a final method for estimating $p$.
 
-First, to find ${\displaystyle \int\cfrac{1}{(1+x^{2})^{2}}\ dx}$, we use the substitution $x=\tan{\theta}$. So we have $dx=\sec^{2}{\theta}\ d\theta$, $\theta=\arctan{x}$, ${\displaystyle \sin{\theta}=\cfrac{x}{\sqrt{1+x^{2}}}}$, and ${\displaystyle \cos{\theta}=\cfrac{1}{\sqrt{1+x^{2}}}}$. This gives 
-\begin{align*}
-\int\cfrac{1}{(1+x^{2})^{2}}\ dx & =\int\cos^{2}{\theta}\ d\theta\\
- & =\cfrac{1}{2}\int(1+\cos{2\theta})\ d\theta\\
- & =\cfrac{1}{2}\left(\theta+\cfrac{\sin{2\theta}}{2}\right)+C\\
- & =\cfrac{\theta+\sin{\theta}\cos{\theta}}{2}+C\\
- & =\cfrac{\arctan{x}}{2}+\cfrac{x}{2(1+x^{2})}+C.
-\end{align*}
-Thus, we obtain
-\begin{align*}
-\text{Var}(\hat{p}_{3}) & =\cfrac{\mathbb{E}[h^{2}(x)]-\mathbb{E}[h(x)]^{2}}{m}\\
-\\ & =\cfrac{\left[\cfrac{4}{\pi^{2}}{\displaystyle \int_{0}^{2}\cfrac{1}{(1+x^{2})^{2}}\cdot\cfrac{1}{2}\ dx}-\left(\cfrac{2}{\pi}{\displaystyle \int_{0}^{2}\cfrac{1}{1+x^{2}}\cdot\cfrac{1}{2}\ dx}\right)^{2}\right]}{m}\\
-\\ & =\cfrac{\left[\cfrac{2}{\pi^{2}}\left(\cfrac{\arctan{2}}{2}+\cfrac{1}{5}\right)-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}\\
-\\ & =\cfrac{\left[\cfrac{5\arctan{2}+2}{5\pi^{2}}-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}.
-\end{align*}
-Hence
-\[
-\text{Var}(\hat{p}_{3})=\cfrac{\left[\cfrac{5\arctan{2}+2}{5\pi^{2}}-\cfrac{\arctan^{2}{2}}{\pi^{2}}\right]}{m}.
-\]
-Which yields our result,
-\[
-\text{Var}(\hat{p}_{3})\approx\cfrac{0.02850878546357}{m}.
-\]
-Note: that is another 45% reduction in variance! As good as this is, we will investigate a final method for estimating $p$.
-
-3. In the integral 
-\[
-p=\int_{2}^{\infty}\frac{1}{\pi}\frac{1}{1+x^{2}}\diff x
-\]
-make the substitution $u=x^{-1}$ with $\diff u=-x^{-2}\diff x$ or $-u^{-2}\diff u=\diff x$.
-Then we may rewrite the integral as 
-\[
-\int_{0}^{1/2}\frac{1}{\pi}\frac{u^{-2}}{1+u^{-2}}\diff u
-\]
-and after multiplying the numerator and denominator by $y^{2}$ this integral may be viewed as the expectation of $h(Y)/4=1/2\pi(1+Y^{2})$ where $Y\sim\mathrm{Unif}(0,1/2)$. and $h$ is the function used for $\hat{p}_{3}$. To estimate $p$ this last time we may simulate $Y_{1},\ldots,Y_{m}\sim\mathrm{Unif}(0,1)$ and use 
-\[
-\hat{p}_{4} = \frac{1}{4m}\sum_{i=1}^{m} h(Y_{i}).
-\]
-Since the functional form is the same, we may complete another integration by parts and we will find that the variance of $\hat{p}_{4}$ is $\mbox{Var}(\hat{p}_{4})=0.000095525/m$ which is /an additional 99.6% reduction in variance/! If we compare the variance of $\hat{p}_{1}$ with that of $\hat{p}_{4}$
-we find: 
-\[
-\frac{\hat{p}_{1}}{\hat{p}_{4}}=1316.960954
-\]
-and in particular, the standard error will be approximately $\sqrt{1316.960954}\approx 36.28$ times smaller if we use $\hat{p}_{4}$, which translates to 36 times fewer simulations. 
+- In the integral 
+  \[
+  p=\int_{2}^{\infty}\frac{1}{\pi}\frac{1}{1+x^{2}}\diff x
+  \]
+  make the substitution $u=x^{-1}$ with $\diff u=-x^{-2}\diff x$ or $-u^{-2}\diff u=\diff x$.
+  Then we may rewrite the integral as 
+  \[
+  \int_{0}^{1/2}\frac{1}{\pi}\frac{u^{-2}}{1+u^{-2}}\diff u
+  \]
+  and after multiplying the numerator and denominator by $y^{2}$ this integral may be viewed as the expectation of $h(Y)/4=1/2\pi(1+Y^{2})$ where $Y\sim\mathrm{Unif}(0,1/2)$. and $h$ is the function used for $\hat{p}_{3}$. To estimate $p$ this last time we may simulate $Y_{1},\ldots,Y_{m}\sim\mathrm{Unif}(0,1)$ and use
+  \[
+  \hat{p}_{4} = \frac{1}{4m}\sum_{i=1}^{m} h(Y_{i}).
+  \]
+  Since the functional form is the same, we may complete another integration by parts and we will find that the variance of $\hat{p}_{4}$ is $\mbox{Var}(\hat{p}_{4})=0.000095525/m$ which is /an additional 99.6% reduction in variance/! If we compare the variance of $\hat{p}_{1}$ with that of $\hat{p}_{4}$ we find: 
+  \[
+  \frac{\hat{p}_{1}}{\hat{p}_{4}}=1316.960954
+  \]
+  and in particular, the standard error will be approximately $\sqrt{1316.960954}\approx 36.28$ times smaller if we use $\hat{p}_{4}$, which translates to 36 times fewer simulations. 
 
  
 The above suggests a general method to improve Monte Carlo estimates.
@@ -1730,15 +1728,15 @@ The estimator is just like before except that instead of $m$ we use the sum of t
    \]
    Unfortunately, if $h > 0$ then we are right back where we started, because then in order to find $g^{\ast}$ we need to know $\int h(x)f(x)\diff x$, the integral we originally wanted!
 
-*Example.* Exponential and Lognormal Comparison (book). Here we wish to estimate the parameter $\lambda$ based on the observation of a random variable $X$, where $X$ is distributed from two different populations. The first is exponential, $X\sim\mathrm{Exp}(\lambda)$ with PDF 
+*Example.* Exponential and Lognormal Comparison (Robert and Casella). Here we wish to estimate the parameter $\lambda$ based on the observation of a random variable $X$, where $X$ is distributed from two different populations. The first is exponential, $X\sim\mathrm{Exp}(\lambda)$ with PDF 
 \[
 f_{1}(x)=\frac{1}{\lambda}\me^{-x/\lambda},\quad x>0
 \]
- and the second is $X\sim\mathrm{Lnorm}(0,\sigma^{2})$, with PDF
+ and the second is $X\sim\mathrm{Lnorm}(0,\sigma)$, with PDF
 \[
 f_{2}(x)=\frac{1}{\sigma\sqrt{2\pi}}\,\frac{1}{x}\,\exp^{-(\ln x)^{2}/2\sigma^{2}},\quad-\infty<x<\infty,
 \]
-where $\me^{\sigma^{2}/2}=\lambda$. Note that a $\mathrm{Logn}(0,\sigma^{2})$ RV $Y$ may be thought of as $Y=\me^{\sigma Z}$, with $Z \sim N(0,1)$.
+where $\me^{\sigma^{2}/2}=\lambda$. Note that a $\mathrm{Lnorm}(0,\sigma)$ RV $Y$ may be thought of as $Y=\me^{\sigma Z}$, with $Z \sim N(0,1)$.
 
 We will compare the two estimators with the /weighted square error loss/ 
 \[

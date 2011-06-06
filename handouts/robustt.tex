@@ -1,4 +1,4 @@
-% Created 2011-05-19 Thu 14:12
+% Created 2011-06-06 Mon 11:31
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -18,7 +18,7 @@
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
-\title{Investigating Robustness of the Two Sample t-Test}
+\title{2\#+TITLE:   Investigating Robustness of the Two Sample t-Test}
 %\author{G. Jay Kerns}
 \date{STAT 5840: Summer 2011}
 
@@ -26,8 +26,9 @@
 
 \maketitle
 
+\thispagestyle{empty}
 
-In this example we investigate the robustness of the 2 sample \emph{t} statistic.  The setting is $X_{1}$, \ldots{}, $X_{n}$ IID from $f$ and $Y_{1}$, \ldots{}, $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample \emph{t}-test changes as we fiddle with the population assumptions.  Copy-paste the \texttt{robust} function at the command prompt in \texttt{R}.
+In this example we investigate the robustness of the 2 sample \emph{t} statistic.  The setting is $X_{1}$, \ldots{}, $X_{n}$ IID from $f$ and $Y_{1}$, \ldots{}, $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample \emph{t}-test changes as we fiddle with the population assumptions.  Copy-paste the \texttt{robustt} function at the command prompt in \texttt{R}.
 \begin{verbatim}
 # robustt.R
 
@@ -63,7 +64,7 @@ robustt(1,1)
 
 \begin{verbatim}
  [1] "sigma1 = 1, sigma2 = 1"
- [1] "observed level of test = 0.0524 (0.0022)"
+ [1] "observed level of test = 0.0502 (0.0022)"
 \end{verbatim}
 
 
@@ -73,7 +74,7 @@ robustt(1,10)
 
 \begin{verbatim}
  [1] "sigma1 = 1, sigma2 = 10"
- [1] "observed level of test = 0.0671 (0.0025)"
+ [1] "observed level of test = 0.0659 (0.0025)"
 \end{verbatim}
 
 

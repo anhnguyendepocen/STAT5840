@@ -11,7 +11,7 @@
 #+LATEX_HEADER: \input{handoutformat}
 #+latex: \thispagestyle{empty}
 
-In this example we investigate the robustness of the 2 sample /t/ statistic.  The setting is $X_{1}$, ..., $X_{n}$ IID from $f$ and $Y_{1}$, ..., $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample /t/-test changes as we fiddle with the population assumptions.  Copy-paste the =robust= function at the command prompt in =R=.
+In this example we investigate the robustness of the 2 sample /t/ statistic.  The setting is $X_{1}$, ..., $X_{n}$ IID from $f$ and $Y_{1}$, ..., $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample /t/-test changes as we fiddle with the population assumptions.  Copy-paste the =robustt= function at the command prompt in =R=.
 #+begin_src R :exports code
 # robustt.R
 
