@@ -42,10 +42,14 @@ L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
 If $n = 5$ and $x = (1,0,1,1,0)$, then $\sum x_{i}=3$ and $n - \sum x_{i}=2$.
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+CAPTION: Likelihood function for a binomial experiment
+#+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
 #+begin_src R :exports results :results graphics :file img/bernlike.pdf
 f <- function(x) dbinom(3, size = 5, prob = x)
-curve(f)
+p0 <- qplot(0:1, geom = 'blank') +
+      labs(x = "x", y = "density") + 
+      stat_function(fun = f, lwd = 2)
+print(p0)
 #+end_src
 #+latex: \end{center}
 
@@ -155,16 +159,25 @@ where $\alpha > 0$ and $\beta > 0$ and
 - Pictures of some Betas.
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+CAPTION: Pictures of some Beta distributions
+#+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
 #+begin_src R :exports results :results graphics :file img/betaexamples.pdf
-par(mfrow = c(2,3))
-a <- c(0.5, 2, 5, 1, 0.5, 5)
-b <- c(3, 3, 2, 1, 0.5, 0.5)
-for (i in 1:6){
-  f <- function(x){dbeta(x, shape1 = a[i], shape2 = b[i])}
-  curve(f, main = paste("alpha = ", a[i], ", beta = ", b[i], sep = ""))
+a <- matrix(c(0.5, 2, 5, 1, 0.5, 5), nrow = 2)
+b <- matrix(c(3, 3, 2, 1, 0.5, 0.5), nrow = 2)
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(2, 3)))
+vplayout <- function(x, y)
+viewport(layout.pos.row = x, layout.pos.col = y)
+for (i in seq.int(2)){
+  for (j in seq.int(3)){
+    f <- function(x) dbeta(x, shape1 = a[i,j], shape2 = b[i,j])
+    tmp <- qplot(0:1, geom = 'blank', 
+                 main = paste("alpha = ", a[i,j], ", beta = ", b[i,j], sep = "")) +
+           labs(x = "x", y = "density") +
+           stat_function(fun = f)
+    print(tmp, vp = vplayout(i, j))
+  }
 }
-par(mfrow = c(1,1))
 #+end_src
 #+latex: \end{center}
 
@@ -218,6 +231,12 @@ Likelihood functions can be complicated!
 #+latex: \begin{center}
 #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
 #+begin_src R :exports results :results graphics :file img/rightcensdata.pdf
+f <- function(x) dchisq(x, df = 4)
+p0 <- qplot(0:9, geom = 'blank') +
+      labs(x = 'x', y = 'density') + 
+      stat_function(fun = f) +
+      geom_vline(xintercept = 5)
+print(p0)
 curve(dchisq(x, df = 4), xlim = c(0,9))
 abline(v = 5, lty = 2)
 points(c(1.5, 1.7, 2.7, 4.3, 4.9, 6.3, 8.5), rep(0,7), pch = 4, lwd = 2, cex = 2)
