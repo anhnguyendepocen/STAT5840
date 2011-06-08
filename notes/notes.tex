@@ -1,4 +1,4 @@
-% Created 2011-06-06 Mon 12:22
+% Created 2011-06-08 Wed 12:43
 \documentclass[captions=tableheading]{scrbook}
 
 
@@ -1797,6 +1797,75 @@ When the simulation is finished, a Monte Carlo estimate of the size of the test 
 From the output, we see that our estimate of the size is right at 0.05   when the variances are equal ($0.0502-2*0.0022=0.0458$), and the size appears to be over 0.06 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.0659-2*0.0025=0.0609$).  
 \section{Bayesian Applications of Monte Carlo \textbf{:NEW:}}
 \label{sec-3_3}
+
+
+
+\begin{itemize}
+\item The Bayesian model is  \(X_{1},X_{2},\ldots, X_{n}\sim f(x|\theta)\), where $f$ is the \emph{sampling distribution}.
+\item We have \(\theta \sim g(\theta) \) where $g$ is the \emph{prior}.
+\item Observe data \(x_{1},x_{2},\ldots,x_{n}\).
+\item Base inferences on the posterior distribution
+  \[
+  g(\theta | \mbox{data}) \propto \prod_{i=1}^{n}f(x_{i}|\theta)\cdot g(\theta) = \frac{L(\theta)g(\theta)}{C}.
+  \]
+\item The normalizing constant
+  \[
+  C = \int \prod_{i=1}^{n}f(x_{i}|\theta)\cdot g(\theta)\,\diff \theta.
+  \]
+\end{itemize}
+
+We summarize the posterior density for inferences.
+
+
+\begin{enumerate}
+\item Posterior mean
+   \begin{align*}
+   \E \left( \theta | \mbox{data}  \right) & = \int \theta g( \theta | \mbox{data} ) \, \diff \theta, \\
+   & = \int \theta \, \frac{L(\theta)g(\theta)}{C} \, \diff \theta, \\
+   & = \frac{\int \theta \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
+   & = \mu.
+   \end{align*}
+\item Posterior spread: variance
+   \begin{align*}
+   \E \left[ \left(\theta - \mu \right)^{2} | \mbox{data}  \right] & = \int \left(\theta - \mu \right)^{2} g( \theta | \mbox{data} ) \, \diff \theta, \\
+   & = \frac{\int \left(\theta - \mu \right)^{2} \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
+   \end{align*}
+\item Posterior probabilities
+   \begin{align*}
+   \P\left( \theta \in A |\mbox{data} \right) & = \int_{A}  g( \theta | \mbox{data} ) \, \diff \theta, \\
+   & = \frac{\int 1\left(\theta \in A \right) \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
+   \end{align*}
+\end{enumerate}
+
+\textbf{Example:}  Estimating a normal mean with a Cauchy prior (Robert/Casella).
+
+We will take \( X \sim N(\theta,1) \)  and \( \theta \sim \mathrm{Cauchy}(0,1) \) so 
+\[
+f(x|\theta) = \frac{1}{\sqrt{2\pi}}\exp \left[-\frac{1}{2}(x - \theta)^2  \right]
+\]
+and
+\[
+g(\theta) = \frac{1}{\pi}\frac{1}{(1 + \theta^{2})}.
+\]
+We find
+\[
+g(\theta|x) \propto \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})}
+\]
+with
+\[
+C = \int \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta
+\]
+and
+\[
+\E (\theta | \mbox{data}) = \frac{ \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta }{C}.
+\]
+
+Monte Carlo computation of \( \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta  \) :
+
+
+\begin{enumerate}
+\item 
+\end{enumerate}
 \section{Importance Sampling}
 \label{sec-3_4}
 
@@ -1813,7 +1882,7 @@ that is, we want to know $\P(X > 2)$ where $X \sim \mathrm{Cauchy}(0,1)$. (It tu
    \[
    \hat{p}_{1}=\frac{1}{m}\sum_{i=1}^{m}1(X_{i}>2).
    \]
-   Of course, $\hat{p}_{1}$ converges to $p$ as $m\to\infty$, but to get an idea of the speed of convergence we ma take a look at 
+   Of course, $\hat{p}_{1}$ converges to $p$ as $m\to\infty$, but to get an idea of the speed of convergence we may take a look at 
    \[
    \mbox{Var}(\hat{p}_{1})=\frac{p(1-p)}{m}\approx\frac{0.1258026951}{m}.
    \]

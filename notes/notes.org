@@ -1584,6 +1584,75 @@ From the output, we see that our estimate of the size is right at 0.05   when th
 
 ** Bayesian Applications of Monte Carlo 				:NEW:
 
+- The Bayesian model is  \(X_{1},X_{2},\ldots, X_{n}\sim f(x|\theta)\), where $f$ is the /sampling distribution/.
+
+- We have \(\theta \sim g(\theta) \) where $g$ is the /prior/.
+
+- Observe data \(x_{1},x_{2},\ldots,x_{n}\).
+
+- Base inferences on the posterior distribution
+  \[
+  g(\theta | \mbox{data}) \propto \prod_{i=1}^{n}f(x_{i}|\theta)\cdot g(\theta) = \frac{L(\theta)g(\theta)}{C}.
+  \]
+
+- The normalizing constant
+  \[
+  C = \int \prod_{i=1}^{n}f(x_{i}|\theta)\cdot g(\theta)\,\diff \theta.
+  \]
+
+We summarize the posterior density for inferences.
+
+1. Posterior mean
+   \begin{align*}
+   \E \left( \theta | \mbox{data}  \right) & = \int \theta g( \theta | \mbox{data} ) \, \diff \theta, \\
+   & = \int \theta \, \frac{L(\theta)g(\theta)}{C} \, \diff \theta, \\
+   & = \frac{\int \theta \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
+   & = \mu.
+   \end{align*}
+
+2. Posterior spread: variance
+   \begin{align*}
+   \E \left[ \left(\theta - \mu \right)^{2} | \mbox{data}  \right] & = \int \left(\theta - \mu \right)^{2} g( \theta | \mbox{data} ) \, \diff \theta, \\
+   & = \frac{\int \left(\theta - \mu \right)^{2} \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
+   \end{align*}
+
+3. Posterior probabilities
+   \begin{align*}
+   \P\left( \theta \in A |\mbox{data} \right) & = \int_{A}  g( \theta | \mbox{data} ) \, \diff \theta, \\
+   & = \frac{\int 1\left(\theta \in A \right) \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
+   \end{align*}
+
+*Example:*  Estimating a normal mean with a Cauchy prior (Robert/Casella).
+
+We will take \( X \sim N(\theta,1) \)  and \( \theta \sim \mathrm{Cauchy}(0,1) \) so 
+\[
+f(x|\theta) = \frac{1}{\sqrt{2\pi}}\exp \left[-\frac{1}{2}(x - \theta)^2  \right]
+\]
+and
+\[
+g(\theta) = \frac{1}{\pi}\frac{1}{(1 + \theta^{2})}.
+\]
+We find
+\[
+g(\theta|x) \propto \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})}
+\]
+with
+\[
+C = \int \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta
+\]
+and
+\[
+\E (\theta | \mbox{data}) = \frac{ \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta }{C}.
+\]
+
+Monte Carlo computation of \( \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta  \) :
+
+1.  
+
+
+
+
+
 ** Importance Sampling
 
 *Example.* Cauchy tail probabilities. (Ripley and Robert/Casella) We would like to estimate the quantity 
@@ -1596,7 +1665,7 @@ that is, we want to know $\P(X > 2)$ where $X \sim \mathrm{Cauchy}(0,1)$. (It tu
    \[
    \hat{p}_{1}=\frac{1}{m}\sum_{i=1}^{m}1(X_{i}>2).
    \]
-   Of course, $\hat{p}_{1}$ converges to $p$ as $m\to\infty$, but to get an idea of the speed of convergence we ma take a look at 
+   Of course, $\hat{p}_{1}$ converges to $p$ as $m\to\infty$, but to get an idea of the speed of convergence we may take a look at 
    \[
    \mbox{Var}(\hat{p}_{1})=\frac{p(1-p)}{m}\approx\frac{0.1258026951}{m}.
    \]
