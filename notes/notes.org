@@ -1645,17 +1645,36 @@ and
 \E (\theta | \mbox{data}) = \frac{ \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta }{C}.
 \]
 
-Monte Carlo computation of \( \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta  \) :
+#+latex: \bigskip \noindent
 
-1.  
+*Monte Carlo computation of*
+\[
+\int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta :
+\]
+We're looking for
+\[
+\int h(x)f(x)\,\diff x
+\]
+So write
+\[
+I = \int \,\pi \exp\left[-\frac{(x - \theta)^{2}}{2} \right]\,\frac{1}{\pi(1 + \theta^{2})}\, \diff \theta
+\]
+where we understand
+\[
+h(\theta) = \pi \exp\left[-\frac{(x - \theta)^{2}}{2} \right],\quad f(\theta) = \frac{1}{\pi(1 + \theta^{2})}
+\]
+*Algorithm:*
+1. simulate \(\theta_{1},\theta_{2},\ldots,\theta_{m}\sim \mathrm{Cauchy}(0,1)\)
+2. compute \(h(\theta_{1}),\,h(\theta_{2}),\ldots,h(\theta_{m})\).
+3. compute \( \overline{h}_{m}\).
 
-
-
+See the HANDOUT, =cauchyprior.pdf=
 
 
 ** Importance Sampling
 
-*Example.* Cauchy tail probabilities. (Ripley and Robert/Casella) We would like to estimate the quantity 
+*Example.* Cauchy tail probabilities. (Ripley and Robert/Casella). 
+We would like to estimate the quantity 
 \[
 p=\int_{2}^{\infty}\frac{1}{\pi}\frac{1}{1+x^{2}}\diff x,
 \]

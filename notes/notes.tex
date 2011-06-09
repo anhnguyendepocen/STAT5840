@@ -1,4 +1,4 @@
-% Created 2011-06-08 Wed 12:43
+% Created 2011-06-09 Thu 10:38
 \documentclass[captions=tableheading]{scrbook}
 
 
@@ -1860,12 +1860,33 @@ and
 \E (\theta | \mbox{data}) = \frac{ \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta }{C}.
 \]
 
-Monte Carlo computation of \( \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta  \) :
+\bigskip \noindent
 
+\textbf{Monte Carlo computation of}
+\[
+\int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta :
+\]
+We're looking for
+\[
+\int h(x)f(x)\,\diff x
+\]
+So write
+\[
+I = \int \,\pi \exp\left[-\frac{(x - \theta)^{2}}{2} \right]\,\frac{1}{\pi(1 + \theta^{2})}\, \diff \theta
+\]
+where we understand
+\[
+h(\theta) = \pi \exp\left[-\frac{(x - \theta)^{2}}{2} \right],\quad f(\theta) = \frac{1}{\pi(1 + \theta^{2})}
+\]
+\textbf{Algorithm:}
 
 \begin{enumerate}
-\item 
+\item simulate \(\theta_{1},\theta_{2},\ldots,\theta_{m}\sim \mathrm{Cauchy}(0,1)\)
+\item compute \(h(\theta_{1}),\,h(\theta_{2}),\ldots,h(\theta_{m})\).
+\item compute \( \overline{h}_{m}\).
 \end{enumerate}
+
+See the HANDOUT, \texttt{cauchyprior.pdf}
 \section{Importance Sampling}
 \label{sec-3_4}
 
