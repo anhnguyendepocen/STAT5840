@@ -12,7 +12,7 @@ for (j in seq_along(lambda)){     # for each lambda, estimate risk
   l <- lambda[j]                  # get jth lambda
   sig <- sqrt(2*log(l))           # calc sigma
   x <- rlnorm(m, sdlog = sig)     # simulate m lognormals
-  f1 <- l^(-1)*exp(-x/l);;        # f1 is the exponential density
+  f1 <- l^(-1)*exp(-x/l)          # f1 is the exponential density
                                   # f2 is the lognormal density
   f2 <- (1/x)*(exp(-(log(x))^2/(2*sig^2)))/sqrt(2*pi*sig^2) 
   h <- (x - l)^2/l^2              # loss function

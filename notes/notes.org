@@ -1854,6 +1854,10 @@ The risks will be estimated therefore by
  & =\frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}\lambda^{-1}\, \me^{-x_{i}/\lambda}x_{i}\sigma\sqrt{2\pi}\, \me^{(\ln x_{i})^{2}/2\sigma^{2}}
    \end{align*}
 
+See the PRINTOUT =exp_lognormal.pdf=
+
+
+
 
 
 * Resampling Methods: the Bootstrap and Related Procedures

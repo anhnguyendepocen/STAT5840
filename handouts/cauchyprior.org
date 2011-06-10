@@ -33,7 +33,7 @@ rpm <- rep(0, times = m)
 
 for (i in seq.int(m)){         # seq.int(m) will be 1:m
   rc[i] <- mean(h[1:i])
-  rpm[i] <- mean(num[1:i])/mean(h[1:i]);
+  rpm[i] <- mean(num[1:i])/mean(h[1:i])
 }
 #+end_src
 

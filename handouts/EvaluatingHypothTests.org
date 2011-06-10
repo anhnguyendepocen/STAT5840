@@ -1,5 +1,5 @@
 #+TITLE:   Assignment: Evaluating Tests via Monte Carlo Methods
-#+AUTHOR:    
+#+AUTHOR:    G. Jay Kerns
 #+EMAIL:     gkerns@ysu.edu
 #+DATE:      
 #+LANGUAGE:  en
@@ -12,7 +12,7 @@
 
 * Setup
 
-Suppose $X_{1}$, $X_{2}$, ..., $X_{n}$ are a random sample from a distribution $f$ with mean $\mu$.  The standard test of the null hypothesis $H_{0}: \mu = 0$ is based on the statistic
+Suppose $X_{1}$, $X_{2}$, ..., $X_{n}$ are a random sample from a distribution $f$ with mean $\mu$.  The standard two-sided test of the null hypothesis $H_{0}: \mu = 0$ is based on the statistic
 \[
 T = \frac{\Xbar}{S/\sqrt{n}}.
 \]
@@ -30,7 +30,7 @@ At level $\alpha = 0.05$, one rejects $H_{0}$ if $|T| > t_{\alpha/2}$, where $t_
 
 - For each population distribution, give a) the estimate of the level, b) a standard error for your estimate, and c) a paragraph stating what you have found.
 
-- After the four parts are finished, write a report collecting and summarizing your findings, and PRINT it out to be submitted on Friday.
+- After the four parts are finished, write a report collecting and summarizing your findings.  What have you learned about the robustness of the /t/-test to departures from the normality assumption?
 
 *Hints:*
 - Download =robust.R= and modify it to suit your needs by changing the simulated data and the =t.test= command.

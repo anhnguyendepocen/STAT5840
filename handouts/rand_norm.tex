@@ -1,4 +1,4 @@
-% Created 2011-05-23 Mon 11:40
+% Created 2011-06-10 Fri 11:43
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -36,17 +36,17 @@ We cover the standard Normal density with a Cauchy proposal density and use the 
 \begin{verbatim}
 # rand_norm.R
 rand_norm <- function(n){
-  M <- 1.5203;           # bound used in A/R algorithm
-  i <- 0; N <- 0;        # initialization and storage
-  z <- rep(0, times = n);
+  M <- 1.5203            # bound used in A/R algorithm
+  i <- 0; N <- 0         # initialization and storage
+  z <- rep(0, times = n)
   while(i < n){                      # keep going until n accepts
       x <- tan(pi*(runif(1) - 0.5))  # simulate a Cauchy
       u <- runif(1)                  # simulate a Uniform
       f <- 1/sqrt(2*pi)*exp(-x^2/2)  # compute f(x)
       g <- 1/pi/(1+x^2)              # compute g(x)
       if (u <= f/M/g){
-        i <- i + 1;            # got another accept
-        z[i] <- x;             # save this one
+        i <- i + 1             # got another accept
+        z[i] <- x              # save this one
       }
     N <- N + 1                 # keep track of num trials
   }
@@ -60,7 +60,7 @@ tmp$accept
 \end{verbatim}
 
 \begin{verbatim}
- [1] 0.6524008
+ [1] 0.6488451
 \end{verbatim}
 
 
