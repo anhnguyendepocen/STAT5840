@@ -1,4 +1,4 @@
-% Created 2011-06-10 Fri 11:27
+% Created 2011-06-10 Fri 16:04
 \documentclass[captions=tableheading]{scrbook}
 
 
@@ -153,11 +153,10 @@ Write $X \sim \mathrm{Beta}(\alpha,\beta)$.
 f_{X}(x)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: x^{\alpha-1}(1-x)^{\beta-1},\quad0 < x <1,
 \end{equation}
 where $\alpha > 0$ and $\beta > 0$ and
-\[
 \begin{equation}
 \Gamma(\alpha)=\int_{0}^{\infty}x^{\alpha-1}\me^{-x}\:\diff x,\quad\mbox{for }\alpha>0.
 \end{equation}
-\]
+
 
 
 \begin{itemize}
@@ -1730,135 +1729,147 @@ our answer is:
 
 From the PRINTOUT for \texttt{compare\_estimators.pdf}:
 
-$R_{\Xbar}(0)=0.0994\pm2(0.0045)$
-$R_{\overset{\sim}{X}}(0)=0.0685\pm2(0.0037)$
-$R_{\Xbar_{\alpha}}(0)=0.0864\pm2(0.0039)$
+\begin{align*}
+R_{\Xbar}(0) & = 0.0994 \pm2 (0.0045) \\
+R_{\overset{\sim}{X}}(0) & = 0.0685 \pm2 (0.0037) \\
+R_{\Xbar_{\alpha}}(0) & = 0.0864 \pm2 (0.0039)
+\end{align*}
 
 In this case, the median is the best estimator when $\theta=0$, followed by the trimmed mean, and lastly the sample mean.  
 
-\textbf{Example.} The Two-Sample $t$-Test.
-In this setting we are given 
+\bigskip
+
+\textbf{Example.} The Pooled Two-Sample $t$-Test.
+In this setting we are given independent random samples
 \[
 X_{1},\ldots,X_{m}\sim f(x|\mu_{1},\sigma_{1}),\quad Y_{1},\ldots,Y_{n}\sim g(y|\mu_{2},\sigma_{2}).
 \]
-We want to test $H_{0}:\mu_{1}=\mu_{2}$. A popular test is based on 
+We want to test $H_{0}:\mu_{1}=\mu_{2}$ against a two-sided alternative. A popular test is based on 
 \[
 T=\frac{\Xbar-\overline{Y}-(\mu_{1}-\mu_{2})}{S_{p}\sqrt{(1/m)+(1/n)}},
 \]
-where $S_{p}$ is the \emph{pooled standard deviation} given by the
+where $s_{p}$ is the \emph{pooled standard deviation} given by the
 formula 
 \[
-S_{p}^{2}=\frac{(m-1)s_{1}^{2}+(n-1)s_{2}^{2}}{m+n-2}.
+s_{p}^{2}=\frac{(m-1)s_{1}^{2}+(n-1)s_{2}^{2}}{m+n-2}.
 \]
  The rejection region $R$ of the test can be written in the form
 \[
-\mbox{Reject \ensuremath{H_{0}}if \ensuremath{|T|>t^{\ast}}},
+\mbox{Reject \ensuremath{H_{0}} if \ensuremath{|T|>t^{\ast}}},
 \]
-where $t^{\ast}$ is chosen so that $\P(\mbox{Reject \ensuremath{H_{0}}}|\mbox{ \ensuremath{H_{0}}is true})=\alpha$. The popularity of the test in part stems from the fact that under certain assumptions on the underlying populations $T$ has a known distribution, namely, Student's $t$ distribution with $m+n-2$ degrees of freedom. The assumptions are:
+where $t^{\ast}$ is chosen so that $\P(\mbox{Reject \ensuremath{H_{0}}}|\mbox{ \ensuremath{H_{0}} is true})=\alpha$. The popularity of the test in part stems from the fact that under certain assumptions on the underlying populations $T$ has a known distribution, namely, Student's $t$ distribution with $m+n-2$ degrees of freedom. The assumptions are:
 
-\begin{itemize}
+\begin{enumerate}
 \item the populations are Normally distributed, and
 \item the spreads are equal, $\sigma_{1}=\sigma_{2}$.
-\end{itemize}
-
-\underline{How do we evaluate a $t$-test?} Consider the \emph{power function} $\beta(\theta)$ defined by 
-\[
-\beta(\theta)=\P_{\theta}(\mbox{Reject \ensuremath{H_{0}}}).
-\]
- We can see that \textbf{IF} the assumptions on the populations are true then 
-\[
-\P(|T|>t^{\ast}\mbox{ when \ensuremath{\mu_{1}=\mu_{2}}})=\alpha.
-\]
-The quantity $\alpha$ is called the \emph{level} of the test and is usually some small number, say $\alpha=0.10$ or $\alpha=0.05$.
-
-\underline{Question:} How does the size of the $t$-test vary as one violates the assumptions? There are two possible directions to investigate:
+\end{enumerate}
 
 
+\begin{description}
+\item[How do we evaluate a $t$-test?] Consider the \emph{power function} $\beta(\theta)$ defined by 
+  \[
+  \beta(\theta)=\P_{\theta}(\mbox{Reject \ensuremath{H_{0}}}).
+  \]
+  We can see that \textbf{IF} the assumptions on the populations are true then 
+  \[
+  \P(|T|>t^{\ast}\mbox{ when \ensuremath{\mu_{1}=\mu_{2}}})=\alpha.
+  \]
+  The quantity $\alpha$ is called the \emph{significance level} of the test and is usually some small number, say, $\alpha=0.05$ or $\alpha=0.01$.
+\item[Question:] How does the size of the $t$-test vary as one violates the assumptions? There are two possible dimensions to investigate:
 \begin{enumerate}
 \item non-normal populations (skewed, heavy-tailed, bounded support,$\ldots$)
 \item unequal variances $\sigma_{1}^{2}\neq\sigma_{2}^{2}$.
 \end{enumerate}
+\end{description}
 
 We will focus on 2.
 
-\textbf{Monte Carlo Simulation:} (Assume $\mu_{1}=\mu_{2}=0$.)
 
+\begin{description}
+\item[Monte Carlo Simulation:] (Assume $\mu_{1}=\mu_{2}=0$, that is, that the null hypothesis is true.)
 \begin{enumerate}
 \item Generate $X_{1},\ldots,X_{m}\sim N(0,\sigma_{1}^{2})$ and $Y_{1},\ldots,Y_{n}\sim N(0,\sigma_{2}^{2})$.
 \item Compute $T$.
 \item Record if the observed \(p\)-value is less than 0.05.
 \item Repeat.
 \end{enumerate}
+When the simulation is finished, a Monte Carlo estimate of the size of the test will be given by
+  \[
+  \hat{p}=\frac{\mbox{Number of rejections}}{\mbox{Total number of simulations}},
+  \]
+  that is, the proportion of rejections. To evaluate the accuracy of our estimate we may find the standard error, estimated with the quantity
+  \[
+  \mathrm{SE}_{\hat{p}} \approx \sqrt{\frac{\hat{p}\,(1-\hat{p})}{\mathrm{Iter}}}
+  \]
+\end{description}
 
-When the simulation is finished, a Monte Carlo estimate of the size of the test will be given by $\hat{p}=\mathit{num\ rejections/TotalSimulations}$, that is, the proportion of rejections. To evaluate the accuracy of our estimate we may find the standard error, estimated with the quantity
-\[
-\mathrm{s.e.}\approx\sqrt{\frac{\hat{p}\,(1-\hat{p})}{\mathrm{Iter}}}
-\]
-From the output, we see that our estimate of the size is right at 0.05   when the variances are equal ($0.0502-2*0.0022=0.0458$), and the size appears to be over 0.06 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.0659-2*0.0025=0.0609$).  
-\section{Bayesian Applications of Monte Carlo \textbf{:NEW:}}
+See the PRINTOUT, \texttt{robustt.pdf}.
+
+From the output, we see that our estimate of the size is right at 0.05 when the variances are equal ($0.0502-2*0.0022=0.0458$), and the size appears to be over 0.06 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.0659-2*0.0025=0.0609$).  
+\section{Bayesian Applications of Monte Carlo}
 \label{sec-3_3}
 
 
 
 \begin{itemize}
-\item The Bayesian model is  \(X_{1},X_{2},\ldots, X_{n}\sim f(x|\theta)\), where $f$ is the \emph{sampling distribution}.
-\item We have \(\theta \sim g(\theta) \) where $g$ is the \emph{prior}.
-\item Observe data \(x_{1},x_{2},\ldots,x_{n}\).
-\item Base inferences on the posterior distribution
+\item The Bayesian model is \(\theta \sim g(\theta) \) where $g$ is a \emph{prior distribution}.
+\item We have the model for the data to be  \(X_{1},X_{2},\ldots, X_{n}\sim f(x|\theta)\), where $f$ is a \emph{sampling distribution}.
+\item Observe data \(x_{1},x_{2},\ldots,x_{n}\).  This gives us the \emph{likelihood} \( L(\theta) =  \prod_{i=1}^{n}f(x_{i}|\theta)\).
+\item We base inferences on the posterior distribution
   \[
   g(\theta | \mbox{data}) \propto \prod_{i=1}^{n}f(x_{i}|\theta)\cdot g(\theta) = \frac{L(\theta)g(\theta)}{C}.
   \]
-\item The normalizing constant
+\item The normalizing constant $C$ is
   \[
   C = \int \prod_{i=1}^{n}f(x_{i}|\theta)\cdot g(\theta)\,\diff \theta.
   \]
 \end{itemize}
+We summarize the posterior distribution when it comes time to make inferences.
 
-We summarize the posterior density for inferences.
-
-
-\begin{enumerate}
-\item Posterior mean
+\begin{itemize}
+\item Posterior mean: ::
    \begin{align*}
-   \E \left( \theta | \mbox{data}  \right) & = \int \theta g( \theta | \mbox{data} ) \, \diff \theta, \\
+   \E \left( \theta |\, \mbox{data}  \right) & = \int \theta g( \theta | \mbox{data} ) \, \diff \theta, \\
    & = \int \theta \, \frac{L(\theta)g(\theta)}{C} \, \diff \theta, \\
    & = \frac{\int \theta \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
    & = \mu.
    \end{align*}
-\item Posterior spread: variance
+\item Posterior spread: :: variance
    \begin{align*}
-   \E \left[ \left(\theta - \mu \right)^{2} | \mbox{data}  \right] & = \int \left(\theta - \mu \right)^{2} g( \theta | \mbox{data} ) \, \diff \theta, \\
+   \E \left[ \left(\theta - \mu \right)^{2} |\, \mbox{data}  \right] & = \int \left(\theta - \mu \right)^{2} g( \theta | \mbox{data} ) \, \diff \theta, \\
    & = \frac{\int \left(\theta - \mu \right)^{2} \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
    \end{align*}
-\item Posterior probabilities
+\item Posterior probabilities: :: 
    \begin{align*}
-   \P\left( \theta \in A |\mbox{data} \right) & = \int_{A}  g( \theta | \mbox{data} ) \, \diff \theta, \\
+   \P\left( \theta \in A |\,\mbox{data} \right) & = \int_{A}  g( \theta | \mbox{data} ) \, \diff \theta, \\
    & = \frac{\int 1\left(\theta \in A \right) \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
    \end{align*}
-\end{enumerate}
+\end{itemize}
 
-\textbf{Example:}  Estimating a normal mean with a Cauchy prior (Robert/Casella).
 
-We will take \( X \sim N(\theta,1) \)  and \( \theta \sim \mathrm{Cauchy}(0,1) \) so 
-\[
-f(x|\theta) = \frac{1}{\sqrt{2\pi}}\exp \left[-\frac{1}{2}(x - \theta)^2  \right]
-\]
-and
-\[
-g(\theta) = \frac{1}{\pi}\frac{1}{(1 + \theta^{2})}.
-\]
-We find
-\[
-g(\theta|x) \propto \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})}
-\]
-with
-\[
-C = \int \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta
-\]
-and
-\[
-\E (\theta | \mbox{data}) = \frac{ \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta }{C}.
-\]
+\begin{description}
+\item[Example:] Estimating a normal mean with a Cauchy prior (Robert/Casella).
+  We will take \( X \sim N(\theta,1) \)  and \( \theta \sim \mathrm{Cauchy}(0,1) \) so 
+  \[
+  f(x|\theta) = \frac{1}{\sqrt{2\pi}}\exp \left[-\frac{1}{2}(x - \theta)^2  \right]
+  \]
+  and
+  \[
+  g(\theta) = \frac{1}{\pi}\frac{1}{(1 + \theta^{2})}.
+  \]
+  We find
+  \[
+  g(\theta|x) \propto \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})}
+  \]
+  with
+  \[
+  C = \int \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta
+  \]
+  and
+  \[
+  \E (\theta | \mbox{data}) = \frac{ \int \theta \exp \left[-\frac{1}{2}(x - \theta)^2  \right] \frac{1}{(1 + \theta^{2})} \diff \theta }{C}.
+  \]
+\end{description}
 
 \bigskip \noindent
 
@@ -1886,7 +1897,7 @@ h(\theta) = \pi \exp\left[-\frac{(x - \theta)^{2}}{2} \right],\quad f(\theta) = 
 \item compute \( \overline{h}_{m}\).
 \end{enumerate}
 
-See the HANDOUT, \texttt{cauchyprior.pdf}
+See the PRINTOUT, \texttt{cauchyprior.pdf}
 \section{Importance Sampling}
 \label{sec-3_4}
 
@@ -2065,7 +2076,7 @@ We would like to compute these integrals using Monte Carlo methods, so we will s
 The risks will be estimated therefore by
 
 \begin{enumerate}
-\item For given $\lambda$, Simulate $X_{1},\ldots,X_{m} \sim \mathrm{Lnorm}(0,\sigma^{2})$.
+\item For given $\lambda$, Simulate $X_{1},\ldots,X_{m} \sim \mathrm{Lnorm}(0,\sigma)$.
 \item Estimate $R_{2}(\lambda)$ with 
    \[
    \frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}
@@ -2076,6 +2087,8 @@ The risks will be estimated therefore by
  & =\frac{1}{m}\sum_{i=1}^{m}\frac{(x_{i}-\lambda)^{2}}{\lambda^{2}}\lambda^{-1}\, \me^{-x_{i}/\lambda}x_{i}\sigma\sqrt{2\pi}\, \me^{(\ln x_{i})^{2}/2\sigma^{2}}
    \end{align*}
 \end{enumerate}
+
+See the PRINTOUT \texttt{exp\_lognormal.pdf}
 \chapter{Resampling Methods: the Bootstrap and Related Procedures}
 \label{sec-4}
 \section{Introduction}
