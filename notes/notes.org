@@ -1703,7 +1703,7 @@ that is, we want to know $\P(X > 2)$ where $X \sim \mathrm{Cauchy}(0,1)$. (It tu
    \[
    p_{2}=\frac{1}{2}\P(|X|>2).
    \]
-   The obvious method we be to use 
+   The obvious method approach would be 
    \[
    \hat{p}_{2}=\frac{1}{2m}\sum_{i=1}^{m}1(|X_{i}|>2).
    \]
@@ -1762,13 +1762,13 @@ that is, we want to know $\P(X > 2)$ where $X \sim \mathrm{Cauchy}(0,1)$. (It tu
   \[
   \int_{0}^{1/2}\frac{1}{\pi}\frac{u^{-2}}{1+u^{-2}}\diff u
   \]
-  and after multiplying the numerator and denominator by $y^{2}$ this integral may be viewed as the expectation of $h(Y)/4=1/2\pi(1+Y^{2})$ where $Y\sim\mathrm{Unif}(0,1/2)$. and $h$ is the function used for $\hat{p}_{3}$. To estimate $p$ this last time we may simulate $Y_{1},\ldots,Y_{m}\sim\mathrm{Unif}(0,1)$ and use
+  and after multiplying the numerator and denominator by $y^{2}$ this integral may be viewed as the expectation of $h(Y)/4=1/2\pi(1+Y^{2})$ where $Y\sim\mathrm{Unif}(0,1/2)$. and $h$ is the function used for $\hat{p}_{3}$. To estimate $p$ this last time we may simulate $Y_{1},\ldots,Y_{m}\sim\mathrm{Unif}(0,1/2)$ and use
   \[
   \hat{p}_{4} = \frac{1}{4m}\sum_{i=1}^{m} h(Y_{i}).
   \]
   Since the functional form is the same, we may complete another integration by parts and we will find that the variance of $\hat{p}_{4}$ is $\mbox{Var}(\hat{p}_{4})=0.000095525/m$ which is /an additional 99.6% reduction in variance/! If we compare the variance of $\hat{p}_{1}$ with that of $\hat{p}_{4}$ we find: 
   \[
-  \frac{\hat{p}_{1}}{\hat{p}_{4}}=1316.960954
+  \frac{\mathrm{Var}_{\hat{p}_{1}}}{\mathrm{Var}_{\hat{p}_{4}}}=1316.960954
   \]
   and in particular, the standard error will be approximately $\sqrt{1316.960954}\approx 36.28$ times smaller if we use $\hat{p}_{4}$, which translates to 36 times fewer simulations. 
 
@@ -2067,8 +2067,80 @@ enough. In general, if the true $p$-value is $p$ then the standard error of the 
 
 * The Bootstrap and Jackknife
 
+** The Empirical Distribution
+
+Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) of a random variable \(X \sim F\), where we understand $F$ to be the CDF of the population. For simplicity in most of the discussion that follows it will be convenient to imagine that the observed values are distinct, but the remarks are valid even when the observed values are repeated. 
+
+- Definition. ::  The empirical cumulative distribution function \(F_{n}\) (also written ECDF) is the probability distribution that places probability mass \(1/n\) on each of the values \(x_{1}, x_{2}, ..., x_{n}\). The empirical PMF takes the form 
+  \begin{equation*}
+  f_{X}(x)=\frac{1}{n},\quad x\in\left\{ x_{1},x_{2},...,x_{n}\right\}.
+  \end{equation*}
+  If the value \(x_{i}\) is repeated \(k\) times, the mass at \(x_{i}\) is accumulated to \(k/n\).
+
+\bigskip
+*Facts about the ECDF.*
+
+The mean of the empirical distribution is
+\[
+\mu=\sum_{x\in S}xf_{X}(x)=\sum_{i=1}^{n}x_{i}\cdot\frac{1}{n}
+\]
+and we recognize this last quantity to be the sample mean, \(\xbar\). The variance of the empirical distribution is
+\[
+\sigma^{2}=\sum_{x\in S}(x-\mu)^{2}f_{X}(x)=\sum_{i=1}^{n}(x_{i}-\xbar)^{2}\cdot\frac{1}{n}
+\]
+and this last quantity looks very close to what we already know to be the sample variance.
+\[
+s^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\xbar)^{2}.
+\]
+The empirical quantile function is the inverse of the ECDF.
+
+*** How to do it with =R=
+
+The empirical distribution is not directly available as a distribution in the same way that the other base probability distributions are, but there are plenty of resources available for the determined investigator. 
+
+Given a data vector of observed values , we can see the empirical CDF with the  function:
+
+<<>>=
+x <- c(4, 7, 9, 11, 12)
+ecdf(x)
+@
+
+The above shows that the returned value of  is not a number but rather a function. The ECDF is not usually used by itself in this form, by itself. More commonly it is used as an intermediate step in a more complicated calculation, for instance, in hypothesis testing. It is nevertheless instructive to see what the  looks like, and there is a special plot method for  objects.
+
+<<eval = FALSE>>=
+plot(ecdf(x))
+@
+The graph is of a right-continuous function with jumps exactly at the locations stored in . There are no repeated values in  so all of the jumps are equal to \(1/5=0.2\).
+
+The empirical PDF is not usually of particular interest in itself, but if we really wanted we could define a function to serve as the empirical PDF:
+
+<<keep.source = TRUE>>=
+epdf <- function(x) function(t){sum(x %in% t)/length(x)}
+x <- c(0,0,1)
+epdf(x)(0)  # should be 2/3
+@
+
+To simulate from the empirical distribution supported on the vector , we use the  function.
+
+<<>>=
+x <- c(0,0,1)
+sample(x, size = 7, replace = TRUE)
+@
+
+We can get the empirical quantile function in R with.
+
+As we hinted above, the empirical distribution is significant more because of how and where it appears in more sophisticated applications.
+
+
 ** The Bootstrap
 *** Bootstrap Estimation of Standard Error
+The bootstrap estimate of the standard error of an estimator \(\hat{\theta}\) is the sample standard deviation of the bootstrap replicates \(\hat{\theta}^{(1)},\, \hat{\theta}^{(2)},\, \ldots,\,\hat{\theta}^{(B)}\):
+
+\[
+\mathrm{\widehat{SE}(\hat{\theta}^{\ast})}=\sqrt{}
+\]
+
+
 *** Bootstrap Estimation of Bias
 ** The Jackknife
 ** Jackknife After Bootstrap
