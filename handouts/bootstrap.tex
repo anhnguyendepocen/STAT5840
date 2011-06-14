@@ -1,0 +1,68 @@
+% Created 2011-06-14 Tue 15:24
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Bootstrapping: the long way}
+%\author{}
+\date{STAT 5840: Summer 2011}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section*{Bootstrapping the standard error of the sample mean}
+\label{sec-1}
+
+This program illustrates the Bootstap procedure for estimating the standard error of the mean.
+
+
+\begin{verbatim}
+# bootstrap.R
+srs <- rnorm(25, mean = 2, sd = 1)  # generate 25 normals, original data 
+Iter <- 50000                       # want 50000 resamples
+xbarstar <- rep(0, times = Iter)    # initialize vector xbarstar
+
+for(i in seq.int(Iter)){
+  boot.samp <- sample(srs, 25, replace = TRUE)   #sample with replacement
+  xbarstar[i] <- mean(boot.samp)                 # save the xbar value
+}
+\end{verbatim}
+
+After the copy-paste we can check the results with the following.
+\begin{verbatim}
+mean(xbarstar)
+sd(xbarstar)
+\end{verbatim}
+
+\begin{verbatim}
+ [1] 2.167843
+ [1] 0.1867706
+\end{verbatim}
+
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=3in, height=3in,]{img/bootstrap.pdf}
+\caption{\label{fig:yplot}Histogram of bootstrap replicates for the sample mean}
+\end{figure}
+
+\end{document}

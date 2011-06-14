@@ -1,0 +1,45 @@
+#+TITLE:   Bootstrapping: the long way
+#+AUTHOR:    
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Bootstrapping the standard error of the sample mean
+This program illustrates the Bootstap procedure for estimating the standard error of the mean.
+#+begin_src R :exports none
+set.seed(1)
+#+end_src
+
+
+#+begin_src R :exports code
+# bootstrap.R
+srs <- rnorm(25, mean = 2, sd = 1)  # generate 25 normals, original data 
+Iter <- 50000                       # want 50000 resamples
+xbarstar <- rep(0, times = Iter)    # initialize vector xbarstar
+
+for(i in seq.int(Iter)){
+  boot.samp <- sample(srs, 25, replace = TRUE)   #sample with replacement
+  xbarstar[i] <- mean(boot.samp)                 # save the xbar value
+}
+#+end_src
+
+After the copy-paste we can check the results with the following.
+#+begin_src R :exports both
+mean(xbarstar)
+sd(xbarstar)
+#+end_src
+
+#+CAPTION:    Histogram of bootstrap replicates for the sample mean
+#+LABEL:      fig:yplot
+#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+begin_src R :exports results :results output graphics :file img/bootstrap.pdf
+hist(xbarstar, breaks = 40, main = "", prob = TRUE)
+curve(dnorm(x, 2, 0.2), add = TRUE)
+#+end_src

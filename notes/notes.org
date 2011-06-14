@@ -1868,8 +1868,234 @@ See the PRINTOUT =exp_lognormal.pdf=
 
 
 
+** Acceleration Methods
 
-* Resampling Methods: the Bootstrap and Related Procedures
+Clever methods to reduce the variance of a Monte Carlo estimate of an integral.
+
+*** Antithetic variables
+
+It may be helpful to generate samples of correlated variables in estimating integrals
+
+- Want to compare 2 integrals:
+  \[
+  I_{i} = \int \, h_{i}(x)f_{i}(x)\, \diff x, \quad i = 1,2.
+  \]
+
+- Integral estimates -> \(\hat{I}_{i},\ i=1,2.\)
+
+- Want to estimate \(I_{1} - I_{2}\) by  \(\hat{I}_{1} - \hat{I}_{2}\) 
+
+- If \(\hat{I}_{1},\hat{I}_{2}\) independent,
+  \[
+  \mathrm{Var}(\hat{I}_{1} - \hat{I}_{2}) = \mathrm{Var}(\hat{I}_{1}) + \mathrm{Var}(\hat{I}_{2}).
+  \]
+
+- If \(\hat{I}_{1},\hat{I}_{2}\) correlated,
+  \[
+  \mathrm{Var}(\hat{I}_{1} - \hat{I}_{2}) = \mathrm{Var}(\hat{I}_{1}) + \mathrm{Var}(\hat{I}_{2}) - 2\mathrm{Cov}(\hat{I}_{1},\hat{I}_{2}).
+  \]
+
+Therefore, it is desirable for  \(\hat{I}_{1},\hat{I}_{2}\) to be positively correlated.
+
+
+- Example: ::  Want to compare \(\delta_{1},\ \delta_{2}\) given a sampling density $f(x|\theta)$ and loss function $L(\theta,\delta)$.
+  - Want to compute
+    \[
+    R(\theta,\delta_{1}) - R(\theta,\delta_{2}),
+    \]
+    where
+    \[
+    R(\theta,\delta_{i}) = \E\,L(\theta,\delta_{i}) = \int L(\theta,\delta_{i}(x))\,f(x|\theta)\,\diff x.
+    \]
+  - Variance of the estimate of difference in risks is reduced if $L(\theta,\delta_{1}(X))$ and $L(\theta,\delta_{2}(X))$ are positively correlated.
+
+- Remarks about this: ::
+  - The same simulation sample should be used in the evaluation of $R(\theta,\delta_{1})$ and $R(\theta,\delta_{2})$.
+  - The same simulation sample should be used in comparison of risks for every $$\theta$.
+
+
+*Example.  James Stein Estimation. (Robert-Casella)*.
+
+- Suppose we are estimating a set of normal means.
+
+- \(X_{1},X_{2},\ldots,X_{p}\) are independent,
+  \[
+  X_{i} \sim N(\theta_{i},1).
+  \]
+
+- Want to estimate
+  \[
+  \theta = \left(\theta_{1},\theta_{2},\ldots,\theta_{p}) \right).
+  \]
+
+- Our estimate is
+  \[
+  \delta = \left(\delta_{1},\ldots,\delta_{p}  \right).
+  \]
+
+- Loss is SUM of SQUARED ERROR LOSS:
+  \[
+  L(\theta,\delta) = \sum_{i=1}^{p}\left(\theta_{i} - \delta_{i} \right).
+  \]
+
+- The "best" estimate of $\theta$ is
+  \[
+  \delta_{i}^{0}(X) = X_{i}, \quad i = 1,\ldots,p.
+  \]
+
+- The risk of $\delta^{0}$ is
+  \begin{align*}
+  R(\theta,\delta^{0}) & = \E \left[ \sum_{i=1}^{p}\left(X_{i}-\theta_{i} \right)^{2} \right],  \\
+  & = \sum_{i=1}^{p} \E \left[ \left(X_{i}-\theta_{i} \right)^{2} \right], \\
+  & = \sum_{i=1}^{p} \, \mathrm{Variances},  \\
+  & = p.
+  \end{align*}
+
+
+  PICTURE HERE
+
+It turns out that $\delta_{i}^{0}(X)$ is INADMISSIBLE.  /amazing/
+
+A better estimator is the James-Stein Estimator:
+\[
+\delta_{i}^{\mathrm{JS}}(X) = \left(1 - \frac{a}{|X|^{2}} \right)^{+} X_{i}, \quad 0 < a < 2(p - 2),
+\]
+where
+\[
+(a)^{+} = \max (0, a)
+\]
+and
+\[
+ | x | = \sqrt{\sum_{i=1}^{p}x_{i}}
+\]
+
+This is really crazy, because it means that independent samples can give better information for estimating perhaps unrelated means.
+
+- Mathematically, we can show
+  \[
+  R(\theta,\delta^{\mathrm{JS}}) < p,\quad \mbox{for all $\theta$.}
+  \]
+
+
+
+* The Bootstrap and Jackknife
+
+** The Empirical Distribution
+
+Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) of a random variable \(X \sim F\), where we understand $F$ to be the CDF of the population. For simplicity in most of the discussion that follows it will be convenient to imagine that the observed values are distinct, but the remarks are valid even when the observed values are repeated. 
+
+- Definition. ::  The empirical cumulative distribution function \(F_{n}\) (also written ECDF) is the probability distribution that places probability mass \(1/n\) on each of the values \(x_{1}, x_{2}, ..., x_{n}\). The empirical PMF takes the form 
+  \begin{equation*}
+  f_{X}(x)=\frac{1}{n},\quad x\in\left\{ x_{1},x_{2},...,x_{n}\right\}.
+  \end{equation*}
+  If the value \(x_{i}\) is repeated \(k\) times, the mass at \(x_{i}\) is accumulated to \(k/n\).  When $X \sim F$, we will write $X^{\ast} \sim F_{n}$.
+
+\bigskip
+*Facts about the ECDF.*
+
+1. The mean of the ECDF is
+   \[
+   \mu=\sum_{x\in S}xf_{X}(x)=\sum_{i=1}^{n}x_{i}\cdot\frac{1}{n}
+   \]
+   and we recognize this last quantity to be the original sample mean, \(\xbar\). 
+
+2. The variance of the ECDF is
+   \[
+   \sigma^{2}=\sum_{x\in S}(x-\mu)^{2}f_{X}(x)=\sum_{i=1}^{n}(x_{i}-\xbar)^{2}\cdot\frac{1}{n}
+   \]
+   and this last quantity looks very close to what we already know to be the original sample variance.
+   \[
+   s^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\xbar)^{2}.
+   \]
+3. The ECDF $F_{n}(x)$ is a /sufficient statistic/ for $F(x)$, for every $x$.
+
+4. The value $F_{n}(x)$ is a /consistent estimator/ of $F(x)$, for every $x$.  In fact, $F_{n}$ converges /uniformly/ to $F$ (but the proof is much harder).
+
+5. A SRS($m$) \(X_{1}^{\ast},X_{2}^{\ast},\ldots,X_{m}^{\ast}\) from $F_{n}$ is nothing more than a *RESAMPLE* of size $m$ from the original sample $x$, where we sample /with replacement/. 
+
+
+
+** The Bootstrap
+
+
+*Main Idea.*
+- We have a population of interest, $F$, and a parameter of interest, $\theta$.
+
+- Want to learn about $\theta$, so we sample from $F$ to get \(x_{1}, x_{2}, ..., x_{n}\).
+
+- Estimate $\theta$ with $\hat{\theta} = \hat{\theta}(X)$.
+
+- Of course, $X$ is random, so too is $\hat{\theta}$.  What is the distribution of $\hat{\theta}(X)$?
+
+- The sampling distribution of $\hat{\theta}$ is usually very complicated, but we can use Monte Carlo methods to estimate it.  *HOW:*
+  1. For each /bootstrap replicate/, indexed \(b = 1,\ldots ,B\),
+     1. Generate a resample $x^{\ast(b)}= x_{1}^{\ast},\,x_{2}^{\ast},\,\ldots,\,x_{n}^{\ast}$.
+     2. Compute the $b^{\mathrm{th}}$ replicate $\hat{\theta}^{(b)}$ from the $b^{\mathrm{th}}$ bootstrap resample.
+  2. The bootstrap estimate of the true sampling distribution $F_{\hat{\theta}}$ is the ECDF of the bootstrap replicates.
+
+
+
+*** Bootstrap Estimation of Standard Error
+
+For this first part, we don't try to estimate the entire true sampling distribution $F_{\hat{\theta}}$, we satisfy ourselves with simply trying to estimate the standard error of $\hat{\theta}$,
+\[
+\mathrm{SE}(\hat{\theta})=\sqrt{ \E \left[\hat{\theta} - \E\hat{\theta}  \right]^{2}}.
+\]
+
+The bootstrap estimate of the standard error of an estimator \(\hat{\theta}\) is the sample standard deviation of the bootstrap replicates \(\hat{\theta}^{(1)},\, \hat{\theta}^{(2)},\, \ldots,\,\hat{\theta}^{(B)}\):
+\[
+\widehat{\mathrm{SE}}(\hat{\theta}^{\ast})=\sqrt{\frac{1}{B-1}\sum_{b=1}^{B} \left( \hat{\theta}^{(b)} - \overline{\hat{\theta}^{\ast}} \right)^{2}},
+\]
+where we understand
+\[
+\overline{\hat{\theta}^{\ast}} = \frac{1}{B}\sum_{b=1}^{B} \hat{\theta}^{(b)}.
+\]
+
+
+*Example.* Bootstrapping Standard Errors: the Mean.  In this example we illustrate the bootstrap by trying to estimate the standard error of the sample mean. We do this in the special case when the underlying population is normal, mean 2, standard deviation 1. Of course, we don't need a bootstrap distribution: $\Xbar$ has a normal sampling distribution, with mean 1 and standard deviation $1/\sqrt{n}$, where $n$ is the sample size. We will use what we already know to see how the bootstrap method performs.
+
+Please see the handout, "Bootstrapping the Standard Error of the Mean"
+
+
+
+
+*Example.* Bootstrapping the Standard Error of the Median. In this example we extend our study to include more complicated statistics and distributions such that we do not know the answer ahead of time. This example uses a simulated dataset on the settlement amounts of 250 lawsuits. Lawsuit amounts are notoriously right-skewed, so a natural estimate of center would be the sample median. Unfortunately, then the sampling distribution falls out of our reach. We use the bootstrap to help us with this problem, and the modifications to the last example are scarcely more than trivial.
+
+ 
+
+Please see the handout, "Bootstrapping the Standard Error of the Median".  
+
+
+ 
+
+
+
+*** Bootstrap Estimation of Bias
+** The Jackknife
+** Jackknife After Bootstrap
+** Bootstrap Confidence Intervals
+*** Standard Normal Bootstrap Confidence Interval
+*** Basic Bootstrap Confidence Interval
+*** Percentile Bootstrap Confidence Interval
+*** Bootstrap /t/ Interval
+\[
+\left( \hat{\theta} - t_{1 - \alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta}),\  \hat{\theta} - t_{\alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta})
+\]
+** Better Bootstrap Confidence Intervals
+
+
+
+
+
+
+
+
+
+
+* Other Stuff
+
+
+** Resampling Methods: the Bootstrap and Related Procedures
 
 ** Introduction
 
@@ -1912,22 +2138,18 @@ Fortunately, computers are very skilled at doing simple, repetitive tasks very q
 
 3. The bootstrap distribution gives information about the sampling distribution of the statistic. In particular, it gives us some idea about the center, spread, and shape of the sampling distribution of $S$. 
 
-*Example.* Bootstrapping Standard Errors: the Mean.  In this example we illustrate the bootstrap by trying to estimate the standard error of the sample mean. We do this in the special case when the underlying population is normal, mean 2, standard deviation 1. Of course, we don't need a bootstrap distribution: $\Xbar$ has a normal sampling distribution, with mean 1 and standard deviation $1/\sqrt{(}n)$, where $n$ is the sample size. We will use what we already know to see how the bootstrap method performs.
-
- 
-
-Please see the handout, "Bootstrapping the Standard Error of the Mean"  
 
 
- 
-*Example.* Bootstrapping the Standard Error of the Median. In this example we extend our study to include more complicated statistics and distributions such that we do not know the answer ahead of time. This example uses a simulated dataset on the settlement amounts of 250 lawsuits. Lawsuit amounts are notoriously right-skewed, so a natural estimate of center would be the sample median. Unfortunately, then the sampling distribution falls out of our reach. We use the bootstrap to help us with this problem, and the modifications to the last example are scarcely more than trivial.
-
- 
-
-Please see the handout, "Bootstrapping the Standard Error of the Median".  
 
 
- 
+
+
+
+
+
+
+
+
 
 *Example.* The =boot= package in =R=. It turns out that there are many bootstrap procedures and commands already built into =R=, in the =boot= package. Further, inside the =boot= packacge there is a function =boot=! The general syntax is of the form:
 
@@ -2065,97 +2287,12 @@ enough. In general, if the true $p$-value is $p$ then the standard error of the 
    - Matched Pairs Designs. 
    - Relationship between two variables. 
 
-* The Bootstrap and Jackknife
-
-** The Empirical Distribution
-
-Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) of a random variable \(X \sim F\), where we understand $F$ to be the CDF of the population. For simplicity in most of the discussion that follows it will be convenient to imagine that the observed values are distinct, but the remarks are valid even when the observed values are repeated. 
-
-- Definition. ::  The empirical cumulative distribution function \(F_{n}\) (also written ECDF) is the probability distribution that places probability mass \(1/n\) on each of the values \(x_{1}, x_{2}, ..., x_{n}\). The empirical PMF takes the form 
-  \begin{equation*}
-  f_{X}(x)=\frac{1}{n},\quad x\in\left\{ x_{1},x_{2},...,x_{n}\right\}.
-  \end{equation*}
-  If the value \(x_{i}\) is repeated \(k\) times, the mass at \(x_{i}\) is accumulated to \(k/n\).
-
-\bigskip
-*Facts about the ECDF.*
-
-The mean of the empirical distribution is
-\[
-\mu=\sum_{x\in S}xf_{X}(x)=\sum_{i=1}^{n}x_{i}\cdot\frac{1}{n}
-\]
-and we recognize this last quantity to be the sample mean, \(\xbar\). The variance of the empirical distribution is
-\[
-\sigma^{2}=\sum_{x\in S}(x-\mu)^{2}f_{X}(x)=\sum_{i=1}^{n}(x_{i}-\xbar)^{2}\cdot\frac{1}{n}
-\]
-and this last quantity looks very close to what we already know to be the sample variance.
-\[
-s^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\xbar)^{2}.
-\]
-The empirical quantile function is the inverse of the ECDF.
-
-*** How to do it with =R=
-
-The empirical distribution is not directly available as a distribution in the same way that the other base probability distributions are, but there are plenty of resources available for the determined investigator. 
-
-Given a data vector of observed values , we can see the empirical CDF with the  function:
-
-<<>>=
-x <- c(4, 7, 9, 11, 12)
-ecdf(x)
-@
-
-The above shows that the returned value of  is not a number but rather a function. The ECDF is not usually used by itself in this form, by itself. More commonly it is used as an intermediate step in a more complicated calculation, for instance, in hypothesis testing. It is nevertheless instructive to see what the  looks like, and there is a special plot method for  objects.
-
-<<eval = FALSE>>=
-plot(ecdf(x))
-@
-The graph is of a right-continuous function with jumps exactly at the locations stored in . There are no repeated values in  so all of the jumps are equal to \(1/5=0.2\).
-
-The empirical PDF is not usually of particular interest in itself, but if we really wanted we could define a function to serve as the empirical PDF:
-
-<<keep.source = TRUE>>=
-epdf <- function(x) function(t){sum(x %in% t)/length(x)}
-x <- c(0,0,1)
-epdf(x)(0)  # should be 2/3
-@
-
-To simulate from the empirical distribution supported on the vector , we use the  function.
-
-<<>>=
-x <- c(0,0,1)
-sample(x, size = 7, replace = TRUE)
-@
-
-We can get the empirical quantile function in R with.
-
-As we hinted above, the empirical distribution is significant more because of how and where it appears in more sophisticated applications.
-
-
-** The Bootstrap
-*** Bootstrap Estimation of Standard Error
-The bootstrap estimate of the standard error of an estimator \(\hat{\theta}\) is the sample standard deviation of the bootstrap replicates \(\hat{\theta}^{(1)},\, \hat{\theta}^{(2)},\, \ldots,\,\hat{\theta}^{(B)}\):
-
-\[
-\mathrm{\widehat{SE}(\hat{\theta}^{\ast})}=\sqrt{}
-\]
-
-
-*** Bootstrap Estimation of Bias
-** The Jackknife
-** Jackknife After Bootstrap
-** Bootstrap Confidence Intervals
-*** Standard Normal Bootstrap Confidence Interval
-*** Basic Bootstrap Confidence Interval
-*** Percentile Bootstrap Confidence Interval
-*** Bootstrap /t/ Interval
-\[
-\left( \hat{\theta} - t_{1 - \alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta}),\  \hat{\theta} - t_{\alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta})
-\]
-** Better Bootstrap Confidence Intervals
 
 
 
+
+
+* The Bibliography
 
 
 %%%%%%%%%%  The Bibliography %%%%%%%%%%%%%%%%%%%%%%5
