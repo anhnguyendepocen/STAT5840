@@ -2014,7 +2014,6 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
 5. A SRS($m$) \(X_{1}^{\ast},X_{2}^{\ast},\ldots,X_{m}^{\ast}\) from $F_{n}$ is nothing more than a *RESAMPLE* of size $m$ from the original sample $x$, where we sample /with replacement/. 
 
 
-
 ** The Bootstrap
 
 
@@ -2028,7 +2027,7 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
 - Of course, $X$ is random, so too is $\hat{\theta}$.  What is the distribution of $\hat{\theta}(X)$?
 
 - The sampling distribution of $\hat{\theta}$ is usually very complicated, but we can use Monte Carlo methods to estimate it.  *HOW:*
-  1. For each /bootstrap replicate/, indexed \(b = 1,\ldots ,B\),
+  1. For each /bootstrap replicate/, indexed \(b = 1, \ldots, B\),
      1. Generate a resample $x^{\ast(b)}= x_{1}^{\ast},\,x_{2}^{\ast},\,\ldots,\,x_{n}^{\ast}$.
      2. Compute the $b^{\mathrm{th}}$ replicate $\hat{\theta}^{(b)}$ from the $b^{\mathrm{th}}$ bootstrap resample.
   2. The bootstrap estimate of the true sampling distribution $F_{\hat{\theta}}$ is the ECDF of the bootstrap replicates.
@@ -2051,12 +2050,9 @@ where we understand
 \overline{\hat{\theta}^{\ast}} = \frac{1}{B}\sum_{b=1}^{B} \hat{\theta}^{(b)}.
 \]
 
-
 *Example.* Bootstrapping Standard Errors: the Mean.  In this example we illustrate the bootstrap by trying to estimate the standard error of the sample mean. We do this in the special case when the underlying population is normal, mean 2, standard deviation 1. Of course, we don't need a bootstrap distribution: $\Xbar$ has a normal sampling distribution, with mean 1 and standard deviation $1/\sqrt{n}$, where $n$ is the sample size. We will use what we already know to see how the bootstrap method performs.
 
-Please see the handout, "Bootstrapping the Standard Error of the Mean"
-
-
+Please see the PRINTOUT =bootstrap.pdf=
 
 
 *Example.* Bootstrapping the Standard Error of the Median. In this example we extend our study to include more complicated statistics and distributions such that we do not know the answer ahead of time. This example uses a simulated dataset on the settlement amounts of 250 lawsuits. Lawsuit amounts are notoriously right-skewed, so a natural estimate of center would be the sample median. Unfortunately, then the sampling distribution falls out of our reach. We use the bootstrap to help us with this problem, and the modifications to the last example are scarcely more than trivial.
