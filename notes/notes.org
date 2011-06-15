@@ -1962,11 +1962,11 @@ A better estimator is the James-Stein Estimator:
 \]
 where
 \[
-(a)^{+} = \max (0, a)
+(a)^{+} = \max (0, a),
 \]
 and
 \[
- | x | = \sqrt{\sum_{i=1}^{p}x_{i}}
+ | x | = \sqrt{\sum_{i=1}^{p}x_{i}}.
 \]
 
 This is really crazy, because it means that independent samples can give better information for estimating perhaps unrelated means.
@@ -1976,6 +1976,89 @@ This is really crazy, because it means that independent samples can give better 
   R(\theta,\delta^{\mathrm{JS}}) < p,\quad \mbox{for all $\theta$.}
   \]
 
+- Now, the James-Stein estimator depends on $0 < a < 2(p-2)$.
+
+- Want to investigate three (3) things:
+  - Show that the risk of J-S truly is less than $p$ for all $\theta$
+  - See if we can speed up our estimates by introducing correlation (namely, by reusing simultations)
+  - See what happens over a range of values of $a$
+
+
+*Monte Carlo Experiment*
+
+Naive way: 
+1. Choose a grid of $\theta$ values (say, $0 < \theta < 10$).
+2. For each $\theta$,
+   1. Simulate 2000 values of $X|\theta = (X_{1},\ldots,X_{p})$ where $X_{i} \sim N(\theta,1)$, independent.
+   2. Compute JSE, $\delta_{a}^{\mathrm{JS}}$
+   3. Compute loss, $\sum \left( \delta_{i}^{\mathrm{JS}}(x) - \theta \right)^{2}$
+   4. Average losses to get risk
+
+Better way:
+- use the same generated $x$'s for each calculated value of risk.  Change only $\theta$ from run to run.
+
+When comparing what happens for different values of $a$, be sure to use the same simulated $x$'s.
+
+
+
+*Antithetic Variables*
+
+Given two samples \(X_{1},X_{2},\ldots,X_{m}\sim f  \)  and  \(Y_{1},Y_{2},\ldots,Y_{m}\sim f  \) for estimating 
+\[
+I = \int h(x) f(x) \diff x
+\] 
+where $X_{i}$ and $Y_{i}$ are negatively correlated and $h$ is a monotone function.
+
+Define an /antithetic pair/
+\[
+\frac{h(X_{i}) + h(Y_{i})}{2}
+\]
+then the /antithetic estimator/
+\[
+\hat{I}=\frac{1}{m} \sum_{i = 1}^{m}\frac{h(X_{i}) + h(Y_{i})}{2}
+\]
+is more efficient than the estimate based only on $X$'s and $Y$'s.
+
+How to get negatively correlated \(X_{i}\) and \(Y_{i}\)
+1. Using inversion
+   - $U \sim \mathrm{Unif}(0,1)$
+   - $U$ and $1-U$ are negatively correlated
+   - $X = F^{-1}(U)$ and $Y = F^{-1}(1 - U)$
+
+   *Example*  want to compute
+   \[
+   \int_{0}^{\infty}x^{2}\me^{-x} \diff x
+   \]
+   1. Boring way
+      - Generate  \(X_{1},X_{2},\ldots,X_{m}\sim \mathrm{Exp}(1)\)
+      \[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}X_{i}^{2}
+      \]
+   2. Better way
+      - Generate  \(U_{1},U_{2},\ldots,U_{m}\sim \mathrm{Unif}(0,1)\)
+      - Let $X_{i} = -\ln(U_{i})$ and $Y_{i} = -\ln(1 - U_{i})$
+      \[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}\frac{X_{i}^{2} + Y_{i}^{2}}{2}
+      \]
+
+2. Use symmetry
+   - $X \sim f(x)$ which is symmetric about $\mu$
+   - $X - \mu$ has the same distribution as $\mu - X$
+   - So $X$ has the same distribution as $2\mu - X$ (remember $U$ and $1 - U$)
+   *Example*  want to compute
+   \[
+   \int_{0}^{\infty}x^{3}\phi(x) \diff x
+   \]
+   1. Boring way
+      - Generate  \(X_{1},X_{2},\ldots,X_{m}\sim \mathrm{N}(0,1)\)
+      \[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}X_{i}^{3}
+      \]
+   2. Better way
+      - Generate  \(X_{1},X_{2},\ldots,X_{m}\sim \mathrm{N}(0,1)\)
+      \[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}\frac{X_{i}^{3} + (-X_{i})^{3}}{2}
+      \]
 
 
 * The Bootstrap and Jackknife
@@ -2031,7 +2114,6 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
      1. Generate a resample $x^{\ast(b)}= x_{1}^{\ast},\,x_{2}^{\ast},\,\ldots,\,x_{n}^{\ast}$.
      2. Compute the $b^{\mathrm{th}}$ replicate $\hat{\theta}^{(b)}$ from the $b^{\mathrm{th}}$ bootstrap resample.
   2. The bootstrap estimate of the true sampling distribution $F_{\hat{\theta}}$ is the ECDF of the bootstrap replicates.
-
 
 
 *** Bootstrap Estimation of Standard Error

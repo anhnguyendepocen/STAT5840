@@ -1,0 +1,117 @@
+#+TITLE:   Accelerating Monte Carlo Integration
+#+AUTHOR:    
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Evaluating the James-Stein Estimator
+This program illustrates risk calculations for the James-Stein estimator using Monte Carlo integration.  In this example we have 
+\[
+X = \left( X_{1},X_{2},\ldots,X_{p}),\mbox{ with }X_{i}\sim N(\theta,1),\ i=1,\ldots 5. 
+\]
+and we we will take $p = 5$ and $\theta$ ranging from $0 < \theta < 10$. We are using the James-Stein Estimator:
+\[
+\delta_{i}^{\mathrm{JS}}(X) = \left(1 - \frac{a}{|X|^{2}} \right)^{+} X_{i}, \quad 0 < a < 2(p - 2),
+\]
+ We do it in three parts:
+1. Naive way: generate a bunch of normals (=Iter= = 2000) like crazy and see what happens.
+2. Clever way: only generate one (1) master set of normals and reuse those for all values of $\theta$.
+3. Do part 2) over and over for different choices of $a$  Use the same set of normals for all $\theta$ and for each $a$.
+
+** Here's the first part.
+
+#+begin_src R :exports code
+# jamesstein.R
+set.seed(1)
+p <- 5             # how many populations
+Iter <- 2000       # sample size
+n <- 100           # number of thetas for the grid
+theta <- seq(from = 0, to = 10, length.out = n)  # thetas on the grid
+a <- 3             # J-S parameter, 0 < a < 2(p-2)
+risk <- rep(0, times = n)
+
+# Naive simulation
+for (i in seq.int(n)){
+  x <- matrix(rnorm(p*Iter, mean = theta[i]), nrow = p)
+  nx <- colSums(x^2)
+  js1 <- max(c(0, 1 - a/nx)) * x[1, ]
+  js2 <- max(c(0, 1 - a/nx)) * x[2, ]
+  js3 <- max(c(0, 1 - a/nx)) * x[3, ]
+  js4 <- max(c(0, 1 - a/nx)) * x[4, ]
+  js5 <- max(c(0, 1 - a/nx)) * x[5, ]
+  risk[i] <- mean((js1 - theta[i])^2 + (js1 - theta[i])^2 + 
+                  (js3 - theta[i])^2 + (js4 - theta[i])^2 + 
+                  (js5 - theta[i])^2)
+}
+#+end_src
+
+** Here's the second part.
+
+#+begin_src R :exports code
+# Instead use the same sequence of variates
+risk2 <- rep(0, times = n)
+xstay <- matrix(rnorm(p*Iter), nrow = p)  # generate one set of data
+
+for (i in seq.int(n)){
+  x <- xstay + theta[i]
+  nx <- colSums(x^2)
+  js1 <- max(c(0, 1 - a/nx)) * x[1, ]
+  js2 <- max(c(0, 1 - a/nx)) * x[2, ]
+  js3 <- max(c(0, 1 - a/nx)) * x[3, ]
+  js4 <- max(c(0, 1 - a/nx)) * x[4, ]
+  js5 <- max(c(0, 1 - a/nx)) * x[5, ]
+  risk2[i] <- mean((js1 - theta[i])^2 + (js1 - theta[i])^2 + 
+                   (js3 - theta[i])^2 + (js4 - theta[i])^2 + 
+                   (js5 - theta[i])^2)
+}
+#+end_src
+
+** Here's the third part.
+
+#+begin_src R :exports code
+# Now evaluate for different choices of a
+a <- 1:5
+risk3 <- matrix(rep(0, times = n*length(a)), nrow  = length(a))
+th <- matrix(rnorm(p*Iter), nrow = p)
+
+for (k in seq_along(a)){
+  for (i in seq.int(n)){
+    x <- th + theta[i]
+    nx <- colSums(x^2)
+    js1 <- max(c(0, 1 - a[k]/nx)) * x[1, ]
+    js2 <- max(c(0, 1 - a[k]/nx)) * x[2, ]
+    js3 <- max(c(0, 1 - a[k]/nx)) * x[3, ]
+    js4 <- max(c(0, 1 - a[k]/nx)) * x[4, ]
+    js5 <- max(c(0, 1 - a[k]/nx)) * x[5, ]
+    risk3[k, i] <- mean((js1 - theta[i])^2 + (js1 - theta[i])^2 + 
+                        (js3 - theta[i])^2 + (js4 - theta[i])^2 + 
+                        (js5 - theta[i])^2)
+  }
+}
+#+end_src
+
+#+CAPTION:    Plots for James-Stein risk estimation, naive method (wiggly) and reuse method (smooth) when $a = 3$
+#+LABEL:      fig:yplot
+#+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+#+begin_src R :exports results :results output graphics :file img/jamesstein.pdf
+plot(theta, risk, xlab = expression(theta), ylab = "risk", ylim = c(1,5.2), type = "l")
+lines(theta, risk2, lwd = 2)
+abline(h = 5, lty = 2)
+#+end_src
+
+
+#+CAPTION:    Plots for James-Stein risk estimation, as $a$ ranges from $a = 1$ (skinny) to $a = 5$ (wide)
+#+LABEL:      fig:yplot
+#+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+#+begin_src R :exports results :results output graphics :file img/jamesstein2.pdf
+plot(theta, risk3[1, ], xlab = expression(theta), ylab = "risk", ylim = c(2.8,5.2), type = "l")
+abline(h = 5, lty = 2)
+for (k in 2:5){print(lines(theta, risk3[k, ], lwd = k))}
+#+end_src

@@ -1,4 +1,4 @@
-% Created 2011-06-14 Tue 15:29
+% Created 2011-06-15 Wed 12:33
 \documentclass[captions=tableheading]{scrbook}
 
 
@@ -2184,11 +2184,11 @@ A better estimator is the James-Stein Estimator:
 \]
 where
 \[
-(a)^{+} = \max (0, a)
+(a)^{+} = \max (0, a),
 \]
 and
 \[
- | x | = \sqrt{\sum_{i=1}^{p}x_{i}}
+ | x | = \sqrt{\sum_{i=1}^{p}x_{i}}.
 \]
 
 This is really crazy, because it means that independent samples can give better information for estimating perhaps unrelated means.
@@ -2199,7 +2199,114 @@ This is really crazy, because it means that independent samples can give better 
   \[
   R(\theta,\delta^{\mathrm{JS}}) < p,\quad \mbox{for all $\theta$.}
   \]
+\item Now, the James-Stein estimator depends on $0 < a < 2(p-2)$.
+\item Want to investigate three (3) things:
+\begin{itemize}
+\item Show that the risk of J-S truly is less than $p$ for all $\theta$
+\item See if we can speed up our estimates by introducing correlation (namely, by reusing simultations)
+\item See what happens over a range of values of $a$
 \end{itemize}
+\end{itemize}
+\textbf{Monte Carlo Experiment}
+
+Naive way: 
+
+\begin{enumerate}
+\item Choose a grid of $\theta$ values (say, $0 < \theta < 10$).
+\item For each $\theta$,
+\begin{enumerate}
+\item Simulate 2000 values of $X|\theta = (X_{1},\ldots,X_{p})$ where $X_{i} \sim N(\theta,1)$, independent.
+\item Compute JSE, $\delta_{a}^{\mathrm{JS}}$
+\item Compute loss, $\sum \left( \delta_{i}^{\mathrm{JS}}(x) - \theta \right)^{2}$
+\item Average losses to get risk
+\end{enumerate}
+\end{enumerate}
+
+Better way:
+
+\begin{itemize}
+\item use the same generated $x$'s for each calculated value of risk.  Change only $\theta$ from run to run.
+\end{itemize}
+
+When comparing what happens for different values of $a$, be sure to use the same simulated $x$'s.
+
+
+
+\textbf{Antithetic Variables}
+
+Given two samples \(X_{1},X_{2},\ldots,X_{m}\sim f  \)  and  \(Y_{1},Y_{2},\ldots,Y_{m}\sim f  \) for estimating 
+\[
+I = \int h(x) f(x) \diff x
+\] 
+where $X_{i}$ and $Y_{i}$ are negatively correlated and $h$ is a monotone function.
+
+Define an \emph{antithetic pair}
+\[
+\frac{h(X_{i}) + h(Y_{i})}{2}
+\]
+then the \emph{antithetic estimator}
+\[
+\hat{I}=\frac{1}{m} \sum_{i = 1}^{m}\frac{h(X_{i}) + h(Y_{i})}{2}
+\]
+is more efficient than the estimate based only on $X$'s and $Y$'s.
+
+How to get negatively correlated \(X_{i}\) and \(Y_{i}\)
+
+\begin{enumerate}
+\item Using inversion
+\begin{itemize}
+\item $U \sim \mathrm{Unif}(0,1)$
+\item $U$ and $1-U$ are negatively correlated
+\item $X = F^{-1}(U)$ and $Y = F^{-1}(1 - U)$
+\end{itemize}
+\textbf{Example}  want to compute
+   \[
+   \int_{0}^{\infty}x^{2}\me^{-x} \diff x
+   \]
+\begin{enumerate}
+\item Dumb way
+\begin{itemize}
+\item Generate  \(X_{1},X_{2},\ldots,X_{m}\sim \mathrm{Exp}(1)\)
+\end{itemize}
+\[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}X_{i}^{2}
+      \]
+\item Better way
+\begin{itemize}
+\item Generate  \(U_{1},U_{2},\ldots,U_{m}\sim \mathrm{Unif}(0,1)\)
+\item Let $X_{i} = -\ln(U_{i})$ and $Y_{i} = -\ln(1 - U_{i})$
+\end{itemize}
+\[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}\frac{X_{i}^{2} + Y_{i}^{2}}{2}
+      \]
+\end{enumerate}
+\item Use symmetry
+\begin{itemize}
+\item $X \sim f(x)$ which is symmetric about $\mu$
+\item $X - \mu$ has the same distribution as $\mu - X$
+\item So $X$ has the same distribution as $2\mu - X$ (remember $U$ and $1 - U$)
+\end{itemize}
+\textbf{Example}  want to compute
+   \[
+   \int_{0}^{\infty}x^{3}\phi(x) \diff x
+   \]
+\begin{enumerate}
+\item Dumb way
+\begin{itemize}
+\item Generate  \(X_{1},X_{2},\ldots,X_{m}\sim \mathrm{N}(0,1)\)
+\end{itemize}
+\[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}X_{i}^{3}
+      \]
+\item Better way
+\begin{itemize}
+\item Generate  \(X_{1},X_{2},\ldots,X_{m}\sim \mathrm{N}(0,1)\)
+\end{itemize}
+\[
+      \hat{I}=\frac{1}{m} \sum_{i = 1}^{m}\frac{X_{i}^{3} + (-X_{i})^{3}}{2}
+      \]
+\end{enumerate}
+\end{enumerate}
 \chapter{The Bootstrap and Jackknife}
 \label{sec-4}
 \section{The Empirical Distribution}
@@ -2253,7 +2360,7 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
 \item Of course, $X$ is random, so too is $\hat{\theta}$.  What is the distribution of $\hat{\theta}(X)$?
 \item The sampling distribution of $\hat{\theta}$ is usually very complicated, but we can use Monte Carlo methods to estimate it.  \textbf{HOW:}
 \begin{enumerate}
-\item For each \emph{bootstrap replicate}, indexed \(b = 1,\ldots ,B\),
+\item For each \emph{bootstrap replicate}, indexed \(b = 1, \ldots, B\),
 \begin{enumerate}
 \item Generate a resample $x^{\ast(b)}= x_{1}^{\ast},\,x_{2}^{\ast},\,\ldots,\,x_{n}^{\ast}$.
 \item Compute the $b^{\mathrm{th}}$ replicate $\hat{\theta}^{(b)}$ from the $b^{\mathrm{th}}$ bootstrap resample.
@@ -2279,12 +2386,9 @@ where we understand
 \overline{\hat{\theta}^{\ast}} = \frac{1}{B}\sum_{b=1}^{B} \hat{\theta}^{(b)}.
 \]
 
-
 \textbf{Example.} Bootstrapping Standard Errors: the Mean.  In this example we illustrate the bootstrap by trying to estimate the standard error of the sample mean. We do this in the special case when the underlying population is normal, mean 2, standard deviation 1. Of course, we don't need a bootstrap distribution: $\Xbar$ has a normal sampling distribution, with mean 1 and standard deviation $1/\sqrt{n}$, where $n$ is the sample size. We will use what we already know to see how the bootstrap method performs.
 
-Please see the handout, ``Bootstrapping the Standard Error of the Mean''
-
-
+Please see the PRINTOUT \texttt{bootstrap.pdf}
 
 
 \textbf{Example.} Bootstrapping the Standard Error of the Median. In this example we extend our study to include more complicated statistics and distributions such that we do not know the answer ahead of time. This example uses a simulated dataset on the settlement amounts of 250 lawsuits. Lawsuit amounts are notoriously right-skewed, so a natural estimate of center would be the sample median. Unfortunately, then the sampling distribution falls out of our reach. We use the bootstrap to help us with this problem, and the modifications to the last example are scarcely more than trivial.

@@ -18,11 +18,10 @@ This program illustrates the Bootstap procedure for estimating the standard erro
 set.seed(1)
 #+end_src
 
-
 #+begin_src R :exports code
 # bootmed.R
 n <- length(islands)     
-Iter <- 10000
+Iter <- 200
 medstar <- rep(0, times = Iter)
 for(i in seq.int(Iter)){
   boot.samp <- sample(islands, size = n, replace = TRUE)
@@ -33,12 +32,18 @@ for(i in seq.int(Iter)){
 After the copy-paste we can check the results with the following.
 #+begin_src R :exports both
 mean(medstar)
+mean(islands)
+median(medstar)
+median(islands)
 sd(medstar)
 #+end_src
 
+We should not trust our estimate of the standard error of the median, here, because we can see that the data are substantially skewed.
+
+
 #+CAPTION:    Histogram of bootstrap replicates for the sample median
 #+LABEL:      fig:yplot
-#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
 #+begin_src R :exports results :results output graphics :file img/bootmed.pdf
 hist(medstar, breaks = 40, main = "", prob = TRUE)
 lines(density(medstar))

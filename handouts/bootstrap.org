@@ -21,7 +21,7 @@ set.seed(1)
 #+begin_src R :exports code
 # bootstrap.R
 srs <- rnorm(25, mean = 2, sd = 1)  # generate 25 normals, original data 
-Iter <- 50000                       # want 50000 resamples
+Iter <- 200                         # want 200 resamples
 xbarstar <- rep(0, times = Iter)    # initialize vector xbarstar
 
 for(i in seq.int(Iter)){
@@ -32,13 +32,15 @@ for(i in seq.int(Iter)){
 
 After the copy-paste we can check the results with the following.
 #+begin_src R :exports both
+mean(srs)
 mean(xbarstar)
-sd(xbarstar)
+sd(xbarstar)   # bootstrap estimate of standard error
+1/sqrt(25)     # true standard error
 #+end_src
 
-#+CAPTION:    Histogram of bootstrap replicates for the sample mean
+#+CAPTION:    Histogram of bootstrap replicates for the sample mean.  True sampling distribution is the solid line.
 #+LABEL:      fig:yplot
-#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
 #+begin_src R :exports results :results output graphics :file img/bootstrap.pdf
 hist(xbarstar, breaks = 40, main = "", prob = TRUE)
 curve(dnorm(x, 2, 0.2), add = TRUE)
