@@ -1,4 +1,4 @@
-% Created 2011-06-10 Fri 11:43
+% Created 2011-06-17 Fri 10:47
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -34,8 +34,8 @@
 We cover the standard Normal density with a Cauchy proposal density and use the accept-reject algorithm.  We copy-paste the \texttt{rand\_norm} function at the command prompt in \texttt{R}.
 
 \begin{verbatim}
-# rand_norm.R
-rand_norm <- function(n){
+# randnorm.R
+randnorm <- function(n){
   M <- 1.5203            # bound used in A/R algorithm
   i <- 0; N <- 0         # initialization and storage
   z <- rep(0, times = n)
@@ -55,12 +55,12 @@ list(z = z, accept = n/N)
 \end{verbatim}
 After the copy-paste we can run the function with the following.
 \begin{verbatim}
-tmp <- rand_norm(10000)
+tmp <- randnorm(10000)
 tmp$accept
 \end{verbatim}
 
 \begin{verbatim}
- [1] 0.6488451
+ [1] 0.6552651
 \end{verbatim}
 
 

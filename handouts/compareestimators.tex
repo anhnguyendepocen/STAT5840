@@ -1,20 +1,41 @@
-#+TITLE:   Comparing the Risks of Three Classical Estimators
-#+AUTHOR:    G. Jay Kerns
-#+EMAIL:     gkerns@ysu.edu
-#+DATE:      STAT 5840: Summer 2011
-#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
-#+BABEL: :session *R* :results output pp :tangle yes
-#+LaTeX_CLASS: article
-#+LaTeX_CLASS_OPTIONS: [11pt,english]
-#+LATEX_HEADER: \input{handoutformat}
-#+latex: \thispagestyle{empty}
+% Created 2011-06-17 Fri 10:46
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Comparing the Risks of Three Classical Estimators}
+%\author{G. Jay Kerns}
+\date{STAT 5840: Summer 2011}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
 
 Here we go to compare risks of three classical estimators: the sample mean, sample median, and trimmed sample mean.  Our underlying population will be $\mathrm{Laplace}(\mu,1)$ and the loss will be squared error loss.
 
-* The Script
+\section*{The Script}
+\label{sec-1}
 
-#+begin_src R :exports code
-# compare_estimators.R
+
+\begin{verbatim}
+# compareestimators.R
 
 set.seed(1)
 Iter <- 1000        # number of iterations (should be multiple of 100)
@@ -58,14 +79,23 @@ r3 <- round(sltm/Iter, 4)
 se1 <- round(sqrt((sl2mn - slmn^2/Iter)/Iter^2), 4)
 se2 <- round(sqrt((sl2md - slmd^2/Iter)/Iter^2), 4)
 se3 <- round(sqrt((sl2tm - sltm^2/Iter)/Iter^2), 4)
-#+end_src
+\end{verbatim}
+\section*{At the command prompt}
+\label{sec-2}
 
-* At the command prompt
 We copy-paste the above script and let it run. To see what happened we may do the following.
 
-#+begin_src R :exports both
+\begin{verbatim}
 # Now print the results
 paste("Mean:         ", r1, " (", se1, ")", sep="")
 paste("Median:       ", r2, " (", se2, ")", sep="")
 paste("Trimmed Mean: ", r3, " (", se3, ")", sep="")
-#+end_src
+\end{verbatim}
+
+\begin{verbatim}
+ [1] "Mean:         0.0994 (0.0045)"
+ [1] "Median:       0.0685 (0.0037)"
+ [1] "Trimmed Mean: 0.0864 (0.0039)"
+\end{verbatim}
+
+\end{document}

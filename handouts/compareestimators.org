@@ -1,5 +1,20 @@
+#+TITLE:   Comparing the Risks of Three Classical Estimators
+#+AUTHOR:    G. Jay Kerns
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
 
-# compare_estimators.R
+Here we go to compare risks of three classical estimators: the sample mean, sample median, and trimmed sample mean.  Our underlying population will be $\mathrm{Laplace}(\mu,1)$ and the loss will be squared error loss.
+
+* The Script
+
+#+begin_src R :exports code
+# compareestimators.R
 
 set.seed(1)
 Iter <- 1000        # number of iterations (should be multiple of 100)
@@ -43,8 +58,14 @@ r3 <- round(sltm/Iter, 4)
 se1 <- round(sqrt((sl2mn - slmn^2/Iter)/Iter^2), 4)
 se2 <- round(sqrt((sl2md - slmd^2/Iter)/Iter^2), 4)
 se3 <- round(sqrt((sl2tm - sltm^2/Iter)/Iter^2), 4)
+#+end_src
 
+* At the command prompt
+We copy-paste the above script and let it run. To see what happened we may do the following.
+
+#+begin_src R :exports both
 # Now print the results
 paste("Mean:         ", r1, " (", se1, ")", sep="")
 paste("Median:       ", r2, " (", se2, ")", sep="")
 paste("Trimmed Mean: ", r3, " (", se3, ")", sep="")
+#+end_src

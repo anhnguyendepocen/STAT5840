@@ -18,7 +18,7 @@ L(\lambda) = \E \left[\frac{(X - \lambda)^{2}}{\lambda^{2}}\right].
 \]
 The following is a script to accomplish that goal.
 #+begin_src R :exports code
-# exp_lognormal.R
+# explognormal.R
 
 # compute for a range of lambdas
 lambda <- seq(from = 1.5, to = 10, by = 0.1)

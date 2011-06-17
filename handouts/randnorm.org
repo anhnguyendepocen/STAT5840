@@ -15,8 +15,8 @@
 We cover the standard Normal density with a Cauchy proposal density and use the accept-reject algorithm.  We copy-paste the =rand_norm= function at the command prompt in =R=.
 
 #+begin_src R :exports code
-# rand_norm.R
-rand_norm <- function(n){
+# randnorm.R
+randnorm <- function(n){
   M <- 1.5203            # bound used in A/R algorithm
   i <- 0; N <- 0         # initialization and storage
   z <- rep(0, times = n)
@@ -36,7 +36,7 @@ list(z = z, accept = n/N)
 #+end_src
 After the copy-paste we can run the function with the following.
 #+begin_src R :exports both
-tmp <- rand_norm(10000)
+tmp <- randnorm(10000)
 tmp$accept
 #+end_src
 

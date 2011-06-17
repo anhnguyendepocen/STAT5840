@@ -1,6 +1,6 @@
 
-# rand_norm.R
-rand_norm <- function(n){
+# randnorm.R
+randnorm <- function(n){
   M <- 1.5203            # bound used in A/R algorithm
   i <- 0; N <- 0         # initialization and storage
   z <- rep(0, times = n)
@@ -18,7 +18,7 @@ rand_norm <- function(n){
 list(z = z, accept = n/N)                     
 }
 
-tmp <- rand_norm(10000)
+tmp <- randnorm(10000)
 tmp$accept
 
 pdf(file="img/ARalgo.pdf")

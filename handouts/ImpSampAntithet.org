@@ -1,0 +1,39 @@
+#+TITLE:   Assignment: Importance Sampling and Antithetic Variables
+#+AUTHOR:    STAT 5840 Summer 2011
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil ^:nil date:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+
+* Questions
+
+1. Obtain a Monte Carlo estimate $\hat{\theta}$ of 
+   \[
+   \int_{1}^{\infty} \frac{x^{3}}{\sqrt{2\pi}}\me^{-x^2/2} \diff x
+   \]
+   by importance sampling,  and also estimate the variance of $\hat{\theta}$.  *Note:* there are /many/ ways to do this problem, and I'm only looking for one (1) way.  Surprise me.
+
+2. Compute a Monte Carlo estimate $\hat{\theta}$ of 
+   \[
+   \theta = \int_{0}^{2} \me ^{-x}\,\diff x
+   \]
+   by sampling from a Unif(0,2) distribution, and also estimate the variance of $\hat{\theta}$. Find another Monte Carlo estimator $\hat{\theta}^{\ast}$ by sampling from an Exp(1) distribution.  Which of the variances (of $\hat{\theta}$ and $\hat{\theta}^{\ast}$) is smaller, and why?
+
+3. Use Monte Carlo integration with antithetic variables to estimate
+   \[
+   \theta = \int_{0}^{1} \frac{\me ^{-x}}{1 + x^{2}}\,\diff x,
+   \]
+   and find the approximate reduction in variance as a percentage of the variance without variance reduction (this means you also need to estimate $\theta$ the naive way and compare variances).
+
+*Hints:*
+
+1. Look for an importance function which is easy to simulate and has heavier tails than $f$ (but still has finite variance).  You can also manipulate the integral beforehand with Calculus tricks which may give you something easier/better.  For hints how to set up your program, look at =explognormal.R=.
+
+2. Not really much to say here.  Simulate some variates, compute some values, and find the =mean=.  For the variance you are looking at $\hat{\theta}(1 - \hat{\theta})/n$.
+
+3. Take a look at the range of integration.  Do you see the natural choice of variates to simulate?  Now, remember from class: what's the easiest way to introduce correlation with variates like those?

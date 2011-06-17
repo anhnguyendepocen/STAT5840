@@ -1,5 +1,5 @@
 
-# exp_lognormal.R
+# explognormal.R
 
 # compute for a range of lambdas
 lambda <- seq(from = 1.5, to = 10, by = 0.1)

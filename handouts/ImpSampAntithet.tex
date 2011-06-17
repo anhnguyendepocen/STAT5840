@@ -1,0 +1,62 @@
+% Created 2011-06-17 Fri 10:51
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Assignment: Importance Sampling and Antithetic Variables}
+\author{STAT 5840 Summer 2011}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\section*{Questions}
+\label{sec-1}
+
+
+
+\begin{enumerate}
+\item Obtain a Monte Carlo estimate $\hat{\theta}$ of 
+   \[
+   \int_{1}^{\infty} \frac{x^{3}}{\sqrt{2\pi}}\me^{-x^2/2} \diff x
+   \]
+   by importance sampling,  and also estimate the variance of $\hat{\theta}$.  \textbf{Note:} there are \emph{many} ways to do this problem, and I'm only looking for one (1) way.  Surprise me.
+\item Compute a Monte Carlo estimate $\hat{\theta}$ of 
+   \[
+   \theta = \int_{0}^{2} \me ^{-x}\,\diff x
+   \]
+   by sampling from a Unif(0,2) distribution, and also estimate the variance of $\hat{\theta}$. Find another Monte Carlo estimator $\hat{\theta}^{\ast}$ by sampling from an Exp(1) distribution.  Which of the variances (of $\hat{\theta}$ and $\hat{\theta}^{\ast}$) is smaller, and why?
+\item Use Monte Carlo integration with antithetic variables to estimate
+   \[
+   \theta = \int_{0}^{1} \frac{\me ^{-x}}{1 + x^{2}}\,\diff x,
+   \]
+   and find the approximate reduction in variance as a percentage of the variance without variance reduction (this means you also need to estimate $\theta$ the naive way and compare variances).
+\end{enumerate}
+
+\textbf{Hints:}
+
+
+\begin{enumerate}
+\item Look for an importance function which is easy to simulate and has heavier tails than $f$ (but still has finite variance).  You can also manipulate the integral beforehand with Calculus tricks which may give you something easier/better.  For hints how to set up your program, look at \texttt{explognormal.R}.
+\item Not really much to say here.  Simulate some variates, compute some values, and find the \texttt{mean}.  For the variance you are looking at $\hat{\theta}(1 - \hat{\theta})/n$.
+\item Take a look at the range of integration.  Do you see the natural choice of variates to simulate?  Now, remember from class: what's the easiest way to introduce correlation with variates like those?
+\end{enumerate}
+
+\end{document}
