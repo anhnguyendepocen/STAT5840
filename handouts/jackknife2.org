@@ -1,0 +1,53 @@
+#+TITLE:   The Jackknife, Part 2
+#+AUTHOR:    
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Estimating standard error of a ratio estimator with the jackknife[fn:1]
+We were talking about the =patch= data in the =bootstrap= package which concerns bloodstream measurements for eight subjects in a study. 
+
+#+begin_src R :exports none
+library(bootstrap)
+data(patch)
+head(patch)
+#+end_src
+
+The parameter of interest was
+\[
+\theta = \frac{\E[\mathrm{new}] - \E[\mathrm{old}]}{\E[\mathrm{old}] - \E[\mathrm{placebo}]},
+\]
+which we estimated with the statistic \(\hat{\theta} = \overline{Y}/\overline{Z}\).  The following uses the jackknife to estimate the standard error of $\hat{\theta}$.
+
+#+begin_src R :exports code
+# jackknife2.R
+n <- nrow(patch)
+y <- patch$y
+z <- patch$z
+theta.hat <- mean(y)/mean(z)  # original value of statistic
+
+theta.jack <- numeric(n)
+for (i in 1:n){
+  theta.jack[i] <- mean(y[-i]) / mean(z[-i])
+}
+bias <- (n - 1) * (mean(theta.jack) - theta.hat)
+se <- sqrt((n-1) *
+        mean((theta.jack - mean(theta.jack))^2))  # this is the new line
+#+end_src
+
+After the copy-paste of the above we may look at our results with the following.
+#+begin_src R :exports both
+theta.hat
+bias
+se
+bias/se
+#+end_src
+
+[fn:1] Adapted from \emph{Statistical Computing with R} by Maria Rizzo (2008). 

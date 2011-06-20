@@ -1,0 +1,48 @@
+#+TITLE:   The Jackknife
+#+AUTHOR:    
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Estimating bias of a ratio estimator with the jackknife[fn:1]
+The =patch= data in the =bootstrap= package (you may need to install the package if you do not already have it) has data about bloodstream measurements for eight subjects in a study.  The data look like this:
+#+begin_src R :exports both
+library(bootstrap)
+data(patch)
+head(patch)
+#+end_src
+
+The parameter of interest is
+\[
+\theta = \frac{\E[\mathrm{new}] - \E[\mathrm{old}]}{\E[\mathrm{old}] - \E[\mathrm{placebo}]},
+\]
+which we can estimate with the statistic \(\hat{\theta} = \overline{Y}/\overline{Z}\).  The following uses the jackknife to estimate the bias of $\hat{\theta}$.
+
+#+begin_src R :exports code
+# jackknife1.R
+n <- nrow(patch)
+y <- patch$y
+z <- patch$z
+theta.hat <- mean(y)/mean(z)  # original value of statistic
+
+theta.jack <- numeric(n)
+for (i in 1:n){
+  theta.jack[i] <- mean(y[-i]) / mean(z[-i])
+}
+bias <- (n - 1) * (mean(theta.jack) - theta.hat)
+#+end_src
+
+After the copy-paste of the above we may look at our results with the following.
+#+begin_src R :exports both
+theta.hat
+bias
+#+end_src
+
+[fn:1] Adapted from \emph{Statistical Computing with R} by Maria Rizzo (2008).

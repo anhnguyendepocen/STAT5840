@@ -1,0 +1,49 @@
+#+TITLE:   When the Jackknife Fails
+#+AUTHOR:    
+#+EMAIL:     gkerns@ysu.edu
+#+DATE:      STAT 5840: Summer 2011
+#+LANGUAGE:  en
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+EXPORT_EXCLUDE_TAGS: answer
+#+BABEL: :session *R* :results output pp :tangle yes
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,english]
+#+LATEX_HEADER: \input{handoutformat}
+#+latex: \thispagestyle{empty}
+
+* Watch out for statistics that are not smooth
+The =islands= data are very skewed, so we used the sample median to measure the center.  We would like to estimate the standard error of our statistic, so we might try estimating with either the jackknife or the bootstrap.  But the jackknife can give wrong answers when the statistic whose SE is desired is not smooth (case in point: the sample median).
+
+Watch what happens when we try to estimate the SE with both methods.
+#+begin_src R :exports both
+#jackknife3.R
+n <- length(islands)
+x <- islands
+
+#jackknife estimate of se
+Mj <- rep(0, times = n)
+for (i in seq.int(n)) {  
+  y <- x[-i]
+  Mj[i] <- median(y)
+}
+
+Mjbar <- mean(Mj)
+SEj <- sqrt((n-1)/n * sum((Mj - Mjbar)^2))
+
+#bootstrap estimate of se
+Mb <- replicate(1000, expr = {
+                y <- sample(x, size = n, replace = TRUE)
+                median(y) })
+SEb <- sd(Mb)
+#+end_src
+
+
+After the copy-paste of the above we may look at our results with the following.
+#+begin_src R :exports both
+SEj
+SEb
+#+end_src
+
+Clearly the answers are different, and it's the jackknife we should through away.
+
+

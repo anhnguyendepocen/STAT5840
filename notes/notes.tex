@@ -1,4 +1,4 @@
-% Created 2011-06-17 Fri 10:22
+% Created 2011-06-20 Mon 12:26
 \documentclass[captions=tableheading]{scrbook}
 
 
@@ -2342,7 +2342,7 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
    \[
    s^{2}=\frac{1}{n-1}\sum_{i=1}^{n}(x_{i}-\xbar)^{2}.
    \]
-\item The ECDF $F_{n}(x)$ is a \emph{sufficient statistic} for $F(x)$, for every $x$.
+\item In the nonparametric IID setting the ECDF $F_{n}$ is a \emph{minimal sufficient statistic} for $F$.
 \item The value $F_{n}(x)$ is a \emph{consistent estimator} of $F(x)$, for every $x$.  In fact, $F_{n}$ converges \emph{uniformly} to $F$ (but the proof is much harder).
 \item A SRS($m$) \(X_{1}^{\ast},X_{2}^{\ast},\ldots,X_{m}^{\ast}\) from $F_{n}$ is nothing more than a \textbf{RESAMPLE} of size $m$ from the original sample $x$, where we sample \emph{with replacement}.
 \end{enumerate}
@@ -2393,12 +2393,32 @@ Please see the PRINTOUT \texttt{bootstrap.pdf}
 
 \textbf{Example.} Bootstrapping the Standard Error of the Median. In this example we extend our study to include more complicated statistics and distributions such that we do not know the answer ahead of time. This example uses a simulated dataset on the settlement amounts of 250 lawsuits. Lawsuit amounts are notoriously right-skewed, so a natural estimate of center would be the sample median. Unfortunately, then the sampling distribution falls out of our reach. We use the bootstrap to help us with this problem, and the modifications to the last example are scarcely more than trivial.
 
+Please see the PRINTOUT, \texttt{bootmed.pdf}.  
+
+\textbf{Example.} Bootstrapping the Standard Error of the Median, 2nd try.  In this handout we do it the right way.  We set up a function of two areguments, and use the \texttt{boot} function in \texttt{R}. 
+
+
+\textbf{Example.} The \texttt{boot} package in \texttt{R}. It turns out that there are many bootstrap procedures and commands already built into \texttt{R}, in the \texttt{boot} package. Further, inside the \texttt{boot} packacge there is a function \texttt{boot}! The general syntax is of the form:
+
+\begin{verbatim}
+  boot(data, statistic, R, ...)
+\end{verbatim}
+
+
+Here, \texttt{data} is a vector (or matrix) containing the data to be resampled, \texttt{statistic} is a defined function, \emph{of two arguments}, that tells which statistic to be computed, and the parameter \texttt{R} specifies how many resamples should be taken.
+
  
 
-Please see the handout, ``Bootstrapping the Standard Error of the Median''.  
+We notice that the output from both methods of estimating the standard errors produced similar results. In fact, the \texttt{boot} procedure is to be preferred, since it invisibly returns much more information than our naive program, (which we will use later), and it is much quicker in its computation.  
 
 
- 
+\textbf{Remarks:}
+
+\begin{itemize}
+\item For many statistics, the bootstrap distribution closely resembles the sampling distribution with respect to spread and shape. However, the distributions will differ in their centers. While the sampling distribution is centered at the population mean (plus any bias), the bootstrap distribution is centered at the original value of the statistic (plus any bias). We saw that the \texttt{boot} function gives an empirical estimate of the bias in the statistic.
+\item We tried to estimate the standard error, but we could have (in principle) tried to estimate something else. Note from the previous remark, however, that it would be useless to try to estimate the population mean $\mu$ using the bootstrap, since the mean of the bootstrap distribution is the observed $\xbar$.
+\item \underline{You don't get something from nothing.} We have seen that we can take a random sample from a population and use bootstrap methods to get a very good idea about standard errors, bias, and the like. However, one must not get lured into believing that by doing some random resampling somehow one gets more information about the parameters than that which was contained in the original sample. Indeed, there is some uncertainty about the parameter due just to the original random sampling, and there is more introduced by resampling. One should think of the bootstrap as just another method of estimating parameters of interest.
+\end{itemize}
 \subsection{Bootstrap Estimation of Bias}
 \label{sec-4_2_2}
 \section{The Jackknife}
@@ -2472,39 +2492,6 @@ Fortunately, computers are very skilled at doing simple, repetitive tasks very q
 \item Calculate the statistic of interest $S(x_{1}^{\ast}),\ldots,S(x_{M}^{\ast})$ for each resample. The distribution of the resample statistics is called a \emph{bootstrap distribution}.
 \item The bootstrap distribution gives information about the sampling distribution of the statistic. In particular, it gives us some idea about the center, spread, and shape of the sampling distribution of $S$.
 \end{enumerate}
-
-
-
-
-
-
-
-
-
-
-
-
-\textbf{Example.} The \texttt{boot} package in \texttt{R}. It turns out that there are many bootstrap procedures and commands already built into \texttt{R}, in the \texttt{boot} package. Further, inside the \texttt{boot} packacge there is a function \texttt{boot}! The general syntax is of the form:
-
-\begin{verbatim}
-  boot(data, statistic, R, ...)
-\end{verbatim}
-
-
-Here, \texttt{data} is a vector (or matrix) containing the data to be resampled, \texttt{statistic} is a defined function, \emph{of two arguments}, that tells which statistic to be computed, and the parameter \texttt{R} specifies how many resamples should be taken. See the handout, ``Bootstrapping in \texttt{R}''.
-
- 
-
-We notice that the output from both methods of estimating the standard errors produced similar results. In fact, the \texttt{boot} procedure is to be preferred, since it invisibly returns much more information than our naive program, (which we will use later), and it is much quicker in its computation.  
-
-
-\textbf{Remarks:}
-
-\begin{itemize}
-\item For many statistics, the bootstrap distribution closely resembles the sampling distribution with respect to spread and shape. However, the distributions will differ in their centers. While the sampling distribution is centered at the population mean (plus any bias), the bootstrap distribution is centered at the original value of the statistic (plus any bias). We saw that the \texttt{boot} function gives an empirical estimate of the bias in the statistic.
-\item We tried to estimate the standard error, but we could have (in principle) tried to estimate something else. Note from the previous remark, however, that it would be useless to try to estimate the population mean $\mu$ using the bootstrap, since the mean of the bootstrap distribution is the observed $\xbar$.
-\item \underline{You don't get something from nothing.} We have seen that we can take a random sample from a population and use bootstrap methods to get a very good idea about standard errors, bias, and the like. However, one must not get lured into believing that by doing some random resampling somehow one gets more information about the parameters than that which was contained in the original sample. Indeed, there is some uncertainty about the parameter due just to the original random sampling, and there is more introduced by resampling. One should think of the bootstrap as just another method of estimating parameters of interest.
-\end{itemize}
 \section{Bootstrap Confidence Intervals}
 \label{sec-5_4}
 
