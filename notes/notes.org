@@ -2164,6 +2164,206 @@ We notice that the output from both methods of estimating the standard errors pr
 
 
 
+*** Bootstrap Estimation of Bias
+** The Jackknife
+** Jackknife After Bootstrap
+** Bootstrap Confidence Intervals
+*** Standard Normal Bootstrap Confidence Interval
+*** Basic Bootstrap Confidence Interval
+*** Percentile Bootstrap Confidence Interval
+*** Bootstrap /t/ Interval
+\[
+\left( \hat{\theta} - t_{1 - \alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta}),\  \hat{\theta} - t_{\alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta})
+\]
+** Better Bootstrap Confidence Intervals
+
+
+
+
+
+
+
+
+
+
+* Other Stuff
+
+
+** Resampling Methods: the Bootstrap and Related Procedures
+
+** Introduction
+
+These days computers are changing the face of Statistics. Their quick computational speed and flawless accuracy, coupled with large datasets acquired by the researcher, make them indispensable for any modern analysis. In particular, resampling methods (due in large part to Bradley Efron) have gained prominence in the modern statistician's repertoire. Let us look at a classical problem to get some insight
+why.
+
+*A Classical Question:* Given a population of interest, how may we effectively learn some of its salient features, /e.g./, the population's mean? Answer: one way is through representative random sampling. Given a random sample, how do we summarize the information contained therein? Answer: by calculating a reasonable statistic, /e.g./, the sample mean. Given a value of a statistic, how do we know whether that value is significantly different from that which was expected?
+
+\begin{center}
+Answer: we don't. 
+\end{center}
+
+Instead, we look at the /sampling distribution/ of the statistic, and we try to make probabilistic assertions, based on some confidence level or other considerations. For example, we may find ourselves saying things like, "With 95% confidence, the true population mean is greater than zero."
+
+*Problem:* Unfortunately, in most cases the sampling distribution is /unknown/. Thus in the past, in efforts to say something useful, statisticians have been obligated to place some restrictive assumptions on the underlying population. For example, if we suppose that the population is normal, then we know that the distribution of $\xbar$ is normal, too, with the same mean (and a smaller standard deviation). It is then easy to draw conclusions, make inferences, and go about our business.
+
+*An Alternative:* We don't know what the underlying population distributions is, so let us /estimate/ it, just like we would with any other parameter. The "statistic" we use is the /empirical CDF/, that is, the function that places mass $1/n$ at each of the observed data points $x_{1},\ldots,x_{n}$. As the sample size increases, we would expect the approximation to get better and better (with IID observations it does, and there is a wonderful theorem by Glivenko and Cantelli that proves it). Given the (estimated) population distribution, it is easy to find the sampling distribution of any statistic we like: just *sample* from the empirical CDF many, many times, calculate the statistic each time, and make a histogram. Done! Of course, the number of samples needed to get a representative histogram is prohibitively large$\ldots$ we simply are too slow (and clumsy) to do this tedious procedure.
+
+\begin{center}
+Enter the computer. 
+\end{center}
+
+Fortunately, computers are very skilled at doing simple, repetitive tasks very quickly and accurately. So we employ them to give us a reasonable idea about the sampling distribution of our statistic, and we use the generated SD to base our inferences and draw our conclusions. If we would like to have a better approximation for the sampling distribution, we merely tell the computer to sample more. In that sense, we are limited only by our current computational speed and expense.
+
+*Remark:* Due to the special structure of the ECDF, to get an IID sample one needs only to take a random sample of size $n$, without replacement, from the observed data $x_{1},\ldots,x_{n}$. Repeats are expected and acceptable. Since we already sampled to get the original data, the term /resampling/ is used to describe the procedure.
+
+*A Summary of the Advantages of Resampling Methods:*
+
+- Fewer assumptions. :: We are no longer required to assume the population is Normal or the sample size is large. 
+- Greater accuracy. :: Many classical methods are based on rough upper bounds or Taylor expansions. The bootstrap procedures can be iterated long enough to give results accurate to several decimal places, often beating classical approximations. 
+- Generality. :: Resampling methods are easy to understand and apply to a large class of seemingly unrelated procedures. One no longer needs to memorize long complicated formulas and algorithms. 
+
+** Bootstrapping Parameter Estimates
+
+*Procedure for Bootstrapping:* To approximate the Sampling distribution of a Statistic $S(x)$ based on a $SRS$ $x$ of size $n$.
+
+1. Create many many samples $x_{1}^{\ast},\ldots,x_{M}^{\ast}$, called /resamples/, by sampling with replacement from the data.
+
+2. Calculate the statistic of interest $S(x_{1}^{\ast}),\ldots,S(x_{M}^{\ast})$ for each resample. The distribution of the resample statistics is called a /bootstrap distribution/. 
+
+3. The bootstrap distribution gives information about the sampling distribution of the statistic. In particular, it gives us some idea about the center, spread, and shape of the sampling distribution of $S$. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+** Bootstrap Confidence Intervals
+
+*A First Method: Percentile Confidence Intervals.*
+
+As a first try, we want to obtain a 95% confidence interval for a parameter. Usually the statistic is centered (or at least close by) the parameter; therefore, as in the normal case, a 95% confidence interval for the parameter is nothing more than a 95% confidence interval for the statistic. And to find a 95% confidence interval for the statistic we need only go to its sampling distribution and find an interval that contains 95% of the area. (The most popular choice is the equal-tailed interval with 2.5% in each tail.)
+
+This is incredibly easy to accomplish with the Bootstrap. We need only to take a bunch of bootstrap resamples, order them, and choose the $\alpha/2$th and $(1-\alpha)$th percentiles. There is a function =boot.ci= in =R= already created to do just this. Note that in order to use the function =boot.ci= you must first run the program =boot= and save the output in a variable, for example, =data.boot=.  You then plug =data.boot= into the function =boot.ci=.
+
+ 
+
+Please see the handout, "Bootstrapping Confidence Intervals for the Median".
+
+ Please see the handout, "Bootstrapping Confidence Intervals for the Median, $2^{\mathrm{nd}}$ try."
+
+*An Alternative Method: Student's $t$ Intervals.*
+
+Intuitively, the idea is to use confidence intervals that we already know, and let the bootstrap help us when we get into trouble. We know that a $100(1-\alpha)%$ confidence interval for the mean of a $SRS$, size $n$, from a normal distribution is given by 
+\[
+\xbar\pm t_{\alpha/2}(n-1)*\mathrm{SE}(\xbar)
+\]
+where $t_{\alpha/2}(n-1)$ is the appropriate critical value from Student's $t$ distribution and we remember from our classes that SE($\xbar$)=$\sigma/\sqrt{n}$. Of course, the standard error will change when the underlying population distribution in not Normal, or when we use a statistic more complicated than $\xbar$. What should we do? Use the Bootstrap! It will give us quite reasonable estimates for the standard error. And as long as the sampling distribution of our /statistic/ is approximately bell-shaped with small bias, the interval 
+\[
+\mathit{statistic}\pm t_{\alpha/2}(n-1)*\mathrm{SE}(\mathit{statistic})
+\]
+will have approximately $100(1-\alpha)\%$ confidence of containing the population mean.
+
+*Example.* Lawsuit data revisited. We will use the t-interval method to find the bootstrap CI for the Median. We have looked at the bootstrap distribution; it appears to be symmetric and approximately mound shaped. Further, we may check that the bias is approximately 40, which on the scale of these data is practically negligible. Thus, we may consider looking at the $t$-Intervals. Note that, since our sample is so large, instead of $t$-intervals we will actually be using $z$-intervals.
+
+ 
+
+Please see the handout, "Bootstrapping Confidence Intervals for the Median, $3^{\mathrm{rd}}$ try."
+
+ 
+
+We see that, considering the scale of the data, the confidence intervals compare with each other quite well.
+
+ 
+*Remark.* We have seen two methods for bootstrapping confidence intervals for a statistic. Which method should we use? If the bias of the bootstrap distribution is small and if the distribution is close to Normal, then the percentile and $t$-intervals will agree closely. If the intervals are noticeably different, then it should be considered evidence that the normality and bias conditions are not met. In this case, *NEITHER* interval should be used.
+
+** Resampling in Hypothesis Tests
+
+The classical two-sample problem can be stated as such: Given two groups of interest, we would like to know whether these two groups are significantly different from one another, or whether the groups are reasonably similar. The standard way to decide is to
+
+1. Go collect some information from the two groups and calculate an associated statistic, for example, $\xbar_{1}-\xbar_{2}$. 
+
+2. Suppose that there is no difference in the groups, and find the distribution
+of the statistic in 1. 
+
+3. Locate the observed value of the statistic with respect to the distribution found in 2. a value in the main body of the distribution is not spectacular, it could reasonably have occurred by chance. A value in the tail of the distribution is unlikely, and hence provides evidence /AGAINST/ the null hypothesis. 
+
+
+PICTURE
+
+\vspace{1in}
+
+
+Of course, we usually compute a $p$-value, defined to be the probability of the observed value of the statistic or more extreme, when the null hypothesis is true. Small $p$-values are evidence against the null hypothesis. It is not immediately obvious how to use resampling methods here, so we discuss an example.
+
+*Example.* A study concerned differing dosages of the antiretroviral drug AZT. The common dosage is 300mg daily. Higher doses cause more side affects, but are they significantly higher? We examine for a 600mg dose. The data are as follows: We compare the scores from the two groups by computing the difference in their sample means. The 300mg data were entered in x1 and the 600mg data were entered into x2. The observed difference was
+
+\begin{center}
+\begin{tabular}{l|cccccccccc}
+300 mg  & 284  & 279  & 289  & 292  & 287  & 295  & 285  & 279  & 306  & 298 \tabularnewline
+600 mg  & 298  & 307  & 297  & 279  & 291  & 335  & 299  & 300  & 306  & 291 \tabularnewline
+\end{tabular}
+\par\end{center}
+
+The average amounts can be found:
+
+#+begin_src  R :eval never  
+mean(x1)
+mean(x2)
+#+end_src
+
+
+with an observed difference of =mean(x2) - mean(x1) = 10.9=. As expected, the 600 mg measurements seem to have a higher average, and we might be interested in trying to decide if the average amounts are /significantly/ different. The null hypothesis should be that there is no difference in the amounts, that is, the groups are more or less the same. If the null hypothesis were true, then the two groups would indeed be the same, or just one big group. In that case, the observed difference in the sample means just reflects the random assignment into the arbitrary =x1= and =x2= categories.
+It is now clear how we may resample, consistent with the null hypothesis.
+
+*Procedure:*
+
+1. Randomly resample 10 scores from the combined scores of =x1= and =x2=, and assign then to the =x1= group.  The rest will then be in the =x2= group. Calculate
+the difference in (re)sampled means, and store that value.  
+
+2. Repeat this procedure many, many times and draw a histogram of the resampled statistics, called the /permutation distribution/.  Locate the observed difference 10.9 on the histogram to get the $p$-value. If the $p$-value is small, then we consider that evidence against the hypothesis that the groups are the same. 
+
+
+Please see the handout, "Two Sample Permutation Tests in =R=."
+
+*Note:* In calculating the permutation test $p$-value, the formula is essentially the proportion of resample statistics that are greater than or equal to the observed value. Of course, this is merely an /estimate/ of the true $p$-value. As it turns out, an adjustment of $+1$ to both the numerator and denominator of the
+proportion improves the performance of the estimated $p$-value, and this adjustment is implemented in the =ts.perm= function.
+
+*Comparison with the Two-Sample $t$-test.*
+
+We know from earlier classes that in order to tell whether there is an improvement as a result of taking the intervention class the procedure to use is the two-sample $t$-test. We use the $t$-test because we assume a normal underlying population, with unknown variance, and we have a small sample $n=10$. *Question:* what does the $t$-test say? It is easy to do in =R=; below is the output.
+
+#+begin_src  R :eval never
+t.test(x2,x1, alt = "greater", var.equal = TRUE)
+#+end_src
+
+
+The $p$-value for the $t$-test was 0.02848, while for the permutation test it was 0.02948526. These are actually really close! But they are not necessarily close, in other situations. Note that there is an underlying normality assumption for the $t$-test, which isn't present in the permutation test. If the normality assumption may be questionable, then the permutation test would be more reasonable. We see what can happen when using a test in a situation where the assumptions are not met: smaller $p$-values. In situations where the normality assumptions are not met, for example, small sample scenarios, the permutation test is to be preferred. In particular, if accuracy is very important, then one should use the permutation test.
+
+ 
+*Remarks.*
+
+- When are Permutation tests valid? While the permutation test doesn't require normality of the populations (as contrasted with the $t$-test), nevertheless it still requires that the two groups have identical distributions -- they must have not only the same means, but they must also have the same spread and shape. This assumption may or may not be true in a given example, but rarely will that cause the $t$-test to outperform the permutation test. Why? Because even if the sample standard deviations are markedly different, that doesn't mean that the population standard deviations are different. Many problems if the permutation test will also carry over to the $t$-test.  
+
+- If the distribution of the groups is close to normal, then the $t$-test $p$-value and the bootstrap $p$-value will be approximately equal. If they differ markedly, then this should be considered evidence that the normality assumptions do not hold. 
+
+- The generality of the Permutation test is such that one can use all kinds of statistics to compare the two groups. One could compare the difference in variances, or the difference in (just about anything). Alternatively, one could compare the ratio of sample means, $\xbar_{1}/\xbar_{2}$. Of course, under the null hypothesis this last quantity should be near 1. 
+
+- Just as with the bootstrap, the answer we get is subject to variability due to the inherent randomness of resampling from the data. We can make the variability as small as we like by taking sufficiently many resamples. How many? If the conclusion is very important (that is, if lots of money is at stake), then take thousands (Verizon in some of its studies uses $R=50,000$). Typically, $R=1000$ resamples is
+enough. In general, if the true $p$-value is $p$ then the standard error of the estimated $p$-value is $\sqrt{p(1-p)/R}$. You can choose $R$ to get whatever accuracy desired. 
+
+- Other possible testing designs:
+   - Matched Pairs Designs. 
+   - Relationship between two variables. 
+
+
 
 
 
