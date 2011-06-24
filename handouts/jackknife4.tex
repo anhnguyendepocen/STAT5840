@@ -1,0 +1,88 @@
+% Created 2011-06-24 Fri 12:31
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Jackknife After Bootstrap}
+%\author{}
+\date{STAT 5840: Summer 2011}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section*{Estimating the standard error of a bootstrap standard error estimate}
+\label{sec-1}
+
+We go back to the \texttt{patch} data in the \texttt{bootstrap} package which concerns bloodstream measurements for eight subjects in a study. The parameter of interest was
+\[
+\theta = \frac{\E[\mathrm{new}] - \E[\mathrm{old}]}{\E[\mathrm{old}] - \E[\mathrm{placebo}]},
+\]
+which we estimated with the statistic \(\hat{\theta} = \overline{Y}/\overline{Z}\).  We can use the boostrap to estimate the standard error of $\hat{\theta}$ which will give us an estimate $\widehat{\mathrm{SE}}(\hat{\theta})$.  But $\widehat{\mathrm{SE}}(\hat{\theta})$ is just an estimator, so it has a standard error, too.  We can use the jackknife-after-bootstrap method to estimate this standard error, and this method is demonstrated below by the following example.
+
+\begin{verbatim}
+# jackknife4.R
+# initialize
+data(patch, package = "bootstrap")
+n <- nrow(patch)
+y <- patch$y
+z <- patch$z
+B <- 2000
+theta.b <- numeric(B)
+# set up storage for the sampled indices
+indices <- matrix(0, nrow = B, ncol = n)
+
+# step one run the bootstrap
+for (b in 1:B) {
+  i <- sample(1:n, size = n, replace = TRUE)
+  y <- patch$y[i]
+  z <- patch$z[i]
+  theta.b[b] <- mean(y) / mean(z)
+  #save the indices for the jackknife
+  indices[b, ] <- i
+}
+
+# step two run jackknife on bootstrap replicates
+se.jack <- numeric(n)
+for (i in 1:n) {
+  #in i-th replicate omit all samples with x[i]
+  keep <- (1:B)[apply(indices, MARGIN = 1,
+                      FUN = function(k) {!any(k == i)})]
+  se.jack[i] <- sd(theta.b[keep])
+}
+\end{verbatim}
+
+
+
+After the copy-paste of the above we may look at our results with the following.
+\begin{verbatim}
+sd(theta.b)
+sqrt((n-1) * mean((se.jack - mean(se.jack))^2))
+\end{verbatim}
+
+\begin{verbatim}
+ [1] 0.09919031
+ [1] 0.02849166
+\end{verbatim}
+
+
+So our bootstrap estimate of the standard error is about  \texttt{0.099} and our jackknife-after-bootstrap estimate of its standard error is about  \texttt{0.028}.
+
+\end{document}
