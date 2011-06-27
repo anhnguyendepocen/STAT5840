@@ -1,0 +1,125 @@
+% Created 2011-06-27 Mon 12:24
+\documentclass[11pt,english]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{soul}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\input{handoutformat}
+\providecommand{\alert}[1]{\textbf{#1}}
+
+\title{Bootstrap Confidence Intervals}
+%\author{}
+\date{STAT 5840: Summer 2011}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\section*{Finding bootstrap confidence intervals for a ratio estimator\protect\footnote{Adapted from \emph{Statistical Computing with R} by Maria Rizzo (2008). }}
+\label{sec-1}
+
+We were talking about the \texttt{patch} data in the \texttt{bootstrap} package which concerns bloodstream measurements for eight subjects in a study. 
+
+
+The parameter of interest was
+\[
+\theta = \frac{\E[\mathrm{new}] - \E[\mathrm{old}]}{\E[\mathrm{old}] - \E[\mathrm{placebo}]},
+\]
+which we estimated with the statistic \(\hat{\theta} = \overline{Y}/\overline{Z}\).  The following uses the bootstrap to find confidence intervals for $\hat{\theta}$.
+
+\begin{verbatim}
+# bootCIs.R
+library(boot)       #for boot and boot.ci
+data(patch, package = "bootstrap")
+
+theta.boot <- function(dat, ind) {
+  #function to compute the statistic
+  y <- dat[ind, 1]
+  z <- dat[ind, 2]
+  mean(y) / mean(z)
+}
+
+y <- patch$y
+z <- patch$z
+dat <- cbind(y, z)
+bootpatch <- boot(dat, statistic = theta.boot, R = 2000)
+\end{verbatim}
+\section*{Take a look at the results}
+\label{sec-2}
+
+After the copy-paste of the above we may look at our results with the following.
+\begin{verbatim}
+bootpatch
+boot.ci(bootpatch, type = c("basic", "norm", "perc", "bca"))
+\end{verbatim}
+
+\begin{verbatim}
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = dat, statistic = theta.boot, R = 2000)
+
+
+Bootstrap Statistics :
+      original      bias    std. error
+t1* -0.0713061 0.008027704   0.1012842
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 2000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootpatch, type = c("basic", "norm", "perc", 
+    "bca"))
+
+Intervals : 
+Level      Normal              Basic         
+95%   (-0.2778,  0.1192 )   (-0.3126,  0.0908 )  
+
+Level     Percentile            BCa          
+95%   (-0.2334,  0.1700 )   (-0.2266,  0.1843 )  
+Calculations and Intervals on Original Scale
+\end{verbatim}
+\section*{Check our answers}
+\label{sec-3}
+
+We can even check that our intervals are doing what they are supposed to with the following code.
+
+\begin{verbatim}
+alpha <- c(.025, .975)
+
+#normal
+bootpatch$t0 + qnorm(alpha) * sd(bootpatch$t)
+
+#basic
+2*bootpatch$t0 - quantile(bootpatch$t, rev(alpha), type=1)
+
+#percentile
+quantile(bootpatch$t, alpha, type=6)
+\end{verbatim}
+
+\begin{verbatim}
+ [1] -0.2698196  0.1272074
+       97.5%        2.5% 
+ -0.31090675  0.09084051
+       2.5%      97.5% 
+ -0.2334424  0.1699706
+\end{verbatim}
+
+
+Notice that the normal interval is a little bit off, and it's off exactly by the bootstrap estimate of bias.
+
+\end{document}
