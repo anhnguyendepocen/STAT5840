@@ -2,7 +2,7 @@
 \lyxformat 413
 \begin_document
 \begin_header
-\textclass literate-article
+\textclass article
 \begin_preamble
 
 % packages used
@@ -15,16 +15,11 @@
 \usepackage{color}
 \usepackage{multicol}
 \usepackage{hyperref}
-
-
-
-
-
-% get rid of extra Sweave space
-\fvset{listparameters={\setlength{\topsep}{0pt}}}
-\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}  
 \end_preamble
 \use_default_options false
+\begin_modules
+sweave
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -489,7 +484,6 @@ R
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
@@ -519,7 +513,6 @@ R
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
@@ -546,7 +539,6 @@ Here, the
 \end_layout
 
 \begin_layout Scrap
-
 <<keep.source = TRUE>>=
 \begin_inset Newline newline
 \end_inset
@@ -716,7 +708,6 @@ Assignment.
 \end_layout
 
 \begin_layout Scrap
-
 <<keep.source = TRUE>>=
 \begin_inset Newline newline
 \end_inset
@@ -846,7 +837,6 @@ concatenate
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
@@ -876,7 +866,6 @@ fred
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
@@ -1091,7 +1080,6 @@ Data vectors have type
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
@@ -1116,7 +1104,6 @@ Here is an example of a logical vector:
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
@@ -1143,7 +1130,6 @@ Applying functions to a data vector.
 \end_layout
 
 \begin_layout Scrap
-
 <<keep.source = TRUE>>=
 \begin_inset Newline newline
 \end_inset
@@ -1214,7 +1200,6 @@ vectorizing functions
 \end_layout
 
 \begin_layout Scrap
-
 <<>>=
 \begin_inset Newline newline
 \end_inset
