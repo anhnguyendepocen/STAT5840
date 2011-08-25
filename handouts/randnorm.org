@@ -3,7 +3,7 @@
 #+EMAIL:     gkerns@ysu.edu
 #+DATE:      STAT 5840: Summer 2011
 #+LANGUAGE:  en
-#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
+#+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil f:nil
 #+EXPORT_EXCLUDE_TAGS: answer
 #+BABEL: :session *R* :results output pp :tangle yes
 #+LaTeX_CLASS: article

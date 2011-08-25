@@ -1,4 +1,4 @@
-% Created 2011-05-23 Mon 11:34
+% Created 2011-08-25 Thu 13:04
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,6 +15,8 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
@@ -32,6 +34,7 @@
 \label{sec-1}
 
 We would like to illustrate using the Monte Carlo method to estimate complicated integrals in Bayesian applications.  The following is a script which estimates the mean of a Normal distribution when our prior distribution is Cauchy.
+
 
 \begin{verbatim}
 # cauchyprior.R
@@ -54,17 +57,21 @@ rpm <- rep(0, times = m)
 
 for (i in seq.int(m)){         # seq.int(m) will be 1:m
   rc[i] <- mean(h[1:i])
-  rpm[i] <- mean(num[1:i])/mean(h[1:i]);
+  rpm[i] <- mean(num[1:i])/mean(h[1:i])
 }
 \end{verbatim}
 \section*{At the command prompt}
 \label{sec-2}
 
 
+
 \begin{verbatim}
 C
 post.mean
 \end{verbatim}
+
+
+
 
 \begin{verbatim}
  [1] 0.3724711
@@ -73,6 +80,7 @@ post.mean
 
 
 The true values are \(C \approx 0.34168057 \) and \(\mbox{Posterior Mean} = 2.284967653\).
+
 
 \begin{verbatim}
 # now plot the results
@@ -83,6 +91,9 @@ plot(1:m, rpm, type = "l", ylim = c(0, 2.7))
 lines(1:m, rc, type = "l")
 par(mfrow = c(1,1))
 \end{verbatim}
+
+
+
 
 \begin{figure}[h!]
 \centering

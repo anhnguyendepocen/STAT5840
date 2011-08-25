@@ -1,4 +1,4 @@
-% Created 2011-06-10 Fri 11:22
+% Created 2011-08-25 Thu 13:05
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,11 +15,13 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
 \title{Assignment: Evaluating Tests via Monte Carlo Methods}
-\author{}
+\author{G. Jay Kerns}
 \date{}
 
 \begin{document}
@@ -31,7 +33,7 @@
 \label{sec-1}
 
 
-Suppose $X_{1}$, $X_{2}$, \ldots{}, $X_{n}$ are a random sample from a distribution $f$ with mean $\mu$.  The standard test of the null hypothesis $H_{0}: \mu = 0$ is based on the statistic
+Suppose $X_{1}$, $X_{2}$, \ldots{}, $X_{n}$ are a random sample from a distribution $f$ with mean $\mu$.  The standard two-sided test of the null hypothesis $H_{0}: \mu = 0$ is based on the statistic
 \[
 T = \frac{\Xbar}{S/\sqrt{n}}.
 \]

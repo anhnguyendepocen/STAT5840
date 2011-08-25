@@ -1,0 +1,6 @@
+In order to process these notes you will need to have at least the following packages installed in R (together with their dependencies).  I generated this list by going through notes.org and looking for library() calls.  If these packages are not installed then you will not be able to generate the notes by yourself.
+
+ggplot2
+lattice
+distr
+LearnBayes

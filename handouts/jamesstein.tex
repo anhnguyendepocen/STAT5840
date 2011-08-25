@@ -1,4 +1,4 @@
-% Created 2011-06-15 Wed 09:43
+% Created 2011-08-25 Thu 13:08
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,6 +15,8 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
@@ -47,7 +49,8 @@ and we we will take $p = 5$ and $\theta$ ranging from $0 < \theta < 10$. We are 
 \item Do part 2) over and over for different choices of $a$  Use the same set of normals for all $\theta$ and for each $a$.
 \end{enumerate}
 \subsection*{Here's the first part.}
-\label{sec-1_1}
+\label{sec-1-1}
+
 
 
 \begin{verbatim}
@@ -75,7 +78,8 @@ for (i in seq.int(n)){
 }
 \end{verbatim}
 \subsection*{Here's the second part.}
-\label{sec-1_2}
+\label{sec-1-2}
+
 
 
 \begin{verbatim}
@@ -97,7 +101,8 @@ for (i in seq.int(n)){
 }
 \end{verbatim}
 \subsection*{Here's the third part.}
-\label{sec-1_3}
+\label{sec-1-3}
+
 
 
 \begin{verbatim}
@@ -123,11 +128,16 @@ for (k in seq_along(a)){
 \end{verbatim}
 
 
+
+
+
+
 \begin{figure}[h!]
 \centering
 \includegraphics[width=4in, height=4in,]{img/jamesstein.pdf}
 \caption{\label{fig:yplot}Plots for James-Stein risk estimation, naive method (wiggly) and reuse method (smooth) when $a = 3$}
 \end{figure}
+
 
 
 

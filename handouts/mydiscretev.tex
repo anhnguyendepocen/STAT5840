@@ -1,4 +1,4 @@
-% Created 2011-06-10 Fri 11:42
+% Created 2011-08-25 Thu 13:09
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,6 +15,8 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
@@ -32,6 +34,7 @@
 \label{sec-1}
 
 This function generates a discrete distribution via the accept-reject algorithm.  Copy-paste the \texttt{mydiscretev} function at the command prompt in \texttt{R}.
+
 \begin{verbatim}
 # mydiscretev.R
 
@@ -54,16 +57,27 @@ mydiscretev <- function(p,N){
   return(x)
 }
 \end{verbatim}
+
+
+
 After copy-pasting we can run the function with the following.
+
 \begin{verbatim}
 p <- c(.11, .12, .09, .08, .12, .10, .09, .09, .10, .10)
 x <- mydiscretev(p, 10000)
 \end{verbatim}
 
 
+
+
+
+
 \begin{verbatim}
 plot(prop.table(table(x)), ylab = "Relative frequency")
 \end{verbatim}
+
+
+
 
 \begin{figure}[h!]
 \centering

@@ -1,7 +1,9 @@
-% Created 2011-06-20 Mon 12:26
+% Created 2011-08-25 Thu 13:17
 \documentclass[captions=tableheading]{scrbook}
 
 
+\usepackage{color}
+\usepackage{listings}
 \input{notesformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
@@ -21,16 +23,16 @@
 \chapter{Introduction}
 \label{sec-1}
 \section{Likelihood Methods}
-\label{sec-1_1}
+\label{sec-1-1}
 
 
 Review: Maximum likelihood, Sir Ronald Aylmer Fisher (1921)
 \subsection{Examples}
-\label{sec-1_1_1}
+\label{sec-1-1-1}
 \begin{itemize}
 
 \item Bernoulli.\\
-\label{sec-1_1_1_1}%
+\label{sec-1-1-1-1}%
 Write $X \sim \mathrm{Bern}(p)$.
 \[
 f(x|\theta) = \theta^{x}(1-\theta)^{1-x},\ x=0,1,\quad, 0 < \theta < 1.
@@ -45,7 +47,8 @@ If $n = 5$ and $x = (1,0,1,1,0)$, then $\sum x_{i}=3$ and $n - \sum x_{i}=2$.
 
 \begin{center}
 
-\begin{figure}[h!]
+
+\begin{figure}[H]
 \centering
 \includegraphics[width=4in, height=4in,]{img/bernlike.pdf}
 \caption{Likelihood function for a binomial experiment}
@@ -55,7 +58,7 @@ If $n = 5$ and $x = (1,0,1,1,0)$, then $\sum x_{i}=3$ and $n - \sum x_{i}=2$.
 
 
 \item Normal.\\
-\label{sec-1_1_1_2}%
+\label{sec-1-1-1-2}%
 Write $X\sim N(\mu,\sigma^2)$. Then 
 \[
 f(x|\theta) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x-\mu)^{2}}{2\sigma^{2}}\right],\quad-\infty<x<\infty.
@@ -69,22 +72,24 @@ for $-\infty < \mu < \infty$ and $\sigma > 0$.
 
 \begin{center}
 
+
 \includegraphics[width=3in, height=3in,]{img/norm2like.pdf}
 
 \end{center}
 
 \end{itemize} % ends low level
 \subsection{Statistical Inference}
-\label{sec-1_1_2}
+\label{sec-1-1-2}
 \begin{itemize}
 
 \item Point estimation: maximize $L(\theta)$ to get $\hat{\theta}$.\\
-\label{sec-1_1_2_1}%
+\label{sec-1-1-2-1}%
 \begin{itemize}
 \item \(\hat{\theta}\) is called an ``MLE''.
 \end{itemize}
 
 \begin{center}
+
 
 \includegraphics[width=3in, height=3in,]{img/bernMLE.pdf}
 
@@ -92,7 +97,7 @@ for $-\infty < \mu < \infty$ and $\sigma > 0$.
 
 
 \item Interval estimation: use\\
-\label{sec-1_1_2_2}%
+\label{sec-1-1-2-2}%
 \[
 \hat{\theta} \pm z_{\alpha/2}\cdot \sigma_{\hat{\theta}},
 \]
@@ -114,11 +119,11 @@ where $\sigma_{\hat{\theta}}$ is the standard error of $\hat{\theta}$ which is $
 
 \end{itemize} % ends low level
 \subsection{Examples of MLEs}
-\label{sec-1_1_3}
+\label{sec-1-1-3}
 \begin{itemize}
 
 \item Bernoulli
-\label{sec-1_1_3_1}%
+\label{sec-1-1-3-1}%
 \begin{eqnarray*}
 L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
  & = & \theta^{\sum x_{i}}(1-\theta)^{n-\sum x_{i}},\quad0<\theta<1.
@@ -130,7 +135,7 @@ L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
 
 
 \item Bivariate normal
-\label{sec-1_1_3_2}%
+\label{sec-1-1-3-2}%
 \begin{eqnarray*}
 L(\theta) & = & \prod_{i=1}^{n}\frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x_{i}-\mu)^{2}}{2\sigma^{2}}\right]\\
  & = & (2\pi\sigma^{2})^{-n/2}\exp\left[-\frac{1}{2\sigma^{2}}\sum_{i=1}^{n}(x_{i}-\mu)^{2}\right],
@@ -147,7 +152,7 @@ That is, $\hat{\theta} = \left(\xbar,\,n^{-1}\sum_{i=1}^{n}(x_{i} - \xbar)^{2}\r
 
 
 \item Beta - harder situation, but still possible.\\
-\label{sec-1_1_3_3}%
+\label{sec-1-1-3-3}%
 Write $X \sim \mathrm{Beta}(\alpha,\beta)$.
 \begin{equation}
 f_{X}(x)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: x^{\alpha-1}(1-x)^{\beta-1},\quad0 < x <1,
@@ -165,7 +170,8 @@ where $\alpha > 0$ and $\beta > 0$ and
 
 \begin{center}
 
-\begin{figure}[h!]
+
+\begin{figure}[H]
 \centering
 \includegraphics[width=6in, height=6in,]{img/betaexamples.pdf}
 \caption{Pictures of some Beta distributions}
@@ -198,12 +204,12 @@ where $\Psi(z)=\Gamma'(z)/\Gamma(z)$ is the \emph{digamma} function.
 
 \end{itemize} % ends low level
 \section{Why are we in Statistical Computing?}
-\label{sec-1_2}
+\label{sec-1-2}
 
 
 Likelihood functions can be complicated!
 \subsection{Censored or missing data}
-\label{sec-1_2_1}
+\label{sec-1-2-1}
 
 
 
@@ -230,6 +236,7 @@ Likelihood functions can be complicated!
 
 \begin{center}
 
+
 \includegraphics[width=6in, height=3in,]{img/rightcensdata.pdf}
 
 \end{center}
@@ -243,7 +250,7 @@ Likelihood functions can be complicated!
 \item This is a typical/common problem.  We will return often.
 \end{itemize}
 \subsection{Robust modelling/Likelihood can be multimodal}
-\label{sec-1_2_2}
+\label{sec-1-2-2}
 
 
 
@@ -255,7 +262,7 @@ Likelihood functions can be complicated!
 \begin{itemize}
 
 \item Alternative (Nonnormal) Models\\
-\label{sec-1_2_2_1}%
+\label{sec-1-2-2-1}%
 Often we have heavy-tailed distributions.
 
 
@@ -267,6 +274,7 @@ Often we have heavy-tailed distributions.
 
     where $-\infty < \mu < \infty$, $\sigma > 0$, and $r = 1, 2,\ldots$ are the \emph{degrees of freedom}.
     \begin{center}
+
 
     \includegraphics[width=6in, height=3in,]{img/tdistpdf.pdf}
 
@@ -298,6 +306,7 @@ Often we have heavy-tailed distributions.
 \item We use the median and scale parameter because the mean and variance DNE! (it's \emph{very} heavy-tailed.)
     \begin{center}
 
+
     \includegraphics[width=4in, height=4in,]{img/cauchydistpdf.pdf}
 
     \end{center}
@@ -315,6 +324,7 @@ Often we have heavy-tailed distributions.
 \item the MLE is \(\hat{\mu} = \mathrm{sample median}\)
     \begin{center}
 
+
     \includegraphics[width=6in, height=3in,]{img/laplacedistpdf.pdf}
 
     \end{center}
@@ -323,7 +333,7 @@ Often we have heavy-tailed distributions.
 
 \end{itemize} % ends low level
 \subsection{Mixture distributions}
-\label{sec-1_2_3}
+\label{sec-1-2-3}
 
 Here we have \(X_{1},\ldots, X_{n} \sim f(x|\theta)\), but $f$ takes the form
 \[
@@ -342,7 +352,7 @@ where $p_{j}\geq 0$ and \(\sum_{j}p_{j}=1\).
 \begin{itemize}
 
 \item Example: Studying heights of students\\
-\label{sec-1_2_3_1}%
+\label{sec-1-2-3-1}%
 \begin{itemize}
 \item Let \(X = \mbox{height in inches}  \).
 \item Male heights $\approx N(71, 3^2)$
@@ -351,6 +361,7 @@ where $p_{j}\geq 0$ and \(\sum_{j}p_{j}=1\).
 \end{itemize}
 
 \begin{center}
+
 
 \includegraphics[width=6in, height=3in,]{img/normalmix.pdf}
 
@@ -373,7 +384,7 @@ The product, when expanded, will have $k^{n}$ terms.  This explodes as $n \to \i
 
 \end{itemize} % ends low level
 \subsection{Dependent Bernoulli trials}
-\label{sec-1_2_4}
+\label{sec-1-2-4}
 
 YET ANOTHER MODEL!
 
@@ -388,7 +399,7 @@ YET ANOTHER MODEL!
 \begin{itemize}
 
 \item BUT -\\
-\label{sec-1_2_4_1}%
+\label{sec-1-2-4-1}%
 \begin{itemize}
 \item Maybe the $p$'s change across trials
 \item Maybe there is dependence in the sequence
@@ -448,7 +459,7 @@ L(p_{H},p_{C},a) = \sum_{\mbox{all possible configurations}}\P(\mbox{observe $x$
 
 \end{itemize} % ends low level
 \section{Introduction to Bayesian Statistics}
-\label{sec-1_3}
+\label{sec-1-3}
 
 
 \begin{itemize}
@@ -456,7 +467,7 @@ L(p_{H},p_{C},a) = \sum_{\mbox{all possible configurations}}\P(\mbox{observe $x$
 \item Based on the theory of subjective probability
 \end{itemize}
 \subsection{Central Theme}
-\label{sec-1_3_1}
+\label{sec-1-3-1}
 
 
 \begin{itemize}
@@ -488,7 +499,7 @@ We wish to UPDATE our beliefs about $\theta$, using the information contained in
 \begin{itemize}
 
 \item Remarks:\\
-\label{sec-1_3_1_1}%
+\label{sec-1-3-1-1}%
 \begin{itemize}
 \item Once beliefs are updated, we then go out and do another experiment to learn even more!  Update again.  Schematic Diagram.
 \item From Bayes' Rule
@@ -512,7 +523,7 @@ We wish to UPDATE our beliefs about $\theta$, using the information contained in
 
 
 \item Examples.\\
-\label{sec-1_3_1_2}%
+\label{sec-1-3-1-2}%
 Want to learn about
 \[
 p = \mbox{proportion of goldfish in lake}
@@ -523,6 +534,7 @@ p = \mbox{proportion of goldfish in lake}
 \item Construct a continuous prior for $p$.
 
    \begin{center}
+
 
    \includegraphics[width=6in, height=3in,]{img/fishprior.pdf}
 
@@ -595,7 +607,7 @@ p = \mbox{proportion of goldfish in lake}
 
 \end{itemize} % ends low level
 \subsection{Bayesian Statistics}
-\label{sec-1_3_2}
+\label{sec-1-3-2}
 
 Draw all inference from the posterior distribution $\mathrm{Beta}(\alpha + y,\ \beta + n - y)$.
 
@@ -621,7 +633,7 @@ That is, the POSTERIOR MEAN is a \emph{weighted average} or the MLE and the PRIO
 \begin{itemize}
 
 \item How do we choose a prior?\\
-\label{sec-1_3_2_1}%
+\label{sec-1-3-2-1}%
 Notice:
 
 \begin{itemize}
@@ -665,7 +677,7 @@ Conjugate families were chosen for priors historically because they are traqctab
 
 
 \item Bayesian Point Estimation\\
-\label{sec-1_3_2_2}%
+\label{sec-1-3-2-2}%
 Our new guess at $\theta$:  the POSTERIOR MEAN $\E [\theta|x]$.
 
 Fact: the posterior mean is optimal in almost every sense, under the assumption of \emph{squared error loss}.
@@ -686,7 +698,7 @@ This will often be complicated, with no closed form solution.  Therefore we will
 
 
 \item Bayesian Interval Estimation\\
-\label{sec-1_3_2_3}%
+\label{sec-1-3-2-3}%
 Here we have a probability interval of probability content $\gamma$, AKA ``credible regions''.
 
 The Bayesian has many options:
@@ -714,9 +726,9 @@ We will talk about the following:
 \item Accept – Reject Methods
 \end{itemize}
 \section{Basic Methods: generating pseudo-random uniform numbers}
-\label{sec-2_1}
+\label{sec-2-1}
 \subsection{Desires for a Uniform Pseudo-Random Generator}
-\label{sec-2_1_1}
+\label{sec-2-1-1}
 
 
 \begin{enumerate}
@@ -728,7 +740,7 @@ We will talk about the following:
 
 \textbf{Repeatability:} the ability to repeat the same stream of numbers at any time during the simulation. Useful for comparing simulations using different methods.
 \subsection{History}
-\label{sec-2_1_2}
+\label{sec-2-1-2}
 
 Guiding principle is that the validity of any simulation rests on the validity of the uniform generator.
 
@@ -743,7 +755,7 @@ People first used ``random sources'' to supply random numbers.
 
 We use an algorithm to generate pseudo-random numbers. We call it random since the output resembles a random sequence, at least in the sense that it passes standard statistical tests of randomness. But we will be using a deterministic sequence to generate/simulate a ``random'' sequence.
 \subsection{Early Method: von Neumann's Midsquare Method}
-\label{sec-2_1_3}
+\label{sec-2-1-3}
 
 
 Generates a random integer between 0 and 99,999.
@@ -766,12 +778,12 @@ The output CAN behave ``randomly'', but how do we know? To statistically check a
 \item Compute the statistic: $\chi^{2}=\sum(O_{i}-E_{i})^{2}/E_{i}$
 \end{itemize}
 \section{Linear Congruential and Shift Register Generators}
-\label{sec-2_2}
+\label{sec-2-2}
 
 
 In current algorithms, most generators generate pseudo-random 32-bit integers.  
 \subsection{Congruential algorithm:}
-\label{sec-2_2_1}
+\label{sec-2-2-1}
 
 Based on the formula 
 \[
@@ -794,7 +806,7 @@ where $U_{i}$ is the random integer, $U_{0}$ is the seed, and $a,c,m$ are select
 \item Choose $m$ as large as possible.
 \item Given $m$, the constants $a$ and $c$ can be chosen such that the period is $m$.
 \end{itemize}
-\item\textbf{Result:} A linear congruential generator has maximal cycle length $m$ if and only if:
+\item[???] \textbf{Result:} A linear congruential generator has maximal cycle length $m$ if and only if:
 \begin{itemize}
 \item $c$ is nonzero and relatively prime to $m$.
 \item \( (a\mod q) = 1 \) for each prime factor $q$ of $m$.
@@ -813,6 +825,7 @@ Researchers have found values of $a,c,m$ which give a long period and appear to 
   This generator is very fast, but has poor statistical properties. In particular, $U_{i}$ and $U_{i+2}$ are highly positively correlated.
 
    \begin{center}
+
 
    \includegraphics[width=6in, height=6in,]{img/randu.pdf}
 
@@ -835,7 +848,7 @@ Researchers have found values of $a,c,m$ which give a long period and appear to 
 \end{itemize}
 \end{description}
 \subsection{Shift Register generators}
-\label{sec-2_2_2}
+\label{sec-2-2-2}
 
 These operate on \emph{n}-bit pseudo-random binary vectors.
 
@@ -860,7 +873,7 @@ Parameters of the algorithm:
 
 This is a popular algorithm\ldots{} why? Because it is easy to implement on a computer! One can have hybrid methods, or those that combine several methods. A popular one is the KISS algorithm (Keep it simple, stupid!)
 \section{Generating Non-Uniform Random Numbers}
-\label{sec-2_3}
+\label{sec-2-3}
 
 
 There are three general methods: 
@@ -871,7 +884,7 @@ There are three general methods:
 \item Accept/Reject methods.
 \end{enumerate}
 \subsection{CDF Inversion}
-\label{sec-2_3_1}
+\label{sec-2-3-1}
 
 
 The inversion method is based on the following.
@@ -898,7 +911,7 @@ Thus, if we can find $F_{X}^{-1}$, the inverse CDF, all we have to do is apply $
 \begin{itemize}
 
 \item Example. Exponential. \(\mathrm{Exp}(\theta)\).\\
-\label{sec-2_3_1_1}%
+\label{sec-2-3-1-1}%
 $X$ has $f(x)=\frac{1}{\theta}\, \me^{-x/\theta}$, $x > 0$.  The CDF is $\P(X\leq x)=1 - \me^{-x/\theta}$, $x > 0$. Now set $F_{X}(x) = y$, and solve for $x$. 
 \begin{align*}
 1 - \me^{-x/\theta} & = y\\
@@ -908,16 +921,24 @@ x & = -\theta\ln(1-y) = F_{X}^{-1}(y).
 \end{align*}
 
 \textbf{R code:} To generate 100 Exp(1)'s: write
+
 \begin{verbatim}
 u <- runif(100)
 x <- -log(1 - u)
 \end{verbatim}
 
+
+
+
 Or we could do it more directly with
+
 \begin{verbatim}
 x <- rexp(100)
 x <- rexp(100, scale = theta)
 \end{verbatim}
+
+
+
 
 
 \textbf{Note:} If \(U\sim \mathrm{Unif}(0,1)\), then \( (1-U)\sim \mathrm{Unif}(0,1) \). Therefore, \(-\log(1-(1-U))\sim \mathrm{Exp}(1)\), that is, \(-\log(U)\sim \mathrm{Exp}(1)\).
@@ -932,6 +953,7 @@ F(x)=\frac{\me^{x}}{1 + \me^{x}} = y
 \]
 \begin{center}
 
+
 \includegraphics[width=4in, height=4in,]{img/logisdistpdf.pdf}
 
 \end{center}
@@ -944,15 +966,23 @@ x & = \ln \frac{y}{1 - y} = F_{X}^{-1}(y) = \mbox{logit}\ y.
 \end{align*}
 
 Therefore, to generate standard Logistic, we could do
+
 \begin{verbatim}
 u <- runif(100)
 x <- log(u/(1 - u))
 \end{verbatim}
 
+
+
+
 Or we could do it more directly in \texttt{R} with
+
 \begin{verbatim}
 x <- rlogis(100)
 \end{verbatim}
+
+
+
 
 
 \textbf{Example.} Normal, \( N(\mu,\sigma^{2}) \). 
@@ -974,7 +1004,7 @@ a_{0}=2.30753, & a_{1}=0.27061, & b_{1}=0.99229, & b_{2}=0.04481.
 
 \end{itemize} % ends low level
 \subsection{Transformation Methods}
-\label{sec-2_3_2}
+\label{sec-2-3-2}
 
 
 
@@ -992,12 +1022,13 @@ a_{0}=2.30753, & a_{1}=0.27061, & b_{1}=0.99229, & b_{2}=0.04481.
 \begin{itemize}
 
 \item Example. Logistic. \( \mathrm{Logis}(\mu,\beta) \).\\
-\label{sec-2_3_2_1}%
+\label{sec-2-3-2-1}%
 If \( Y \sim \mathrm{Logis}(\mu,\beta) \) then $Y$ has PDF
 \[
 f_{Y}(y)=\frac{1}{\beta}\frac{\me^{-\frac{y-\mu}{\beta}}}{(1 + \me^{-\frac{y-\mu}{\beta}})^{2}},\quad -\infty< y <\infty.
 \]
 To generate 100 IID $Y$'s distributed Logis(3,7) we may use the \texttt{R} code:
+
 
 \begin{verbatim}
 u <- runif(100)   # 100 uniforms
@@ -1005,10 +1036,17 @@ x <- log(u(1-u))  # 100 std logistics
 y <- 3 + 0.7*x    # 100 Log(3,7)'s
 \end{verbatim}
 
+
+
+
 or more directly with \texttt{R} we could do
+
 \begin{verbatim}
 rlogis(100, location = 3, scale = 7)  # location/scale logistics
 \end{verbatim}
+
+
+
 
 
 \begin{description}
@@ -1018,21 +1056,33 @@ rlogis(100, location = 3, scale = 7)  # location/scale logistics
 \end{description}
 
 \textbf{R:} To simulate \( \mathrm{Gamma}(n,\theta) \):
+
 \begin{verbatim}
 u <- runif(n)             # n uniforms
 x <- -theta * log(u)      # n Exp(theta)s
 y <- sum(x)               # a gamma(n, theta)
 \end{verbatim}
 
+
+
+
 A shorter way would be:
+
 \begin{verbatim}
 u <- sum(-theta * log(runif(n)))
 \end{verbatim}
 
+
+
+
 This only works for $n$ = a positive integer. We would need another algorithm for non-integral $n$, but with \texttt{R} we can do whatever we want.
+
 \begin{verbatim}
 u <- rgamma(1, shape = n, scale = theta)
 \end{verbatim}
+
+
+
 
 Note that above we would change the first argument, \texttt{1}, to however many gammas we like.
 
@@ -1045,16 +1095,24 @@ Note that above we would change the first argument, \texttt{1}, to however many 
 \end{description}
 
 \textbf{R:} To simulate $\mathrm{Beta}(m,n)$:
+
 \begin{verbatim}
 u <- sum(-log(runif(m)))     # a Gamma(a,1)
 v <- sum(-log(runif(n)))     # a Gamma(b,1)
 y <- u/(u+v)                 # a Beta(a,b)
 \end{verbatim}
 
+
+
+
 Unfortunately, this method only works for integral $\alpha$ and $\beta$.  When we do it with \texttt{R} directly we can use whatever we like:
+
 \begin{verbatim}
 u <- rbeta(1, shape1 = a, shape2 = b)
 \end{verbatim}
+
+
+
 
 
 \textbf{Example.} Generating Chi-Squares.
@@ -1065,15 +1123,23 @@ u <- rbeta(1, shape1 = a, shape2 = b)
 \end{description}
 
 \textbf{R:} To simulate $\chi^{2}(2k)$:
+
 \begin{verbatim}
 y <- sum(-2*log(runif(k)))   # a Gamma(k,2)
 y <- rchisq(1, df = k)       # same thing
 \end{verbatim}
 
+
+
+
 This only works for even degrees of freedom, unfortunately. When we do it with \texttt{R} directly we can use whatever we like:
+
 \begin{verbatim}
 u <- rchisq(500, df = m)
 \end{verbatim}
+
+
+
 
 
 \textbf{Example.} Generating Fs.
@@ -1088,16 +1154,24 @@ u <- rchisq(500, df = m)
 \end{description}
 
 \textbf{R:} To simulate $F(2k,2l)$:
+
 \begin{verbatim}
 u <- sum(-2*log(runif(k)))        # a Chi-square(2k)
 v <- sum(-log(runif(a)))          # a Chi-square(2l)
 y <- (u/k)/(v/l)                  # an F(2k,2l)
 \end{verbatim}
 
+
+
+
 Again, the above method will only work for even degrees of freedom but the direct method can do anything.
+
 \begin{verbatim}
 y <- rf(500, df1 = m, df2 = n)    # 500 F(m,n)'s
 \end{verbatim}
+
+
+
  
 
 
@@ -1118,11 +1192,15 @@ which is a $\mathrm{Beta(k,\,n-k+1)}$ distribution.
 
 \textbf{R:} An alternative to simulate $\mathrm{Beta}(k,\,n-k+1)$:
 
+
 \begin{verbatim}
 u <- runif(n)  # n uniforms
 v <- sort(u)   # order the uniforms
 y <- v[k]      # the kth order statistic
 \end{verbatim}
+
+
+
 
 This algorithm is costly for large $k$ and $n$, since sorting a vector is often difficult for computers.
 
@@ -1141,6 +1219,7 @@ This algorithm is costly for large $k$ and $n$, since sorting a vector is often 
 
 \textbf{R:} The \underline{Box-Muller Algorithm} to simulate two standard normals:
 
+
 \begin{verbatim}
 theta <- 2*pi*runif(1)       #  a uniform angle
 r <- sqrt(-2*log(runif(1)))  #  sqrt of chi-squared radius
@@ -1148,13 +1227,20 @@ x1 <- r*cos(theta);          #  use polar coordinates
 x2 <- r*sin(theta);          #  use polar coordinates
 \end{verbatim}
 
+
+
+
 GREAT! Now we can generate normals. But we can do it directly with \texttt{R} and the \texttt{rnorm} function.
 
 \textbf{R:} To simulate IID Normals.
 
+
 \begin{verbatim}
 u <- rnorm(n)  # n standard Normals, IID
 \end{verbatim}
+
+
+
 
 
 \textbf{The Inversion Method for simulating discrete random variables.}  
@@ -1178,6 +1264,7 @@ Below is a typical discrete random variable $X$, together with its PMF $p(x)$.
 
 \begin{center}
 
+
 \includegraphics[width=6in, height=4in,]{img/discpmf.pdf}
 
 \end{center}
@@ -1198,19 +1285,27 @@ In general, we let $X$ take the value $x_{j}$ when $F_{X}(x_{j-1})\leq U<F_{X}(x
  
 \textbf{R:} To simulate $n$ coin flips, probability $p$
 
+
 \begin{verbatim}
 u <- runif(n)             #  n uniforms
 y <- as.integer(u < p)    #  entry is 1 with probability p
 \end{verbatim}
 
 
+
+
+
 \textbf{Example.} $\mathrm{DiscUniform}\{1,2,\ldots,k\}$.  For a die roll $\{1,2,3,4,5,6\}$, partition $[0,1]$ into six equally likely classes.
 
 \textbf{R:}
+
 \begin{verbatim}
 y <- round(runif(1)*6 + 0.5)  # from 1 to 6 equally likely
 y <- sample(1:6, size = 1)    # same thing
 \end{verbatim}
+
+
+
 
 
 \textbf{Example.} $\mathrm{Binom}(n,p)$.
@@ -1218,16 +1313,20 @@ y <- sample(1:6, size = 1)    # same thing
 Know: If $X_{1},\ldots,X_{n}$ are IID $\mathrm{Bern(p)}$ and $Y=\sum_{i}X_{i}$ then $Y\sim\mathrm{Binom}(n,p)$.
 
 \textbf{R:}
+
 \begin{verbatim}
 y <- sum(runif(n) < p)              # a Binomial(n,p)
 y <- rbinom(1, size = n, prob = p)  # same thing
 \end{verbatim}
 
+
+
+
 We can also generate RVs with \emph{mixture models}, which we will discuss in more detail later.
 
 \end{itemize} % ends low level
 \subsection{Accept--Reject Methods}
-\label{sec-2_3_3}
+\label{sec-2-3-3}
 
 
 \textbf{Situation:} Suppose that we have a complicated PDF $f$ (called the \emph{target density} )from which we would like to simulate. The function is so complicated that inverting the CDF is not possible, at least in a practical sense. Further, no applicable transformation methods are apparent. What do we do?
@@ -1237,6 +1336,7 @@ We have spent much time developing efficient methods to generate uniform random 
 \textbf{Idea:} Draw the PDF $f$ on a piece of paper inside a box and tack it on the wall. Throw darts uniformly inside the box. If the dart falls ``outside'' the PDF, then try again. Suppose the dart falls ``inside'' the PDF at the point $(x,y)$. Then $x$ is an observation from a random variable \(X\sim f\)!
 
 \begin{center}
+
 
 \includegraphics[width=6in, height=4in,]{img/acceptrejectidea.pdf}
 
@@ -1299,6 +1399,7 @@ M=\max_{j}\frac{p_{j}}{q_{j}}=\frac{0.12}{0.10}=1.2.
 \end{enumerate}
  
 \textbf{R:}
+
 \begin{verbatim}
 mydiscrete <- function(){
   accept <- FALSE
@@ -1312,10 +1413,17 @@ mydiscrete <- function(){
 }
 \end{verbatim}
 
+
+
+
 \textbf{At the COMMAND prompt:}
+
 \begin{verbatim}
 y <- mydiscrete()
 \end{verbatim}
+
+
+
 
 What if we would like to simulate a whole vector of discrete RVs, all IID with density $\mathbf{p}$? We can generalize our function to include arguments $\mathbf{p}$ and $n$, the density and length of the simulation, called \texttt{mydiscretev}.
 
@@ -1375,6 +1483,7 @@ Here our target density is \emph{Beta} distribution with PDF
 f(x)\propto x^{2}(1-x)^{2}.
 \]
 \begin{center}
+
 
 \includegraphics[width=6in, height=4in,]{img/betapdfacceptreject.pdf}
 
@@ -1484,7 +1593,7 @@ H=\E_{f}h(X)=\int\, h(x)\, f(x)\diff x
 \item Bayesian Inference (subjective approach)
 \end{itemize}
 \section{An Introduction to Classical Decision Theory}
-\label{sec-3_1}
+\label{sec-3-1}
 
 
 The usual scenario concerns an unknown quantity, $\theta$ (a \emph{parameter} ) about which we would like to learn. The particular value is uncertain, but it is usually considered a member of some set of possible values, the \emph{parameter space}, represented by the symbol $\Theta$.
@@ -1619,7 +1728,7 @@ In this form it is easy to see that the risk can be interpreted as an average Lo
    \end{align*}
 \end{itemize}
 \section{Classical Monte Carlo}
-\label{sec-3_2}
+\label{sec-3-2}
 
 
 We want to compute an integral 
@@ -1807,7 +1916,7 @@ See the PRINTOUT, \texttt{robustt.pdf}.
 
 From the output, we see that our estimate of the size is right at 0.05 when the variances are equal ($0.0502-2*0.0022=0.0458$), and the size appears to be over 0.06 when $\sigma_{1}=1$, $\sigma_{2}=10$ ($0.0659-2*0.0025=0.0609$).  
 \section{Bayesian Applications of Monte Carlo}
-\label{sec-3_3}
+\label{sec-3-3}
 
 
 
@@ -1826,25 +1935,23 @@ From the output, we see that our estimate of the size is right at 0.05 when the 
 \end{itemize}
 We summarize the posterior distribution when it comes time to make inferences.
 
-\begin{itemize}
-\item Posterior mean: ::
-   \begin{align*}
+\begin{description}
+\item[Posterior mean:] \begin{align*}
    \E \left( \theta |\, \mbox{data}  \right) & = \int \theta g( \theta | \mbox{data} ) \, \diff \theta, \\
    & = \int \theta \, \frac{L(\theta)g(\theta)}{C} \, \diff \theta, \\
    & = \frac{\int \theta \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
    & = \mu.
    \end{align*}
-\item Posterior spread: :: variance
+\item[Posterior spread:] variance
    \begin{align*}
    \E \left[ \left(\theta - \mu \right)^{2} |\, \mbox{data}  \right] & = \int \left(\theta - \mu \right)^{2} g( \theta | \mbox{data} ) \, \diff \theta, \\
    & = \frac{\int \left(\theta - \mu \right)^{2} \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
    \end{align*}
-\item Posterior probabilities: :: 
-   \begin{align*}
+\item[Posterior probabilities:] \begin{align*}
    \P\left( \theta \in A |\,\mbox{data} \right) & = \int_{A}  g( \theta | \mbox{data} ) \, \diff \theta, \\
    & = \frac{\int 1\left(\theta \in A \right) \, L(\theta)g(\theta) \, \diff \theta}{\int L(u)g(u) \, \diff u}, \\
    \end{align*}
-\end{itemize}
+\end{description}
 
 
 \begin{description}
@@ -1899,7 +2006,7 @@ h(\theta) = \pi \exp\left[-\frac{(x - \theta)^{2}}{2} \right],\quad f(\theta) = 
 
 See the PRINTOUT, \texttt{cauchyprior.pdf}
 \section{Importance Sampling}
-\label{sec-3_4}
+\label{sec-3-4}
 
 
 \textbf{Example.} Cauchy tail probabilities. (Ripley and Robert/Casella). 
@@ -2090,12 +2197,12 @@ The risks will be estimated therefore by
 
 See the PRINTOUT \texttt{exp\_lognormal.pdf}
 \section{Acceleration Methods}
-\label{sec-3_5}
+\label{sec-3-5}
 
 
 Clever methods to reduce the variance of a Monte Carlo estimate of an integral.
 \subsection{Antithetic variables}
-\label{sec-3_5_1}
+\label{sec-3-5-1}
 
 
 It may be helpful to generate samples of correlated variables in estimating integrals
@@ -2310,7 +2417,7 @@ How to get negatively correlated \(X_{i}\) and \(Y_{i}\)
 \chapter{The Bootstrap and Jackknife}
 \label{sec-4}
 \section{The Empirical Distribution}
-\label{sec-4_1}
+\label{sec-4-1}
 
 
 Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) of a random variable \(X \sim F\), where we understand $F$ to be the CDF of the population. For simplicity in most of the discussion that follows it will be convenient to imagine that the observed values are distinct, but the remarks are valid even when the observed values are repeated. 
@@ -2347,7 +2454,7 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
 \item A SRS($m$) \(X_{1}^{\ast},X_{2}^{\ast},\ldots,X_{m}^{\ast}\) from $F_{n}$ is nothing more than a \textbf{RESAMPLE} of size $m$ from the original sample $x$, where we sample \emph{with replacement}.
 \end{enumerate}
 \section{The Bootstrap}
-\label{sec-4_2}
+\label{sec-4-2}
 
 
 
@@ -2369,7 +2476,7 @@ Do an experiment $n$ times and observe $n$ values \(x_{1}, x_{2}, ..., x_{n}\) o
 \end{enumerate}
 \end{itemize}
 \subsection{Bootstrap Estimation of Standard Error}
-\label{sec-4_2_1}
+\label{sec-4-2-1}
 
 
 For this first part, we don't try to estimate the entire true sampling distribution $F_{\hat{\theta}}$, we satisfy ourselves with simply trying to estimate the standard error of $\hat{\theta}$,
@@ -2420,33 +2527,33 @@ We notice that the output from both methods of estimating the standard errors pr
 \item \underline{You don't get something from nothing.} We have seen that we can take a random sample from a population and use bootstrap methods to get a very good idea about standard errors, bias, and the like. However, one must not get lured into believing that by doing some random resampling somehow one gets more information about the parameters than that which was contained in the original sample. Indeed, there is some uncertainty about the parameter due just to the original random sampling, and there is more introduced by resampling. One should think of the bootstrap as just another method of estimating parameters of interest.
 \end{itemize}
 \subsection{Bootstrap Estimation of Bias}
-\label{sec-4_2_2}
+\label{sec-4-2-2}
 \section{The Jackknife}
-\label{sec-4_3}
+\label{sec-4-3}
 \section{Jackknife After Bootstrap}
-\label{sec-4_4}
+\label{sec-4-4}
 \section{Bootstrap Confidence Intervals}
-\label{sec-4_5}
+\label{sec-4-5}
 \subsection{Standard Normal Bootstrap Confidence Interval}
-\label{sec-4_5_1}
+\label{sec-4-5-1}
 \subsection{Basic Bootstrap Confidence Interval}
-\label{sec-4_5_2}
+\label{sec-4-5-2}
 \subsection{Percentile Bootstrap Confidence Interval}
-\label{sec-4_5_3}
+\label{sec-4-5-3}
 \subsection{Bootstrap \emph{t} Interval}
-\label{sec-4_5_4}
+\label{sec-4-5-4}
 
 \[
 \left( \hat{\theta} - t_{1 - \alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta}),\  \hat{\theta} - t_{\alpha/2}^{\ast}\widehat{\mathrm{SE}}(\hat{\theta})
 \]
 \section{Better Bootstrap Confidence Intervals}
-\label{sec-4_6}
+\label{sec-4-6}
 \chapter{Other Stuff}
 \label{sec-5}
 \section{Resampling Methods: the Bootstrap and Related Procedures}
-\label{sec-5_1}
+\label{sec-5-1}
 \section{Introduction}
-\label{sec-5_2}
+\label{sec-5-2}
 
 
 These days computers are changing the face of Statistics. Their quick computational speed and flawless accuracy, coupled with large datasets acquired by the researcher, make them indispensable for any modern analysis. In particular, resampling methods (due in large part to Bradley Efron) have gained prominence in the modern statistician's repertoire. Let us look at a classical problem to get some insight
@@ -2481,7 +2588,7 @@ Fortunately, computers are very skilled at doing simple, repetitive tasks very q
 \item[Generality.] Resampling methods are easy to understand and apply to a large class of seemingly unrelated procedures. One no longer needs to memorize long complicated formulas and algorithms.
 \end{description}
 \section{Bootstrapping Parameter Estimates}
-\label{sec-5_3}
+\label{sec-5-3}
 
 
 \textbf{Procedure for Bootstrapping:} To approximate the Sampling distribution of a Statistic $S(x)$ based on a $SRS$ $x$ of size $n$.
@@ -2493,7 +2600,7 @@ Fortunately, computers are very skilled at doing simple, repetitive tasks very q
 \item The bootstrap distribution gives information about the sampling distribution of the statistic. In particular, it gives us some idea about the center, spread, and shape of the sampling distribution of $S$.
 \end{enumerate}
 \section{Bootstrap Confidence Intervals}
-\label{sec-5_4}
+\label{sec-5-4}
 
 
 \textbf{A First Method: Percentile Confidence Intervals.}
@@ -2533,7 +2640,7 @@ We see that, considering the scale of the data, the confidence intervals compare
  
 \textbf{Remark.} We have seen two methods for bootstrapping confidence intervals for a statistic. Which method should we use? If the bias of the bootstrap distribution is small and if the distribution is close to Normal, then the percentile and $t$-intervals will agree closely. If the intervals are noticeably different, then it should be considered evidence that the normality and bias conditions are not met. In this case, \textbf{NEITHER} interval should be used.
 \section{Resampling in Hypothesis Tests}
-\label{sec-5_5}
+\label{sec-5-5}
 
 
 The classical two-sample problem can be stated as such: Given two groups of interest, we would like to know whether these two groups are significantly different from one another, or whether the groups are reasonably similar. The standard way to decide is to
@@ -2567,10 +2674,14 @@ Of course, we usually compute a $p$-value, defined to be the probability of the 
 
 The average amounts can be found:
 
+
 \begin{verbatim}
 mean(x1)
 mean(x2)
 \end{verbatim}
+
+
+
 
 
 with an observed difference of \texttt{mean(x2) - mean(x1) = 10.9}. As expected, the 600 mg measurements seem to have a higher average, and we might be interested in trying to decide if the average amounts are \emph{significantly} different. The null hypothesis should be that there is no difference in the amounts, that is, the groups are more or less the same. If the null hypothesis were true, then the two groups would indeed be the same, or just one big group. In that case, the observed difference in the sample means just reflects the random assignment into the arbitrary \texttt{x1} and \texttt{x2} categories.
@@ -2597,9 +2708,13 @@ proportion improves the performance of the estimated $p$-value, and this adjustm
 
 We know from earlier classes that in order to tell whether there is an improvement as a result of taking the intervention class the procedure to use is the two-sample $t$-test. We use the $t$-test because we assume a normal underlying population, with unknown variance, and we have a small sample $n=10$. \textbf{Question:} what does the $t$-test say? It is easy to do in \texttt{R}; below is the output.
 
+
 \begin{verbatim}
 t.test(x2,x1, alt = "greater", var.equal = TRUE)
 \end{verbatim}
+
+
+
 
 
 The $p$-value for the $t$-test was 0.02848, while for the permutation test it was 0.02948526. These are actually really close! But they are not necessarily close, in other situations. Note that there is an underlying normality assumption for the $t$-test, which isn't present in the permutation test. If the normality assumption may be questionable, then the permutation test would be more reasonable. We see what can happen when using a test in a situation where the assumptions are not met: smaller $p$-values. In situations where the normality assumptions are not met, for example, small sample scenarios, the permutation test is to be preferred. In particular, if accuracy is very important, then one should use the permutation test.
@@ -2629,7 +2744,7 @@ enough. In general, if the true $p$-value is $p$ then the standard error of the 
 
 
 
-%\%\%\%\%\%\%\%\%\%  The Bibliography \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%5
+\%\%\%\%\%\%\%\%\%\%  The Bibliography \%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%\%5
 
 \begin{thebibliography}{14}
 \bibitem{jA00}Albert, J. (2000). Introduction to Monte Carlo Methods.

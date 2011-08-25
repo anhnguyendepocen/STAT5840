@@ -1,4 +1,4 @@
-% Created 2011-06-20 Mon 12:12
+% Created 2011-08-25 Thu 13:08
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,6 +15,8 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
@@ -34,6 +36,7 @@
 The \texttt{islands} data are very skewed, so we used the sample median to measure the center.  We would like to estimate the standard error of our statistic, so we might try estimating with either the jackknife or the bootstrap.  But the jackknife can give wrong answers when the statistic whose SE is desired is not smooth (case in point: the sample median).
 
 Watch what happens when we try to estimate the SE with both methods.
+
 \begin{verbatim}
 #jackknife3.R
 n <- length(islands)
@@ -58,15 +61,22 @@ SEb <- sd(Mb)
 
 
 
+
+
+
 After the copy-paste of the above we may look at our results with the following.
+
 \begin{verbatim}
 SEj
 SEb
 \end{verbatim}
 
+
+
+
 \begin{verbatim}
  [1] 6.855655
- [1] 9.49066
+ [1] 10.49736
 \end{verbatim}
 
 

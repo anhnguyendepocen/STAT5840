@@ -1,4 +1,4 @@
-% Created 2011-05-23 Mon 11:38
+% Created 2011-08-25 Thu 13:07
 \documentclass[10pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,6 +15,8 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
@@ -39,6 +41,7 @@
 
    \begin{center}
 
+
    \includegraphics[width=3in, height=1.5in,]{img/IntroR.pdf}
 
    \end{center}
@@ -46,6 +49,8 @@
    Suppose we can generate a pair \( (x,y) \) of random numbers, each chosen independently at random from [0,1].  Then \( (x,y) \) are the coordinates of a point chosen at random from the unit square.  If we would like to estimate the area of the region, we could choose a large number of random points and record the fraction that fall in the region.
 
    \textbf{Example:} $E = \{ (x,y)\, : \, y \leq x^2  \}$.
+\end{enumerate}
+
 
 \begin{verbatim}
    # IntroRinclass.R
@@ -62,11 +67,17 @@
    sqrt(accept*(1-accept)/Iter)       # print std error of estimate
 \end{verbatim}
 
+
+
+
 \begin{verbatim}
-    [1] 0.33
-    [1] 0.01486943
+    [1] 0.336
+    [1] 0.01493667
 \end{verbatim}
 
+
+
+\begin{enumerate}
 \item For each of the following, find 1) an estimate of the area, 2) an error of estimate, and 3) the exact value.
 \begin{enumerate}
 \item \( E = \{ (x,y) : y > |\sin(5 \pi x)| \} \).

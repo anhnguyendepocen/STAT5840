@@ -1,4 +1,4 @@
-% Created 2011-06-06 Mon 11:31
+% Created 2011-08-25 Thu 13:10
 \documentclass[11pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -15,10 +15,12 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \tolerance=1000
+\usepackage{color}
+\usepackage{listings}
 \input{handoutformat}
 \providecommand{\alert}[1]{\textbf{#1}}
 
-\title{2\#+TITLE:   Investigating Robustness of the Two Sample t-Test}
+\title{Investigating Robustness of the Two Sample t-Test}
 %\author{G. Jay Kerns}
 \date{STAT 5840: Summer 2011}
 
@@ -29,6 +31,7 @@
 \thispagestyle{empty}
 
 In this example we investigate the robustness of the 2 sample \emph{t} statistic.  The setting is $X_{1}$, \ldots{}, $X_{n}$ IID from $f$ and $Y_{1}$, \ldots{}, $Y_{m}$ IID from $g$.  We are interested in seeing how the significance level of the two sample \emph{t}-test changes as we fiddle with the population assumptions.  Copy-paste the \texttt{robustt} function at the command prompt in \texttt{R}.
+
 \begin{verbatim}
 # robustt.R
 
@@ -53,28 +56,39 @@ robustt <- function(sigma1, sigma2, Iter = 10000){
 \end{verbatim}
 
 
+
+
+
 \bigskip
 \noindent
 
 \textbf{At the command prompt:} we run the simulation to see what happens.  First we try it for the case the variances are identically 1, then we run it again for $\sigma_{1} = 1$, $\sigma_{2} = 10$.
 
+
 \begin{verbatim}
 robustt(1,1)
 \end{verbatim}
 
+
+
+
 \begin{verbatim}
  [1] "sigma1 = 1, sigma2 = 1"
- [1] "observed level of test = 0.0502 (0.0022)"
+ [1] "observed level of test = 0.0492 (0.0022)"
 \end{verbatim}
+
 
 
 \begin{verbatim}
 robustt(1,10)
 \end{verbatim}
 
+
+
+
 \begin{verbatim}
  [1] "sigma1 = 1, sigma2 = 10"
- [1] "observed level of test = 0.0659 (0.0025)"
+ [1] "observed level of test = 0.0633 (0.0024)"
 \end{verbatim}
 
 

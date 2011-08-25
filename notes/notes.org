@@ -42,7 +42,7 @@ If $n = 5$ and $x = (1,0,1,1,0)$, then $\sum x_{i}=3$ and $n - \sum x_{i}=2$.
 
 #+latex: \begin{center}
 #+CAPTION: Likelihood function for a binomial experiment
-#+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+#+ATTR_LaTeX: width=4in, height=4in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/bernlike.pdf
 f <- function(x) dbinom(3, size = 5, prob = x)
 p0 <- qplot(0:1, geom = 'blank') +
@@ -65,7 +65,7 @@ L(\theta) & = & \prod_{i=1}^{n}\frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x_{i
 for $-\infty < \mu < \infty$ and $\sigma > 0$.
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+ATTR_LaTeX: width=3in, height=3in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/norm2like.pdf
 library(LearnBayes)
 data(marathontimes)
@@ -80,7 +80,7 @@ mycontour(normchi2post, c(220, 330, 500, 9000), time, xlab="mean",ylab="variance
 - \(\hat{\theta}\) is called an "MLE".
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=3in, height=3in, placement=[h!]
+#+ATTR_LaTeX: width=3in, height=3in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/bernMLE.pdf
 dat <- rbinom(27, size = 1, prob = 0.3)
 like <- function(x){
@@ -158,7 +158,7 @@ where $\alpha > 0$ and $\beta > 0$ and
 
 #+latex: \begin{center}
 #+CAPTION: Pictures of some Beta distributions
-#+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=6in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/betaexamples.pdf
 a <- matrix(c(0.5, 2, 5, 1, 0.5, 5), nrow = 2)
 b <- matrix(c(3, 3, 2, 1, 0.5, 0.5), nrow = 2)
@@ -227,7 +227,7 @@ Likelihood functions can be complicated!
   \]
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=3in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/rightcensdata.pdf
 f <- function(x) dchisq(x, df = 4)
 p0 <- qplot(0:9, geom = 'blank') +
@@ -267,7 +267,7 @@ Often we have heavy-tailed distributions.
 
     where $-\infty < \mu < \infty$, $\sigma > 0$, and $r = 1, 2,\ldots$ are the /degrees of freedom/.
     #+latex: \begin{center}
-    #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+    #+ATTR_LaTeX: width=6in, height=3in, placement=[H]
     #+begin_src R :exports results :results graphics :file img/tdistpdf.pdf
     curve(dt(x, df = 4), xlim = c(-4,4))
     curve(dnorm(x), lty = 2, add = TRUE)
@@ -298,7 +298,7 @@ Often we have heavy-tailed distributions.
     where $-\infty < m < \infty$ and $\sigma > 0$.
   - We use the median and scale parameter because the mean and variance DNE! (it's /very/ heavy-tailed.)
     #+latex: \begin{center}
-    #+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+    #+ATTR_LaTeX: width=4in, height=4in, placement=[H]
     #+begin_src R :exports results :results graphics :file img/cauchydistpdf.pdf
     library(ggplot2)
     p1 <- qplot(-4:4, geom = 'blank', xlab = "x", ylab = "density") + 
@@ -317,7 +317,7 @@ Often we have heavy-tailed distributions.
     where $-\infty < \mu < \infty$ and $\sigma > 0$. 
    - the MLE is \(\hat{\mu} = \mathrm{sample median}\)
     #+latex: \begin{center}
-    #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+    #+ATTR_LaTeX: width=6in, height=3in, placement=[H]
     #+begin_src R :exports results :results graphics :file img/laplacedistpdf.pdf
     curve(exp(-abs(x))/2, xlim = c(-3,3))
     curve(dnorm(x), lty = 2, add = TRUE)
@@ -344,7 +344,7 @@ where $p_{j}\geq 0$ and \(\sum_{j}p_{j}=1\).
 - Suppose there are 66% males, 34% females
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=3in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/normalmix.pdf
 curve(dnorm(x, mean = 63, sd = 2), xlim = c(55, 77), ylim = c(0, 0.2), lty = 2)
 curve(dnorm(x, mean = 71, sd = 3), add = TRUE, lty = 2)
@@ -472,7 +472,7 @@ p = \mbox{proportion of goldfish in lake}
 1. Construct a continuous prior for $p$.
 
    #+latex: \begin{center}
-   #+ATTR_LaTeX: width=6in, height=3in, placement=[h!]
+   #+ATTR_LaTeX: width=6in, height=3in, placement=[H]
    #+begin_src R :exports results :results graphics :file img/fishprior.pdf
    par(mfrow = c(1,2))
    curve(dbeta(x, shape1 = 4, shape2 = 3))
@@ -706,7 +706,7 @@ Researchers have found values of $a,c,m$ which give a long period and appear to 
   This generator is very fast, but has poor statistical properties. In particular, $U_{i}$ and $U_{i+2}$ are highly positively correlated.
 
    #+latex: \begin{center}
-   #+ATTR_LaTeX: width=6in, height=6in, placement=[h!]
+   #+ATTR_LaTeX: width=6in, height=6in, placement=[H]
    #+begin_src R :exports results :results graphics :file img/randu.pdf
    print(splom(randu))
    # or plotmatrix(randu) # from ggplot2
@@ -799,7 +799,7 @@ and
 F(x)=\frac{\me^{x}}{1 + \me^{x}} = y
 \]
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=4in, height=4in, placement=[h!]
+#+ATTR_LaTeX: width=4in, height=4in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/logisdistpdf.pdf
 p2 <- qplot(-4:4, geom = 'blank') +
       labs(x = "x", y = "density") + 
@@ -1022,7 +1022,7 @@ Below is a typical discrete random variable $X$, together with its PMF $p(x)$.
 | p(x) | 0.2 | 0.3 | 0.5 |
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=4in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/discpmf.pdf
 library(distr)
 X <- DiscreteDistribution(supp = 1:3, prob = c(2,3,5)/10)
@@ -1079,7 +1079,7 @@ We have spent much time developing efficient methods to generate uniform random 
 *Idea:* Draw the PDF $f$ on a piece of paper inside a box and tack it on the wall. Throw darts uniformly inside the box. If the dart falls "outside" the PDF, then try again. Suppose the dart falls "inside" the PDF at the point $(x,y)$. Then $x$ is an observation from a random variable \(X\sim f\)!
 
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=4in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/acceptrejectidea.pdf
 curve(dchisq(x, df=4), xlim = c(0,9), lwd = 3)
 points(runif(1000, max = 9), runif(1000, max = 0.2), cex = 0.5)
@@ -1201,7 +1201,7 @@ Here our target density is /Beta/ distribution with PDF
 f(x)\propto x^{2}(1-x)^{2}.
 \]
 #+latex: \begin{center}
-#+ATTR_LaTeX: width=6in, height=4in, placement=[h!]
+#+ATTR_LaTeX: width=6in, height=4in, placement=[H]
 #+begin_src R :exports results :results graphics :file img/betapdfacceptreject.pdf
 curve(dbeta(x, shape1 = 3, shape2 = 3))
 #+end_src
