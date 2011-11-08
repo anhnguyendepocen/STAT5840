@@ -1,20 +1,6 @@
-% Created 2011-08-25 Thu 13:07
+% Created 2011-08-26 Fri 16:03
 \documentclass[11pt,english]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
-\usepackage{graphicx}
-\usepackage{longtable}
-\usepackage{float}
-\usepackage{wrapfig}
-\usepackage{soul}
-\usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{latexsym}
-\usepackage{amssymb}
-\usepackage{hyperref}
-\tolerance=1000
+
 \usepackage{color}
 \usepackage{listings}
 \input{handoutformat}
@@ -45,10 +31,13 @@ head(patch)
 
 
 \begin{verbatim}
- Error in library(bootstrap) : there is no package called 'bootstrap'
- Warning message:
- In data(patch) : data set 'patch' not found
- Error in head(patch) : object 'patch' not found
+   subject placebo oldpatch newpatch    z     y
+ 1       1    9243    17649    16449 8406 -1200
+ 2       2    9671    12013    14614 2342  2601
+ 3       3   11792    19979    17274 8187 -2705
+ 4       4   13357    21816    23798 8459  1982
+ 5       5    9055    13850    12560 4795 -1290
+ 6       6    6290     9806    10157 3516   351
 \end{verbatim}
 
 
@@ -87,8 +76,8 @@ bias
 
 
 \begin{verbatim}
- Error: object 'theta.hat' not found
- Error: object 'bias' not found
+ \protect\footnotemark[1] -0.0713061
+ \footnotemark[1] 0.008002488
 \end{verbatim}
 
 \end{document}

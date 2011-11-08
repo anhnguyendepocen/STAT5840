@@ -1,20 +1,6 @@
-% Created 2011-08-25 Thu 13:03
+% Created 2011-08-26 Fri 15:58
 \documentclass[11pt,english]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
-\usepackage{graphicx}
-\usepackage{longtable}
-\usepackage{float}
-\usepackage{wrapfig}
-\usepackage{soul}
-\usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{latexsym}
-\usepackage{amssymb}
-\usepackage{hyperref}
-\tolerance=1000
+
 \usepackage{color}
 \usepackage{listings}
 \input{handoutformat}
@@ -74,10 +60,33 @@ boot.ci(bootpatch, type = c("basic", "norm", "perc", "bca"))
 
 
 
+
 \begin{verbatim}
- Error: object 'bootpatch' not found
- Error in boot.ci(bootpatch, type = c("basic", "norm", "perc", "bca")) : 
-   object 'bootpatch' not found
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = dat, statistic = theta.boot, R = 2000)
+
+
+Bootstrap Statistics :
+      original      bias    std. error
+t1* -0.0713061 0.008982855   0.1047789
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 2000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = bootpatch, type = c("basic", "norm", "perc", 
+    "bca"))
+
+Intervals : 
+Level      Normal              Basic         
+95%   (-0.2857,  0.1251 )   (-0.3255,  0.0914 )  
+
+Level     Percentile            BCa          
+95%   (-0.2340,  0.1829 )   (-0.2258,  0.2009 )  
+Calculations and Intervals on Original Scale
 \end{verbatim}
 \section*{Check our answers}
 \label{sec-3}
@@ -102,10 +111,11 @@ quantile(bootpatch$t, alpha, type=6)
 
 
 \begin{verbatim}
-  Error: object 'bootpatch' not found
-  Error: object 'bootpatch' not found
-  Error in quantile(bootpatch$t, alpha, type = 6) : 
-   object 'bootpatch' not found
+ \protect\footnotemark[1] -0.2766689  0.1340567
+       97.5%        2.5% 
+ -0.32549058  0.09136998
+       2.5%      97.5% 
+ -0.2339689  0.1828784
 \end{verbatim}
 
 

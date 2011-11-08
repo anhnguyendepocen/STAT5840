@@ -1,20 +1,6 @@
-% Created 2011-08-25 Thu 13:08
+% Created 2011-08-26 Fri 16:04
 \documentclass[11pt,english]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
-\usepackage{graphicx}
-\usepackage{longtable}
-\usepackage{float}
-\usepackage{wrapfig}
-\usepackage{soul}
-\usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{latexsym}
-\usepackage{amssymb}
-\usepackage{hyperref}
-\tolerance=1000
+
 \usepackage{color}
 \usepackage{listings}
 \input{handoutformat}
@@ -75,18 +61,6 @@ for (i in 1:n) {
 
 
 
-\begin{verbatim}
-  Error in find.package(package, lib.loc, verbose = verbose) : 
-   there is no package called 'bootstrap'
- Error in nrow(patch) : object 'patch' not found
- Error: object 'patch' not found
- Error: object 'patch' not found
-  Error in matrix(0, nrow = B, ncol = n) : object 'n' not found
-  Error in sample(1:n, size = n, replace = TRUE) : object 'n' not found
-  Error in numeric(n) : object 'n' not found
-  Error: object 'n' not found
-\end{verbatim}
-
 
 
 After the copy-paste of the above we may look at our results with the following.
@@ -100,12 +74,11 @@ sqrt((n-1) * mean((se.jack - mean(se.jack))^2))
 
 
 \begin{verbatim}
- [1] 0
- Error: object 'n' not found
+ [1] 0.1033973
+ [1] 0.03467117
 \end{verbatim}
 
 
-So our bootstrap estimate of the standard error is about  \texttt{0} and our jackknife-after-bootstrap estimate of its standard error is about 
-.
+So our bootstrap estimate of the standard error is about  \texttt{0.103} and our jackknife-after-bootstrap estimate of its standard error is about  \texttt{0.035}.
 
 \end{document}
