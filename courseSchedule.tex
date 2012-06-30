@@ -1,0 +1,75 @@
+\documentclass[12pt]{article}
+\usepackage{termcal}
+\thispagestyle{empty}
+
+\newcommand{\MWFClass}{%
+\calday[Monday]{\classday} % Monday
+\skipday % Tuesday (no class)
+\calday[Wednesday]{\classday} % Wednesday
+\skipday % Thursday (no class)
+\calday[Friday]{\classday} % Friday 
+\skipday\skipday % weekend (no class)
+}
+
+\newcommand{\MWClass}{%
+\calday[Monday]{\classday} % Monday
+\skipday % Tuesday (no class)
+\calday[Wednesday]{\classday} % Wednesday
+\skipday % Thursday (no class)
+\skipday % Friday 
+\skipday\skipday % weekend (no class)
+}
+
+\newcommand{\TRClass}{%
+\skipday % Monday (no class)
+\calday[Tuesday]{\classday} % Tuesday
+\skipday % Wednesday (no class)
+\calday[Thursday]{\classday} % Thursday
+\skipday % Friday 
+\skipday\skipday % weekend (no class)
+}
+
+\newcommand{\Holiday}[2]{%
+\options{#1}{\noclassday}
+\caltext{#1}{#2}
+}
+
+\begin{document}
+\subsection*{Tentative Schedule: STAT 5840 Summer 2011}
+\begin{center}
+\begin{calendar}{5/23/2011}{6} % Semester starts on 5/23/2011 and lasts for 6
+                    % weeks, including finals week
+\setlength{\calboxdepth}{0.8in}
+\MWFClass
+% schedule
+\caltexton{1}{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{}
+\caltextnext{You're done.}
+% ... and so on
+
+% Holidays
+\Holiday{}{}
+% ... and so on
+
+% Options
+\options{5/25/2011}{\noclassday}
+
+% Quizzes and Exams
+\caltext{7/1/2011}{\textbf{Final 300pts}}
+\end{calendar}
+\end{center}
+\end{document}
