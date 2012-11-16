@@ -8,6 +8,7 @@
 \title{Easiest Sweave Template Ever}  % to specify title
 \author{Your name goes here}          % to specify author(s)
 \begin{document}                      % document begins here
+\SweaveOpts{concordance=TRUE}
 
 % If .nw file contains graphs: To specify that EPS/PDF graph files are to be 
 % saved to 'graphics' sub-folder

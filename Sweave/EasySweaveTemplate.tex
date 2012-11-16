@@ -9,6 +9,7 @@
 \author{Your name goes here}          % to specify author(s)
 \usepackage{Sweave}
 \begin{document}                      % document begins here
+\input{EasySweaveTemplate-concordance}
 
 % If .nw file contains graphs: To specify that EPS/PDF graph files are to be 
 % saved to 'graphics' sub-folder
@@ -38,8 +39,8 @@ If you want to see both the input and output, do this:
 > runif(10)
 \end{Sinput}
 \begin{Soutput}
- [1] 0.02614266 0.23460182 0.59832305 0.14789209 0.05683789 0.53273950
- [7] 0.22494575 0.51266456 0.87416583 0.13036323
+ [1] 0.88391527 0.92538512 0.17091107 0.77188165 0.48213965 0.09386202
+ [7] 0.06434053 0.04402382 0.87761762 0.84074091
 \end{Soutput}
 \end{Schunk}
 
@@ -47,8 +48,8 @@ If you want to see output, but no input, do this:
 
 \begin{Schunk}
 \begin{Soutput}
- [1] 0.68058765 0.69535697 0.08438350 0.50416481 0.76245208 0.48381536
- [7] 0.06822326 0.36106798 0.76841479 0.47325312
+ [1] 0.59317417 0.71766509 0.42739176 0.98193059 0.05759842 0.63969684
+ [7] 0.79435661 0.61805005 0.86995578 0.30739595
 \end{Soutput}
 \end{Schunk}
 
@@ -78,8 +79,8 @@ and you can double-check that it worked later (if you like)
 > y
 \end{Sinput}
 \begin{Soutput}
- [1] 0.47050853 0.46858306 0.06095581 0.22382118 0.13999930 0.66977663
- [7] 0.54393756 0.68595458 0.68244135 0.21761271
+ [1] 0.4818667 0.4489951 0.4414288 0.7814628 0.2379165 0.9063004 0.7147336
+ [8] 0.6502742 0.1150843 0.5748972
 \end{Soutput}
 \end{Schunk}
 
@@ -87,7 +88,8 @@ If you want to write some \textsf{R} code but not have it evaluated at all then 
 
 \begin{Schunk}
 \begin{Sinput}
-> runif(1e+24)
+> # whatever you write here must be syntactically correct R code
+> runif(1000000000000000000000000)
 \end{Sinput}
 \end{Schunk}
 
@@ -106,16 +108,16 @@ Sometimes we would like the output to look like \LaTeX\ output instead of \texts
 > library(xtable)
 > xtable(summary(lm(y ~ x)), caption = "Here is the table we made")
 \end{Sinput}
-% latex table generated in R 2.13.0 by xtable 1.5-6 package
-% Fri May 27 12:11:13 2011
+% latex table generated in R 2.15.1 by xtable 1.7-0 package
+% Mon Oct 15 15:55:36 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
   \hline
  & Estimate & Std. Error & t value & Pr($>$$|$t$|$) \\ 
   \hline
-(Intercept) & 0.2652 & 0.1885 & 1.41 & 0.1970 \\ 
-  x & 0.0232 & 0.0265 & 0.88 & 0.4063 \\ 
+(Intercept) & 0.5348 & 0.2013 & 2.66 & 0.0289 \\ 
+  x & 0.0001 & 0.0283 & 0.00 & 0.9980 \\ 
    \hline
 \end{tabular}
 \caption{Here is the table we made}
