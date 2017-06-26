@@ -1,0 +1,583 @@
+---
+title: "Introduction"
+author: "STAT 5840"
+date: "Summer 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+
+```{r, message=FALSE}
+library(ggplot2)
+library(lattice)
+library(distr)
+```
+
+## Likelihood Methods
+
+Review: Maximum likelihood, Sir Ronald Aylmer Fisher (1921)
+
+### Examples 
+
+#### Bernoulli.  
+Write $X \sim \mathrm{Bern}(p)$.
+\[
+f(x|\theta) = \theta^{x}(1-\theta)^{1-x},\ x=0,1,\quad, 0 < \theta < 1.
+\]
+The likelihood function is
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
+ & = & \theta^{\sum x_{i}}(1-\theta)^{n-\sum x_{i}},\quad0<\theta<1.
+\end{eqnarray*}
+
+If $n = 5$ and $x = (1,0,1,1,0)$, then $\sum x_{i}=3$ and $n - \sum x_{i}=2$.
+
+```{r, fig.cap="Likelihood function for a binomial experiment"}
+f <- function(x) dbinom(3, size = 5, prob = x)
+p0 <- qplot(0:1, geom = 'blank') +
+      labs(x = "x", y = "density") + 
+      stat_function(fun = f, lwd = 2)
+print(p0)
+```
+
+#### Normal.  
+Write $X\sim N(\mu,\sigma^2)$. Then 
+\[
+f(x|\theta) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x-\mu)^{2}}{2\sigma^{2}}\right],\quad-\infty<x<\infty.
+\]
+Here $\theta = (\mu,\sigma^2)$.  The likelihood function is
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x_{i}-\mu)^{2}}{2\sigma^{2}}\right]\\
+ & = & (2\pi\sigma^{2})^{-n/2}\exp\left[-\frac{1}{2\sigma^{2}}\sum_{i=1}^{n}(x_{i}-\mu)^{2}\right],
+\end{eqnarray*}
+for $-\infty < \mu < \infty$ and $\sigma > 0$.
+
+```{r}
+library(LearnBayes)
+data(marathontimes)
+attach(marathontimes)
+mycontour(normchi2post, c(220, 330, 500, 9000), time, xlab="mean",ylab="variance")
+```
+
+### Statistical Inference
+
+#### Point estimation: maximize $L(\theta)$ to get $\hat{\theta}$.  
+- \(\hat{\theta}\) is called an "MLE".
+
+```{r}
+dat <- rbinom(27, size = 1, prob = 0.3)
+like <- function(x){
+  r <- 1
+  for (k in 1:27){ 
+    r <- r*dbinom(dat[k], size = 1, prob = x)
+  }
+  return(r)
+}
+curve(like, from = 0, to = 1, xlab = "parameter space", 
+      ylab = "Likelihood", lwd = 3, col = "blue")
+abline(h = 0, lwd = 1, lty = 3, col = "grey")
+mle <- mean(dat)
+mleobj <- like(mle)
+lines(mle, mleobj, type = "h", lwd = 2, lty = 3, col = "red")
+points(mle, 0, pch = 4, lwd = 2, cex = 2, col = "red")
+text(mle, mleobj/6, substitute(hat(theta)==a, 
+     list(a=round(mle, 4))), cex = 2, pos = 4)
+```
+
+#### Interval estimation: use
+\[
+\hat{\theta} \pm z_{\alpha/2}\cdot \sigma_{\hat{\theta}},
+\]
+where $\sigma_{\hat{\theta}}$ is the standard error of $\hat{\theta}$ which is $\sqrt{\mathrm{Var}(\hat{\theta})}$.  
+
+- Usually we don't know $\sigma_{\hat{\theta}}$.  We approximate it.  
+- If $l(\theta) = \log L(\theta)$ then when $n$ is large
+\[
+\mathrm{Var}(\hat{\theta}) \approx -\frac{1}{l''(\hat{\theta})}.
+\]
+
+- From a higher class... MLEs are aymptotically efficient; use the Delta method.
+
+### Examples of MLEs
+
+#### Bernoulli
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\theta^{x_{i}}(1-\theta)^{1-x_{i}}\\
+ & = & \theta^{\sum x_{i}}(1-\theta)^{n-\sum x_{i}},\quad0<\theta<1.
+\end{eqnarray*}
+
+\[
+\mathrm{MLE} = \hat{\theta} = \frac{\sum x_{i}}{n} = \overline{x}. 
+\]
+
+#### Bivariate normal
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n}\frac{1}{\sigma\sqrt{2\pi}}\exp\left[\frac{-(x_{i}-\mu)^{2}}{2\sigma^{2}}\right]\\
+ & = & (2\pi\sigma^{2})^{-n/2}\exp\left[-\frac{1}{2\sigma^{2}}\sum_{i=1}^{n}(x_{i}-\mu)^{2}\right],
+\end{eqnarray*}
+Can show (see 5844/6944 book)
+\[
+\frac{\partial}{\partial\mu}l(\theta) = 0 \mbox{ has solution } \hat{\mu}=\overline{x},
+\]
+\[
+\frac{\partial}{\partial\sigma^{2}}l(\theta) = 0 \mbox{ has solution } \hat{\sigma^{2}}=\frac{1}{n}\sum_{i=1}^{n}(x_{i} - \overline{x})^{2}.
+\]
+
+That is, $\hat{\theta} = \left(\overline{x},\,n^{-1}\sum_{i=1}^{n}(x_{i} - \overline{x})^{2}\right)$.  JOINT MLE.
+
+#### Beta - harder situation, but still possible.
+Write $X \sim \mathrm{Beta}(\alpha,\beta)$.
+\begin{equation}
+f_{X}(x)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: x^{\alpha-1}(1-x)^{\beta-1},\quad0 < x <1,
+\end{equation}
+where $\alpha > 0$ and $\beta > 0$ and
+\begin{equation}
+\Gamma(\alpha)=\int_{0}^{\infty}x^{\alpha-1}\mathrm{e}^{-x}\:\mathrm{d} x,\quad\mbox{for }\alpha>0.
+\end{equation}
+
+
+- Pictures of some Betas.
+
+```{r, fig.cap="Pictures of some Beta distributions"}
+a <- matrix(c(0.5, 2, 5, 1, 0.5, 5), nrow = 2)
+b <- matrix(c(3, 3, 2, 1, 0.5, 0.5), nrow = 2)
+for (i in seq.int(2)){
+  for (j in seq.int(3)){
+    f <- function(x) dbeta(x, shape1 = a[i,j], shape2 = b[i,j])
+    tmp <- qplot(0:1, geom = 'blank', 
+                 main = paste("alpha = ", a[i,j], ", beta = ", b[i,j], sep = "")) +
+           labs(x = "x", y = "density") +
+           stat_function(fun = f)
+    print(tmp)
+  }
+}
+```
+
+Then 
+\[
+L(\theta) = \prod_{i=1}^{n}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: x_{i}^{\alpha-1}(1-x_{i})^{\beta-1}, \quad \alpha > 0,\ \beta > 0.
+\]
+
+The likelihood equations simplify to
+\[
+\begin{cases}
+\frac{1}{n}\sum\ln x_{i} & =\Psi(\alpha)-\Psi(\alpha+\beta),\\
+\frac{1}{n}\sum\ln(1-x_{i}) & =\Psi(\beta)-\Psi(\alpha+\beta),
+\end{cases}
+\]
+where $\Psi(z)=\Gamma'(z)/\Gamma(z)$ is the *digamma* function.
+
+- This looks hard!
+  - analytically impossible
+  - numerically trivial.
+
+## Why are we in Statistical Computing?
+
+Likelihood functions can be complicated!
+
+### Censored or missing data
+
+- Data are right censored, say, we are doing a study  about the effectiveness of a drug on a disease.
+
+- Let \(X_{i} =\) time until onset of disease for \(i^{\mathrm{th}}\) patient, \(i=1,\ldots,n\).
+
+- Suppose \(X_{1},\ldots X_{n}\) are IID
+   \[
+   f(x|\theta),\quad \mbox{``survival density''}\quad \mathrm{PDF}
+   \]
+   \[
+   F(x|\theta),\quad \mbox{``survival CDF''},\quad =\int_{-\infty}^{x}f(t|\theta)\mathrm{d} t
+   \]
+
+- However, the length of the study is LIMITED to $c$ duration (*e.g.* $c=5$ years).
+
+- The data are  \(X_{1},\ldots X_{n}\), but we actually observe
+  \[
+  Y_{i}=
+  \begin{cases}
+  X_{i}, & \mbox{if }X_{i}<c,\\
+  c, & \mbox{if }X_{i}\geq c.
+  \end{cases}
+  \]
+
+```{r}
+f <- function(x) dchisq(x, df = 4)
+p0 <- qplot(0:9, geom = 'blank') +
+      labs(x = 'x', y = 'density') + 
+      stat_function(fun = f) +
+      geom_vline(xintercept = 5)
+print(p0)
+curve(dchisq(x, df = 4), xlim = c(0,9))
+abline(v = 5, lty = 2)
+points(c(1.5, 1.7, 2.7, 4.3, 4.9, 6.3, 8.5), rep(0,7), pch = 4, lwd = 2, cex = 2)
+```
+
+- Likelihood function
+  \[
+  L(\theta | y_{1},\ldots,y_{n}) = \prod_{y_{i} < c} f(y_{i}|\theta)\cdot \prod_{y_{i}\geq c}\left[ 1 - F(c|\theta) \right]
+  \]
+
+- This is a typical/common problem.  We will return often.
+
+### Robust modelling/Likelihood can be multimodal
+
+- Typically we assume \(X_{1},\ldots X_{n}\) are IID \(N(\mu,\sigma^{2})\).
+- Then \(L(\mu,\sigma^{2}) =\) EASY.  \(\hat{\mu} = \overline{x}\).
+- Is this always appropriate?  NO!  Why?
+
+#### Alternative (Nonnormal) Models
+
+Often we have heavy-tailed distributions.
+
+- Student's *t* distribution.  $T(r,\mu,\sigma^2)$
+    \begin{equation}
+    f(x)=\frac{\Gamma\left[(r+1)/2\right]}{\sigma\sqrt{r\pi}\,\Gamma(r/2)}\left(1+\frac{(x - \mu)^{2}}{\sigma^{2}r}\right)^{-(r+1)/2},\quad-\infty<x<\infty,
+    \end{equation}
+
+    where $-\infty < \mu < \infty$, $\sigma > 0$, and $r = 1, 2,\ldots$ are the *degrees of freedom*.
+```{r}
+curve(dt(x, df = 4), xlim = c(-4,4))
+curve(dnorm(x), lty = 2, add = TRUE)
+```
+  - We see that 
+    \begin{equation}
+    f(x) \propto \sigma^{-1}\left(1+\frac{(x - \mu)^{2}}{\sigma^{2}r}\right)^{-(r+1)/2},
+    \end{equation}
+
+  - Usually $r$ is known and $\mu,\sigma^{2}$ are unknown.
+
+  - Given SRS  \(X_{1},\ldots X_{n}\), the likelihood is
+    \begin{align*}
+    L(\mu,\sigma^{2}) & = \prod \sigma^{-1}\left(1+\frac{(x_{i} - \mu)^{2}}{\sigma^{2}r}\right)^{-(r+1)/2}\\
+    & =  \sigma^{-n} \left[\prod \left(1+\frac{(x_{i} - \mu)^{2}}{\sigma^{2}r}\right) \right]^{-(r+1)/2}
+    \end{align*}
+
+  - For fixed $\sigma$, by playing with the data one can choose the number of modes of the likelihood.  Notice the inside is a polynomial in $\mu$ of degree $2n$.  It may have many (up to $n$) minima.  Then the likelihood has $n$ maxima, each of which has to be checked.  As $n \to \infty$, this is very difficult.
+
+
+- Cauchy distribution (take $r = 1$ in Student's *t*).
+  - Write \(X_{1},\ldots X_{n} \sim \mathrm{Cauchy}(m,\sigma)\), where $m$ is the median and $\sigma$ is a scale parameter.
+  - The PDF is 
+    \begin{equation}
+    f(x|m,\sigma)=\frac{1}{\sigma\pi}\left[1+\left(\frac{x-m}{\sigma}\right)^{2}\right]^{-1},\quad -\infty < x <\infty,
+    \end{equation}
+    where $-\infty < m < \infty$ and $\sigma > 0$.
+  - We use the median and scale parameter because the mean and variance DNE! (it's *very* heavy-tailed.)
+
+```{r}
+library(ggplot2)
+p1 <- qplot(-4:4, geom = 'blank', xlab = "x", ylab = "density") + 
+      stat_function(fun = dnorm, lty = 2) + 
+      stat_function(fun = dcauchy, lwd = 1)
+print(p1)
+```
+
+
+- Double Exponential (AKA Laplace).
+    \begin{equation}
+    f(x|\mu,\sigma)=\frac{1}{2\sigma}\exp\left(-\frac{|x - \mu|}{\sigma}\right),\quad -\infty < x <\infty,
+    \end{equation}
+    where $-\infty < \mu < \infty$ and $\sigma > 0$. 
+   - the MLE is \(\hat{\mu} = \text{sample median}\)
+```{r}
+curve(exp(-abs(x))/2, xlim = c(-3,3))
+curve(dnorm(x), lty = 2, add = TRUE)
+```
+
+
+### Mixture distributions
+Here we have \(X_{1},\ldots, X_{n} \sim f(x|\theta)\), but $f$ takes the form
+\[
+f(x|\theta) = \sum_{j=1}^{k}p_{j}f_{j}(x|\theta_{j}),
+\]
+where $p_{j}\geq 0$ and \(\sum_{j}p_{j}=1\).
+
+- Have $k$ different groups/subpopulations
+  - the proportion of people in group $j$ is $p_{j}$
+  - the $j^{\mathrm{th}}$ subpop. has distribution $f_{j}(\cdot |\theta_{j})$ 
+
+#### Example: Studying heights of students
+- Let \(X = \mbox{height in inches}  \).
+- Male heights $\approx N(71, 3^2)$
+- Female heights $\approx N(63, 2^2)$
+- Suppose there are 66% males, 34% females
+
+```{r}
+curve(dnorm(x, mean = 63, sd = 2), xlim = c(55, 77), ylim = c(0, 0.2), lty = 2)
+curve(dnorm(x, mean = 71, sd = 3), add = TRUE, lty = 2)
+f <- function(x) dnorm(x, mean = 63, sd = 2) + dnorm(x, mean = 71, sd = 3)
+curve(f, lwd = 2, add = TRUE)
+```
+
+Then the population density is 
+
+\begin{eqnarray*}
+f(x) & = & p\,N(\mu_{1},\sigma_{1}^{2}) + (1 - p)\,N(\mu_{2},\sigma_{2}^{2})\\
+     & \approx & 0.66\,f(x|71, 3^{2}) + 0.34\,f(x|63,2^{2})
+\end{eqnarray*}
+
+In general, the likelihood is 
+
+\begin{eqnarray*}
+L(\theta) & = & \prod_{i=1}^{n} \left( \sum_{j=1}^{k}p_{j}f_{j}(x_{i}|\theta_{j}) \right) \\
+     & = & \prod_{i=1}^{n} \left( p_{1}f_{1}(x_{i}|\theta_{1}) + \cdots + p_{1}f_{k}(x_{i}|\theta_{k}) \right)
+\end{eqnarray*}
+The product, when expanded, will have $k^{n}$ terms.  This explodes as $n \to \infty$, so not only do we have multimodality, we have SMALL RESOURCES, too.
+
+### Dependent Bernoulli trials
+YET ANOTHER MODEL!
+
+- Coin tossing model: \(X_{1},\ldots, X_{n}\) IID Bern($p$), where 
+   - $\Pr(\mbox{success}) = p$, constant, and 
+   - the trials are independent.
+
+#### BUT - 
+- Maybe the $p$'s change across trials
+- Maybe there is dependence in the sequence
+
+Suppose we have belief in STREAKY behavior
+- Two (2) states:
+   - $p_{H} \to \mbox{hot state}$
+   - $p_{C} \to \mbox{cold state}$
+
+If you are hot, you are more likely to stay hot in the next trial...
+
+| Trial | $i + 1$ | hot    | cold         |
+|-------+---------+--------+--------------|
+| $i$   |         |        |              |
+| hot   |         | $0.9a$ | $0.1(1 - a)$ |
+| cold  |         | 0.1    | 0.9          |
+
+- We don't know: $p_{H}$, $p_{C}$, $a$.
+- Observe a vector of $X$'s, for example,
+  \[
+  x = (1,1,1,0,0,1,0,0,0,1,0,0,1,1,1)
+  \]
+- One possible configuration of states
+  \[
+  s = (H,H,H,C,C,H,C,C,C,H,C,C,H,H,H)
+  \]
+- Probability in this configuration would be
+  \[
+  \frac{1}{2}p_{H}ap_{H}ap_{H}a(1-a)p_{C}(1-a)p_{C}\cdots
+  \]
+
+The Likelihood is
+\[
+L(p_{H},p_{C},a) = \sum_{\mbox{all possible configurations}}\Pr(\mbox{observe $x$}|\mbox{state is $s$})
+\]
+- AKA "Markov Switching Model"
+- Number of terms in above sum: $2^{n}$ - very complicated.
+
+## Introduction to Bayesian Statistics
+- Named for Reverend Thomas Bayes (1702-1761)
+- Based on the theory of subjective probability
+
+### Central Theme
+- the quantity of interest, $\theta$, is unknown and considered to be a *random variable*.
+- we have beliefs / existing knowledge about $\theta$, represented by
+  \[
+  \pi(\theta) \leadsto \text{the PRIOR distribution of } \theta.
+  \]
+- $\pi$ is a PDF, nonnegative, integral one.
+We wish to learn about \(\theta\)! To this end we conduct an experiment, and consequently we observe a random variable $X$ which depends (in some way) on $\theta$. The conditional distribution of $X$ given $\theta$ is represented by
+\[
+f(x|\theta) \leadsto \text{ the LIKELIHOOD function}.
+\]
+We wish to UPDATE our beliefs about $\theta$, using the information contained in the observation $X=x$ combined with our prior beliefs. Our new beliefs will be represented by
+\[
+\pi(\theta|x) \leadsto \text{the POSTERIOR distribution of }\theta.
+\]
+
+- Method: :: BAYES' RULE
+
+\[
+\pi(\theta|x)=\frac{f(x|\theta)\, \pi(\theta)}{\int f(x|\theta)\, \pi(\theta)
+\mathrm{d} \theta}, \quad \mbox{for $\theta \in \Theta$.}
+\]
+
+#### Remarks:
+
+- Once beliefs are updated, we then go out and do another experiment to learn even more!  Update again.  Schematic Diagram.
+
+- From Bayes' Rule
+   \begin{align*}
+   \pi(\theta|x)&=\frac{f(x|\theta)\, \pi(\theta)}
+   {\int f(x|\theta)\, \pi(\theta)d\theta}\\
+   &= M \, f(x|\theta)\, \pi(\theta)\\
+   &\propto f(x|\theta)\, \pi(\theta).
+   \end{align*}
+   Hence, Bayes' Rule is often written in the form POSTERIOR $\propto$ LIKELIHOOD $\times$ PRIOR
+
+- Notice the difference in interpretations:
+   For a Frequentist:
+   \[
+   \mbox{LIKELIHOOD}=L(\theta)=f(\mathbf{x}|\,\theta)= \mbox{a function of $\theta$}.
+   \]
+   While for a Bayesian:
+   \[
+   \mbox{LIKELIHOOD}=f(\mathbf{x}|\,\theta)= \mbox{a function of $\mathbf{x}$}.
+   \]
+
+#### Examples.  
+Want to learn about
+\[
+p = \mbox{proportion of goldfish in lake}
+\]
+
+1. Construct a continuous prior for $p$.
+
+```{r}
+par(mfrow = c(1,2))
+curve(dbeta(x, shape1 = 4, shape2 = 3))
+curve(dbeta(x, shape1 = 0.5, shape2 = 1))
+par(mfrow = c(1,1))
+```
+
+   Let $p$ have a Beta density,
+   \begin{equation}
+   p \sim \pi(p)=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1},\quad 0 < p < 1. \quad \mbox {This is the prior.}
+   \end{equation}
+   - Some properties
+      1.  \(\E[p] = \frac{\alpha}{\alpha+\beta}=\eta  \)
+      2.  \(\mbox{Var}(p) = \frac{\eta(1 - \eta)}{\alpha + \beta + 1} = \frac{\alpha\beta}{(\alpha + \beta)^{2}(\alpha + \beta + 1)}   \)
+      3. Think of $\eta$ as a *prior guess* at $p$
+      4. Think of \(\kappa = \alpha + \beta\) as *precision* of belief
+      5. The CDF is
+      \[
+      \Pr(p \leq x) = \int_{0}^{x}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1}\,\mathrm{d} p.
+      \]
+      The above is the *incomplete beta function*.
+
+2. Want to learn about $p$:  Go fishing! We catch $n$ fish, and let
+   \[
+   Y = \mbox{number of goldfish caught.} 
+   \]
+   Then \( Y = X_{1}+\cdots+X_{n} \), where 
+   \[
+   X_{i}=
+   \begin{cases}
+   1, & \mbox{if $i^{\mathrm{th}}$ fish is a goldfish},\\
+   0, & \mbox{otherwise}.
+   \end{cases}
+   \]
+   So \(X_{i} \sim \mathrm{Bern}(p)\).  Then \(Y \sim \mathrm{Binom}(p)\) with
+   \[
+   f(y|p) = {n \choose y}\,p^{y}(1-p)^{n - y},\quad y = 1,2,\ldots,n. \quad \mbox{(this is the Likelihood)}
+   \]
+
+3. Update beliefs with Bayes' Rule.
+   \[
+   \mbox{POSTERIOR \(\propto\) LIKELIHOOD $\times$ PRIOR}
+   \]
+   This means
+   \begin{align*}
+   \pi(\theta|y)& \propto f(y|p) \times \pi(p)\\
+   &= {n \choose y}\,p^{y}(1 - p)^{n - y}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\: p^{\alpha-1}(1-p)^{\beta-1}\\
+   &= M \cdot p^{\alpha + y - 1}\cdot (1 - p)^{\beta + n - y - 1}.
+   \end{align*}
+   where $M$ is such that
+   \[
+   \int_{0}^{1}\pi(p|y)\,\mathrm{d} p = 1.
+   \]
+   By inspection, we see that
+   \[
+   p|y \sim \mathrm{Beta}(\alpha + y,\beta + n- y),
+   \]
+   and so we conclude
+   \begin{align*}
+   M &= \frac{\Gamma((\alpha + y)+(\beta+n-y))}{\Gamma(\alpha+y)\Gamma(\beta+n-y)},\\
+   &= \frac{\Gamma(\alpha+\beta+n)}{\Gamma(\alpha+y)\Gamma(\beta+n-y)}.
+   \end{align*}
+
+   *Summary:*
+   - Started with prior, \(p \sim \mathrm{Beta}(\alpha,\beta).  \)
+   - Did experiment, observed $Y = y$.
+   - Get posterior, \(p|y \sim \mathrm{Beta}(\alpha + y,\ \beta + n - y).  \)
+
+### Bayesian Statistics 
+Draw all inference from the posterior distribution $\mathrm{Beta}(\alpha + y,\ \beta + n - y)$.
+
+Our new guess at $p$:
+\begin{align*}
+\eta^{\ast} &= \frac{\alpha^{\ast}}{\alpha^{\ast}+\beta^{\ast}} \\
+&= \frac{\alpha + y}{(\alpha + y) + (\beta + n - y)} \\
+&= \frac{\alpha + y}{\alpha + \beta + n} \\
+&= \frac{\alpha}{\alpha + \beta + n}\cdot\frac{\alpha + \beta}{\alpha + \beta} + \frac{y}{\alpha + \beta + n}\cdot\frac{n}{n} \\
+&= \frac{\alpha}{\alpha + \beta}\cdot\frac{\alpha + \beta}{\alpha + \beta + n} + \frac{y}{n}\cdot\frac{n}{\alpha + \beta + n} \\
+&= \eta\cdot\frac{\kappa}{\kappa + n} + \frac{y}{n}\cdot\frac{n}{\kappa + n}
+\end{align*}
+
+That is, the POSTERIOR MEAN is a *weighted average* or the MLE and the PRIOR MEAN.  It's called a *shrinkage estimator*.
+
+- As $\kappa \to \infty$, we have $\eta^{\ast} \to \eta$.
+- As $n \to \infty$, we have $\eta^{\ast} \to \mathrm{MLE}$.
+
+*Remarks:*
+
+#### How do we choose a prior?
+Notice:
+- Prior $\to$ Beta
+- Posterior $\to$ Beta, too.
+
+\(\mathrm{Beta}(\alpha,\beta)\) is called a CONJUGATE FAMILY.
+
+Beta/Binomial is called a CONJUGATE PAIR.
+
+Another conjugate pair: if \(\pi(\theta) = N(\mu,\,\tau^{2})\) and  \(f(x|\theta) = N(\theta,\,\sigma^{2})\), then
+\[
+\pi(\theta|x) = N\left(\frac{\overline{x}\tau^{2}+\mu\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n},\,\frac{\tau^{2}\cdot\sigma^{2}/n}{\tau^{2}+\sigma^{2}/n}  \right).
+\]
+
+- Other pairs:
+  - Gamma/Normal
+  - Gamma/Poisson
+  - Gamma/Gamma
+
+Here, \(\mathrm{Gamma}(\alpha,\beta)\) has PDF
+\[
+f(x|\alpha,\beta) = \frac{1}{\Gamma(\alpha)\beta^{\alpha}}\,x^{\alpha - 1} \mathrm{e}^{-x/\beta},\ x > 0,
+\]
+where $\alpha > 0$ and $\beta > 0$.
+
+Special cases:
+- \(\mathrm{Exp}(\beta) = \mathrm{Gamma}(1,\beta)\)
+- Chi-square \(\chi^{2}(\nu) = \mathrm{Gamma}(\nu/2,\,2),\ \nu =1,2,\ldots\)
+
+Conjugate families were chosen for priors historically because they are tractable, convenient, easy.  Turns out, conjugate families are *very* restricted (that is, most families of priors are not conjugate).  This used to be a problem, but computing advances have made this last difficulty negligible.
+
+#### Bayesian Point Estimation
+
+Our new guess at $\theta$:  the POSTERIOR MEAN $\E [\theta|x]$.
+
+Fact: the posterior mean is optimal in almost every sense, under the assumption of *squared error loss*.
+
+The squared error loss of an estimator $\delta$ which estimates $\theta$ is 
+\[
+L(\delta,\theta) = (\delta - \theta)^{2}.
+\]
+
+We will often need to compute the posterior mean.  Therefore we will need to compute things like
+\begin{align*}
+\E [\theta|x] &= \int \, \theta\, \pi(\theta|x)\,\mathrm{d} \theta,  \\
+&= \int \frac{\theta\, f(x|\theta)\,\pi(\theta)}{\int f(x|u)\pi(u)\mathrm{d} u} \,\mathrm{d} \theta, \\
+&= M \cdot \int \theta f(x|\theta)\pi(\theta)\,\mathrm{d} \theta.
+\end{align*}
+
+This will often be complicated, with no closed form solution.  Therefore we will need to resort to computing techniques.
+
+#### Bayesian Interval Estimation
+Here we have a probability interval of probability content $\gamma$, AKA "credible regions".
+
+The Bayesian has many options:
+
+- Equal-Tails interval
+
+- Shortest interval of content $\gamma$, or "HDR (highest density region)" interval
+
+Since posteriors are often complicated, calculation of credible regions is difficult and we need Monte Carlo techniques.

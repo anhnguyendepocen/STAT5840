@@ -20,9 +20,9 @@ use to you).  You can find the instructions here:
 #+end_center
 It's your best bet to install =R= in the default place.
 
-* You need \LaTeX
+* You need LaTeX
 In order to write statistical reports with =R= you are going to need a
-\(\LaTeX\) distribution.  If you are running Microsoft Windows then
+LaTeX distribution.  If you are running Microsoft Windows then
 your best bet is to go with MikTeX which you can find here:
 #+begin_center
 [[http://miktex.org]]
@@ -42,12 +42,12 @@ Again, you are best to install in the default place.
 
 
 * Getting everybody to play together nicely
-You don't actually need \(\LaTeX\) unless you are going to write an
+You don't actually need LaTeX unless you are going to write an
 =Sweave= report.  I am guessing that you will want to at least try it
 out, but I'll admit to you that getting everybody to play together
 nicely is the hardest part of the process.  I'm saying this here
 because if for some reason you /cannot/ get everybody playing together
-then you can forego the \(\LaTeX\) part, get your script working the
+then you can forego the LaTeX part, get your script working the
 way you want it to at home, then come to YSU to write your report.
 
 The most important step is to install everything in the default place in the right order so that it's easier for later parts to /find/ the parts earlier installed.  In the Lincoln 414 lab everything is in the right place and working so no additional work is needed.

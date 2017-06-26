@@ -1,80 +1,93 @@
-% Created 2011-05-20 Fri 12:18
+% Created 2017-06-26 Mon 08:20
+% Indented LaTeX compiler: pdflatex
 \documentclass[10pt,english]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{fixltx2e}
 \usepackage{graphicx}
+\usepackage{grffile}
 \usepackage{longtable}
-\usepackage{float}
 \usepackage{wrapfig}
-\usepackage{soul}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
 \usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{latexsym}
 \usepackage{amssymb}
+\usepackage{capt-of}
 \usepackage{hyperref}
-\tolerance=1000
 \input{handouts/handoutformat}
-\providecommand{\alert}[1]{\textbf{#1}}
-
+\date{STAT 5840: Summer 2017}
 \title{HOWTO Install Software for STAT 5840 at Home}
-%\author{G. Jay Kerns}
-\date{STAT 5840: Summer 2011}
-
+\hypersetup{
+ pdfauthor={G. Jay Kerns},
+ pdftitle={HOWTO Install Software for STAT 5840 at Home},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 8.3.3)}, 
+ pdflang={English}}
 \begin{document}
 
 \maketitle
-
 \thispagestyle{empty}
 
 
 \section*{You need \texttt{R}}
-\label{sec-1}
-
-The best thing I know to tell you is to use the install instructions I've written for \texttt{IPSUR} (a separate project, but it might be of some use to you).  You can find the instructions here:
+\label{sec:orgheadline1}
+The best thing I know to tell you is to use the install instructions
+I've written for \texttt{IPSUR} (a separate project, but it might be of some
+use to you).  You can find the instructions here:
 \begin{center}
-\href{http://ipsur.r-forge.r-project.org/book/install.html}{http://ipsur.r-forge.r-project.org/book/install.html}
+\url{http://ipsur.org/install.html}
 \end{center}
-
 It's your best bet to install \texttt{R} in the default place.
-\section*{You need \LaTeX}
-\label{sec-2}
 
-In order to write statistical reports with \texttt{R} you are going to need a \(\LaTeX\) distribution.  If you are running Microsoft Windows then your best bet is to go with MikTeX which you can find here:
+\section*{You need \LaTeX{}}
+\label{sec:orgheadline2}
+In order to write statistical reports with \texttt{R} you are going to need a
+\LaTeX{} distribution.  If you are running Microsoft Windows then
+your best bet is to go with MikTeX which you can find here:
 \begin{center}
-\href{http://miktex.org}{http://miktex.org}
+\url{http://miktex.org}
 \end{center}
+You will want to Download and install the latest version (2.9), though
+older versions will probably work if you have them.  It is probably
+alright to stick with the "Basic Installer", if nothing else, because
+the complete installation has a lengthy download time.
 
-You will want to Download and install the latest version (2.9), though older versions will probably work if you have them.  It is probably alright to stick with the ``Basic Installer'', if nothing else, because the complete installation has a lengthy download time.
 \section*{You need \texttt{RStudio}}
-\label{sec-3}
-
-Note for this step that you must have installed \texttt{R} version 2.11.1 or later.  Go here to download and install \texttt{RStudio}:
+\label{sec:orgheadline3}
+Note for this step that you must have installed \texttt{R} version 2.11.1 or
+later.  Go here to download and install \texttt{RStudio}:
 \begin{center}
-\href{http://www.rstudio.org/}{http://www.rstudio.org/}
+\url{http://www.rstudio.org/}
 \end{center}
-
 Again, you are best to install in the default place.
-\section*{Getting everybody to play together nicely}
-\label{sec-4}
 
-You don't actually need \(\LaTeX\) unless you are going to write an \texttt{Sweave} report.  I am guessing that you will want to at least try it out, but I'll admit to you that getting everybody to play together nicely is the hardest part of the process.  I'm saying this here because if for some reason you \emph{cannot} get everybody playing together then you can forego the \(\LaTeX\) part, get your script working the way you want it to at home, then come to YSU to write your report.
+
+\section*{Getting everybody to play together nicely}
+\label{sec:orgheadline4}
+You don't actually need \LaTeX{} unless you are going to write an
+\texttt{Sweave} report.  I am guessing that you will want to at least try it
+out, but I'll admit to you that getting everybody to play together
+nicely is the hardest part of the process.  I'm saying this here
+because if for some reason you \emph{cannot} get everybody playing together
+then you can forego the \LaTeX{} part, get your script working the
+way you want it to at home, then come to YSU to write your report.
 
 The most important step is to install everything in the default place in the right order so that it's easier for later parts to \emph{find} the parts earlier installed.  In the Lincoln 414 lab everything is in the right place and working so no additional work is needed.
 
-One of the problems that can come up (depending on your system) is that sometimes the computer will complain \texttt{ERROR: Sweave.sty is not found}.  If this happens to you, then download the following file, \texttt{Sweave.sty}, from here:
+One of the problems that can come up (depending on your system) is
+that sometimes the computer will complain \texttt{ERROR: Sweave.sty is not
+found}.  If this happens to you, then download the following file,
+\texttt{Sweave.sty}, from here:
 \begin{center}
-\href{http://www.cepe.ethz.ch/education/NPecoHS2010/Sweave.sty}{http://www.cepe.ethz.ch/education/NPecoHS2010/Sweave.sty}
+\url{http://www.cepe.ethz.ch/education/NPecoHS2010/Sweave.sty}
 \end{center}
-
-and save it in the same place where you have your report \texttt{.Rnw} file saved.  Then add the line
+and save it in the same place where you have your report \texttt{.Rnw} file
+saved.  Then add the line
 
 \begin{verbatim}
- \usepackage{Sweave}
+\usepackage{Sweave}
 \end{verbatim}
 
-
 to the Preamble of the \texttt{.Rnw} file (somewhere above the line \texttt{\textbackslash{}begin\{document\}}).
-
 \end{document}

@@ -16,7 +16,7 @@ You.
 * What
 All STAT 5840 assignments to be turned in for a grade should be
 submitted as =R Markdown= files, that is, a text file with file extension
-=.Rmd= which contains =R= code mixed with \(\LaTeX\) code to
+=.Rmd= which contains =R= code mixed with LaTeX code to
 ultimately come together to comprise a self-contained statistical
 report. Your file should be named according to the following scheme:
 
