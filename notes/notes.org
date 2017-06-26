@@ -1,7 +1,7 @@
 #+TITLE:   \fontsize{30}{35}\selectfont STAT 5840: STATISICAL COMPUTING
 #+AUTHOR:    G. Jay Kerns
 #+EMAIL:     gkerns@ysu.edu
-#+DATE:      Summer 2011
+#+DATE:      Summer 2017
 #+OPTIONS:   H:3 ^:nil
 #+EXPORT_EXCLUDE_TAGS: answer
 #+BABEL: :session *R* :results output raw :tangle yes
