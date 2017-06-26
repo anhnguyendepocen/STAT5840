@@ -1,6 +1,6 @@
 #+TITLE: *Youngstown State University*
 #+AUTHOR: Department of Mathematics and Statistics
-#+DATE: Grading Policy for STAT 5840, Summer 2011
+#+DATE: Grading Policy for STAT 5840, Summer 2017
 #+OPTIONS: toc:nil num:nil creator:nil timestamp:nil ^:nil
 #+LaTeX_HEADER: \usepackage[paperwidth=8.5in,paperheight=11in]{geometry}
 #+LaTeX_HEADER: \geometry{verbose,tmargin=0.5in,bmargin=1in,lmargin=1in,rmargin=1in}
@@ -12,11 +12,11 @@
 | *Office:*       | 620 Lincoln Building                  |
 | *Phone No.:*    | (330) 941-3310                        |
 | *E-mail:*       | [[mailto:gkerns@ysu.edu][gkerns@ysu.edu]]                        |
-| *Webpage:*      | =http://personal.ysu.edu/~gkerns=     |
-| *Course page:*  | http://www.moodle.ysumathstat.org     |
-| *Office hours:* | 15:00 – 16:00 MWF, or by appointment. |
+| *Webpage:*      | http://gkerns.people.ysu.edu          |
+| *Course page:*  | http://files.ysu.edu                  |
+| *Office hours:* | 12:15 – 13:15 MWF, or by appointment. |
 |-----------------+---------------------------------------|
-    #+TBLFM: $2=http://personal.ysu.edu/~gkerns=
+
 
 *** Graded Assessments:
 |---------------------------------------+------------|
@@ -34,15 +34,27 @@
 |-----------+-----------+-----------+-----------+-----------|
 
 *** Make-up policy:
-*Late homework or projects* will be penalized 10% of the grade per day. 
+*Late homework or projects* will be penalized 10% of the grade per
+day.
 
 *** Homework and projects: 
-Exercises will be assigned during class. Some of these will be collected. It may become necessary to do some of these exercises during class; if so, I will let you know ahead of time. Grades will be based on performance on these exercises. 
+Exercises will be assigned during class. Some of these will be
+collected. It may become necessary to do some of these exercises
+during class; if so, I will let you know ahead of time. Grades will be
+based on performance on these exercises.
 
 *** Attendance: 
-It is expected that you will make every possible effort to attend all classes. Although I feel that it is essential for you to attend class, no direct punishment will be assessed to your final grade if you choose not to attend class. Students who miss class are responsible for finding out any pertinent information concerning the course from the instructor. 
+It is expected that you will make every possible effort to attend all
+classes. Although I feel that it is essential for you to attend class,
+no direct punishment will be assessed to your final grade if you
+choose not to attend class. Students who miss class are responsible
+for finding out any pertinent information concerning the course from
+the instructor.
 
 *** Recommendations: 
-- Successful students have found that the subject demands frequent intensive study with lots of problem solving. 
-- Participation in group discussions is often helpful to yourself and others in learning. 
-- If you have any special problems or learning difficulties, please contact me immediately.
+- Successful students have found that the subject demands frequent
+  intensive study with lots of problem solving.
+- Participation in group discussions is often helpful to yourself and
+  others in learning.
+- If you have any special problems or learning difficulties, please
+  contact me immediately.

@@ -1,7 +1,7 @@
 #+TITLE:   Suggested Exercises for STAT 5840
 #+AUTHOR:    G. Jay Kerns
 #+EMAIL:     gkerns@ysu.edu
-#+DATE:      STAT 5840: Summer 2011
+#+DATE:      STAT 5840: Summer 2017
 #+LANGUAGE:  en
 #+OPTIONS:   H:4 toc:nil author:nil ^:nil num:nil
 #+BABEL: :session *R* :results output pp :tangle yes
